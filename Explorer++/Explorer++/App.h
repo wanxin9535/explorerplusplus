@@ -103,7 +103,7 @@ private:
 	void SetUpLanguageResourceInstance();
 	void RestoreSession(const std::vector<WindowStorageData> &windows);
 	void RestorePreviousWindows(const std::vector<WindowStorageData> &windows);
-	void CreateStartupFolders();
+	void CreateStartupFolders(const WindowStorageData &startupWindowData);
 	bool IsModelessDialogMessage(MSG *msg);
 	bool MaybeTranslateAccelerator(MSG *msg);
 

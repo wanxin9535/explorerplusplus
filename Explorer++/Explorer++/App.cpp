@@ -261,13 +261,30 @@ void App::SetUpLanguageResourceInstance()
 
 void App::RestoreSession(const std::vector<WindowStorageData> &windows)
 {
-	if (m_config.startupMode == +StartupMode::PreviousTabs)
+	// The details here will be used if a new window needs to be created (as opposed to restoring
+	// the previous set of windows).
+	WindowStorageData startupWindowData;
+
+	if (!windows.empty())
 	{
-		RestorePreviousWindows(windows);
+		startupWindowData = windows[0];
+		startupWindowData.tabs = {};
+		startupWindowData.selectedTab = 0;
 	}
-	else if (m_config.startupMode == +StartupMode::CustomFolders)
+
+	switch (m_config.startupMode)
 	{
-		CreateStartupFolders();
+	case StartupMode::PreviousTabs:
+		RestorePreviousWindows(windows);
+		break;
+
+	case StartupMode::CustomFolders:
+		CreateStartupFolders(startupWindowData);
+		break;
+
+	case StartupMode::DefaultFolder:
+		// This case is handled below.
+		break;
 	}
 
 	if (m_browserList.IsEmpty())
@@ -280,7 +297,7 @@ void App::RestoreSession(const std::vector<WindowStorageData> &windows)
 		// - If m_config.startupMode is StartupMode::DefaultFolder.
 		//
 		// In each case, a default window should be created.
-		Explorerplusplus::Create(this);
+		Explorerplusplus::Create(this, &startupWindowData);
 	}
 }
 
@@ -298,7 +315,7 @@ void App::RestorePreviousWindows(const std::vector<WindowStorageData> &windows)
 	}
 }
 
-void App::CreateStartupFolders()
+void App::CreateStartupFolders(const WindowStorageData &startupWindowData)
 {
 	if (m_config.startupFolders.empty())
 	{
@@ -312,7 +329,7 @@ void App::CreateStartupFolders()
 		tabs.push_back({ .directory = startupFolder });
 	}
 
-	WindowStorageData initialData;
+	WindowStorageData initialData = startupWindowData;
 	initialData.tabs = tabs;
 	initialData.selectedTab = 0;
 	Explorerplusplus::Create(this, &initialData);
