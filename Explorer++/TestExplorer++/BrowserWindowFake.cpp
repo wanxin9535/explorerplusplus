@@ -19,7 +19,7 @@ BrowserWindowFake::BrowserWindowFake(const Config *config, TabEvents *tabEvents,
 	ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
 	CachedIcons *cachedIcons, BookmarkTree *bookmarkTree,
 	const AcceleratorManager *acceleratorManager, const ResourceLoader *resourceLoader,
-	PlatformContext *platformContext) :
+	PlatformContext *platformContext, const WindowStorageData &storageData) :
 	m_config(config),
 	m_window(CreateBrowserWindow()),
 	m_shellBrowserFactory(this, navigationEvents),
@@ -27,6 +27,34 @@ BrowserWindowFake::BrowserWindowFake(const Config *config, TabEvents *tabEvents,
 		this, &m_shellBrowserFactory, tabEvents, shellBrowserEvents, navigationEvents, nullptr,
 		cachedIcons, bookmarkTree, acceleratorManager, config, resourceLoader, platformContext))
 {
+	WINDOWPLACEMENT placement = {};
+	placement.length = sizeof(placement);
+	BOOL res = GetWindowPlacement(m_window.get(), &placement);
+	CHECK(res);
+
+	placement.showCmd = SW_HIDE;
+	placement.rcNormalPosition = storageData.bounds;
+	res = SetWindowPlacement(m_window.get(), &placement);
+	CHECK(res);
+
+	for (const auto &tab : storageData.tabs)
+	{
+		if (tab.pidl.HasValue())
+		{
+			AddTab(tab.pidl, tab.tabSettings);
+		}
+		else
+		{
+			AddTab(tab.directory, tab.tabSettings);
+		}
+	}
+
+	auto *tabContainer = GetActiveTabContainer();
+
+	if (storageData.selectedTab >= 0 && storageData.selectedTab < tabContainer->GetNumTabs())
+	{
+		tabContainer->SelectTabAtIndex(storageData.selectedTab);
+	}
 }
 
 wil::unique_hwnd BrowserWindowFake::CreateBrowserWindow()
@@ -215,7 +243,17 @@ std::optional<std::wstring> BrowserWindowFake::RequestMenuHelpText(HMENU menu, U
 
 WindowStorageData BrowserWindowFake::GetStorageData() const
 {
-	return { {}, WindowShowState::Normal };
+	WINDOWPLACEMENT placement = {};
+	placement.length = sizeof(placement);
+	BOOL res = GetWindowPlacement(m_window.get(), &placement);
+	CHECK(res);
+
+	const auto *tabContainer = GetActiveTabContainer();
+
+	return { .bounds = placement.rcNormalPosition,
+		.showState = NativeShowStateToShowState(placement.showCmd),
+		.tabs = tabContainer->GetStorageData(),
+		.selectedTab = tabContainer->GetSelectedTabIndex() };
 }
 
 bool BrowserWindowFake::IsActive() const
@@ -261,10 +299,13 @@ Tab *BrowserWindowFake::AddTab(const std::wstring &path, const TabSettings &tabS
 	PidlAbsolute *outputPidl)
 {
 	auto pidl = CreateSimplePidlForTest(path);
+	wil::assign_to_opt_param(outputPidl, pidl);
+	return AddTab(pidl, tabSettings);
+}
+
+Tab *BrowserWindowFake::AddTab(const PidlAbsolute &pidl, const TabSettings &tabSettings)
+{
 	auto navigateParams = NavigateParams::Normal(pidl.Raw());
 	auto &tab = GetActiveTabContainer()->CreateNewTab(navigateParams, tabSettings);
-
-	wil::assign_to_opt_param(outputPidl, pidl);
-
 	return &tab;
 }

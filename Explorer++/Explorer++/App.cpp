@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "App.h"
-#include "Explorer++.h"
 #include "AsyncIconFetcher.h"
 #include "BrowserWindow.h"
 #include "ColorRuleModel.h"
@@ -21,6 +20,7 @@
 #include "RegistryAppStorage.h"
 #include "RegistryAppStorageFactory.h"
 #include "ResourceHelper.h"
+#include "SessionRestorer.h"
 #include "ShellWatcher.h"
 #include "TabStorage.h"
 #include "UIThreadExecutor.h"
@@ -47,6 +47,7 @@ App::App(const CommandLine::Settings *commandLineSettings) :
 	m_themeManager(&m_darkModeManager, &m_darkModeColorProvider),
 	m_cachedIcons(std::make_shared<CachedIcons>(MAX_CACHED_ICONS)),
 	m_iconFetcher(std::make_shared<AsyncIconFetcher>(&m_runtime, m_cachedIcons)),
+	m_browserWindowFactory(this),
 	m_colorRuleModel(ColorRuleModelFactory::Create()),
 	m_resourceInstance(GetModuleHandle(nullptr)),
 	m_processManager(&m_browserList),
@@ -141,7 +142,9 @@ void App::SetUpSession()
 
 	SetUpLanguageResourceInstance();
 
-	RestoreSession(windows);
+	SessionRestorer sessionRestorer(&m_config, &m_featureList, &m_browserList,
+		&m_browserWindowFactory);
+	sessionRestorer.Restore(windows);
 }
 
 void App::LoadSettings(std::vector<WindowStorageData> &windows)
@@ -259,82 +262,6 @@ void App::SetUpLanguageResourceInstance()
 		&m_darkModeManager, &m_themeManager);
 }
 
-void App::RestoreSession(const std::vector<WindowStorageData> &windows)
-{
-	// The details here will be used if a new window needs to be created (as opposed to restoring
-	// the previous set of windows).
-	WindowStorageData startupWindowData;
-
-	if (!windows.empty())
-	{
-		startupWindowData = windows[0];
-		startupWindowData.tabs = {};
-		startupWindowData.selectedTab = 0;
-	}
-
-	switch (m_config.startupMode)
-	{
-	case StartupMode::PreviousTabs:
-		RestorePreviousWindows(windows);
-		break;
-
-	case StartupMode::CustomFolders:
-		CreateStartupFolders(startupWindowData);
-		break;
-
-	case StartupMode::DefaultFolder:
-		// This case is handled below.
-		break;
-	}
-
-	if (m_browserList.IsEmpty())
-	{
-		// This path can be taken in a few different situations:
-		//
-		// - If m_config.startupMode is StartupMode::PreviousTabs and the list of windows is empty.
-		// - If m_config.startupMode is StartupMode::CustomFolders and the list of startup folders
-		//   is empty.
-		// - If m_config.startupMode is StartupMode::DefaultFolder.
-		//
-		// In each case, a default window should be created.
-		Explorerplusplus::Create(this, &startupWindowData);
-	}
-}
-
-void App::RestorePreviousWindows(const std::vector<WindowStorageData> &windows)
-{
-	for (const auto &window : windows)
-	{
-		Explorerplusplus::Create(this, &window);
-
-		// If this feature isn't enabled, only a single window is supported.
-		if (!m_featureList.IsEnabled(Feature::MultipleWindowsPerSession))
-		{
-			break;
-		}
-	}
-}
-
-void App::CreateStartupFolders(const WindowStorageData &startupWindowData)
-{
-	if (m_config.startupFolders.empty())
-	{
-		return;
-	}
-
-	std::vector<TabStorageData> tabs;
-
-	for (const auto &startupFolder : m_config.startupFolders)
-	{
-		tabs.push_back({ .directory = startupFolder });
-	}
-
-	WindowStorageData initialData = startupWindowData;
-	initialData.tabs = tabs;
-	initialData.selectedTab = 0;
-	Explorerplusplus::Create(this, &initialData);
-}
-
 bool App::IsModelessDialogMessage(MSG *msg)
 {
 	for (auto modelessDialog : m_modelessDialogList.GetList())
@@ -425,6 +352,11 @@ std::shared_ptr<AsyncIconFetcher> App::GetIconFetcher()
 BrowserList *App::GetBrowserList()
 {
 	return &m_browserList;
+}
+
+BrowserWindowFactory *App::GetBrowserWindowFactory()
+{
+	return &m_browserWindowFactory;
 }
 
 ModelessDialogList *App::GetModelessDialogList()

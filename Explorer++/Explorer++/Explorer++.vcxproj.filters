@@ -916,6 +916,12 @@
     <ClCompile Include="ShellEntryCollection.cpp">
       <Filter>Shell</Filter>
     </ClCompile>
+    <ClCompile Include="SessionRestorer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="BrowserWindowFactoryImpl.cpp">
+      <Filter>Browser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bookmarks\BookmarkHelper.h">
@@ -1961,6 +1967,15 @@
     </ClInclude>
     <ClInclude Include="ShellEntryCollection.h">
       <Filter>Shell</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionRestorer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="BrowserWindowFactory.h">
+      <Filter>Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="BrowserWindowFactoryImpl.h">
+      <Filter>Browser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

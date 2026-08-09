@@ -20,6 +20,7 @@ class ResourceLoader;
 class ShellBrowserEvents;
 class Tab;
 class TabEvents;
+struct WindowStorageData;
 
 class BrowserWindowFake : public BrowserWindow
 {
@@ -28,7 +29,7 @@ public:
 		ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
 		CachedIcons *cachedIcons, BookmarkTree *bookmarkTree,
 		const AcceleratorManager *acceleratorManager, const ResourceLoader *resourceLoader,
-		PlatformContext *platformContext);
+		PlatformContext *platformContext, const WindowStorageData &storageData);
 
 	// BrowserWindow
 	HWND GetHWND() const override;
@@ -65,6 +66,7 @@ public:
 		const TabSettings &tabSettings = {}, PidlAbsolute *outputPidl = nullptr);
 	Tab *AddTab(const std::wstring &path, const TabSettings &tabSettings = {},
 		PidlAbsolute *outputPidl = nullptr);
+	Tab *AddTab(const PidlAbsolute &pidl, const TabSettings &tabSettings = {});
 
 private:
 	static constexpr wchar_t CLASS_NAME[] = L"TestExplorer++BrowserWindowClass";

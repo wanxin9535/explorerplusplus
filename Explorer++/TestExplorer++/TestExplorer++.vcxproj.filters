@@ -571,6 +571,12 @@
     <ClCompile Include="ShellEntryCollectionTest.cpp">
       <Filter>Shell</Filter>
     </ClCompile>
+    <ClCompile Include="SessionRestorerTest.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="BrowserWindowTest.cpp">
+      <Filter>Browser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Bookmarks">

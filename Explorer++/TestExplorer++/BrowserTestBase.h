@@ -8,11 +8,14 @@
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
 #include "Config.h"
+#include "MainRebarStorage.h"
 #include "PlatformContextFake.h"
 #include "ShellBrowser/NavigationEvents.h"
 #include "ShellBrowser/ShellBrowserEvents.h"
 #include "TabEvents.h"
+#include "TabStorage.h"
 #include "Win32ResourceLoader.h"
+#include "WindowStorage.h"
 #include "../Helper/CachedIcons.h"
 #include "../Helper/Pidl.h"
 #include <gtest/gtest.h>
@@ -29,7 +32,7 @@ protected:
 	BrowserTestBase();
 	~BrowserTestBase();
 
-	BrowserWindowFake *AddBrowser();
+	BrowserWindowFake *AddBrowser(const WindowStorageData &storageData = {});
 	void RemoveBrowser(BrowserWindowFake *browser);
 
 	static void NavigateTab(Tab *tab, const std::wstring &path, PidlAbsolute *outputPidl = nullptr);

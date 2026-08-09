@@ -120,7 +120,8 @@ HWND Explorerplusplus::CreateMainWindow(const WindowStorageData *storageData)
 	placement.showCmd = SW_HIDE;
 	placement.rcNormalPosition =
 		storageData ? storageData->bounds : LayoutDefaults::GetDefaultMainWindowBounds();
-	SetWindowPlacement(hwnd, &placement);
+	res = SetWindowPlacement(hwnd, &placement);
+	CHECK(res);
 
 	return hwnd;
 }

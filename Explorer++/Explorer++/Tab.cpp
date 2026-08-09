@@ -151,15 +151,12 @@ bool Tab::IsLocked() const
 
 TabStorageData Tab::GetStorageData() const
 {
-	// The ShellBrowser instance can be null in tests, in which case, this method shouldn't be
-	// called.
-	CHECK(m_shellBrowserImpl);
-
 	TabStorageData storageData;
-	storageData.pidl = m_shellBrowserImpl->GetDirectoryIdl().get();
-	storageData.directory = m_shellBrowserImpl->GetDirectoryPath();
-	storageData.folderSettings = m_shellBrowserImpl->GetFolderSettings();
-	storageData.columns = m_shellBrowserImpl->GetAllColumnSets();
+	storageData.pidl = m_shellBrowser->GetDirectory();
+	CHECK(SUCCEEDED(GetDisplayName(m_shellBrowser->GetDirectory().Raw(), SHGDN_FORPARSING,
+		storageData.directory)));
+	storageData.folderSettings = m_shellBrowser->GetFolderSettings();
+	storageData.columns = m_shellBrowser->GetAllColumnSets();
 
 	TabSettings tabSettings;
 

@@ -8,6 +8,7 @@
 #include "ApplicationModel.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
+#include "BrowserWindowFactoryImpl.h"
 #include "CommandLine.h"
 #include "Config.h"
 #include "DarkModeColorProvider.h"
@@ -68,6 +69,7 @@ public:
 	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();
 	BrowserList *GetBrowserList();
+	BrowserWindowFactory *GetBrowserWindowFactory();
 	ModelessDialogList *GetModelessDialogList();
 	BookmarkTree *GetBookmarkTree();
 	ColorRuleModel *GetColorRuleModel() const;
@@ -101,9 +103,6 @@ private:
 	void LoadSettings(std::vector<WindowStorageData> &windows);
 	void SaveSettings();
 	void SetUpLanguageResourceInstance();
-	void RestoreSession(const std::vector<WindowStorageData> &windows);
-	void RestorePreviousWindows(const std::vector<WindowStorageData> &windows);
-	void CreateStartupFolders(const WindowStorageData &startupWindowData);
 	bool IsModelessDialogMessage(MSG *msg);
 	bool MaybeTranslateAccelerator(MSG *msg);
 
@@ -129,6 +128,7 @@ private:
 	std::shared_ptr<CachedIcons> m_cachedIcons;
 	std::shared_ptr<AsyncIconFetcher> m_iconFetcher;
 	BrowserList m_browserList;
+	BrowserWindowFactoryImpl m_browserWindowFactory;
 	ModelessDialogList m_modelessDialogList;
 	BookmarkTree m_bookmarkTree;
 	std::unique_ptr<ColorRuleModel> m_colorRuleModel;
