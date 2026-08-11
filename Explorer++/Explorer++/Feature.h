@@ -6,7 +6,6 @@
 
 #include "../Helper/BetterEnumsWrapper.h"
 
-// clang-format off
 BETTER_ENUM(Feature, int,
 	DualPane,
 	Plugins,
@@ -22,4 +21,3 @@ BETTER_ENUM(Feature, int,
 	// main thread.
 	BackgroundThreadEnumeration
 )
-// clang-format on

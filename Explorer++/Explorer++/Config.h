@@ -21,21 +21,17 @@
 #include "../Helper/StringHelper.h"
 #include <optional>
 
-// clang-format off
 BETTER_ENUM(InfoTipType, int,
 	System = 0,
 	Custom = 1
 )
-// clang-format on
 
 // These values are used to save/load configuration data. Existing values shouldn't be changed.
-// clang-format off
 BETTER_ENUM(StartupMode, int,
 	PreviousTabs = 1,
 	DefaultFolder = 2,
 	CustomFolders = 3
 )
-// clang-format on
 
 // Holds application-wide configuration options. Options that are specific to a window or tab should
 // instead be stored in their associated class.

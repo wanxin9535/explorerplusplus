@@ -8,7 +8,6 @@
 
 // These are used for both sorting and grouping. For example, it's possible to both sort a folder by
 // name and group a folder by name.
-// clang-format off
 BETTER_ENUM(SortMode, int,
 	Name = 1,
 	DateModified = 2,
@@ -82,4 +81,3 @@ BETTER_ENUM(SortMode, int,
 	MediaWriter = 63,
 	MediaYear = 64
 )
-// clang-format on

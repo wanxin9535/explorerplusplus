@@ -79,4 +79,6 @@ SpacesInCStyleCastParentheses: false
 SpacesInContainerLiterals: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
+WhitespaceSensitiveMacros:
+    - BETTER_ENUM
 ...

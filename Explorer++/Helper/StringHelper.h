@@ -10,7 +10,6 @@
 #include <optional>
 #include <string>
 
-// clang-format off
 BETTER_ENUM(SizeDisplayFormat, int,
 	None = 0,
 	Bytes = 1,
@@ -20,7 +19,6 @@ BETTER_ENUM(SizeDisplayFormat, int,
 	TB = 5,
 	PB = 6
 )
-// clang-format on
 
 using StringComparatorFunc =
 	std::function<bool(const std::wstring &input, const std::wstring &test)>;

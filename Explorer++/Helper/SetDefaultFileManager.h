@@ -9,13 +9,11 @@
 namespace DefaultFileManager
 {
 
-// clang-format off
 BETTER_ENUM(ReplaceExplorerMode, int,
 	None = 1,
 	FileSystem = 2,
 	All = 3
 )
-// clang-format on
 
 LSTATUS SetAsDefaultFileManagerFileSystem(const std::wstring &applicationKeyName,
 	const std::wstring &menuText);

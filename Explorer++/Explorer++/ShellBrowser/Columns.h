@@ -6,7 +6,6 @@
 
 #include "../Helper/BetterEnumsWrapper.h"
 
-// clang-format off
 BETTER_ENUM(ColumnType, unsigned int,
 	Name = 1,
 	Type = 2,
@@ -93,7 +92,6 @@ BETTER_ENUM(ColumnType, unsigned int,
 	/* Printer columns. */
 	PrinterModel = 64
 )
-// clang-format on
 
 struct Column_t
 {

@@ -8,7 +8,6 @@
 
 class ResourceLoader;
 
-// clang-format off
 BETTER_ENUM(ViewMode, int,
 	Icons = 1,
 	SmallIcons = 2,
@@ -21,7 +20,6 @@ BETTER_ENUM(ViewMode, int,
 	ExtraLargeThumbnails = 9,
 	LargeThumbnails = 10
 )
-// clang-format on
 
 bool IsThumbnailsViewMode(ViewMode viewMode);
 

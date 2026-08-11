@@ -6,12 +6,10 @@
 
 #include "BetterEnumsWrapper.h"
 
-// clang-format off
 BETTER_ENUM(SortDirection, int,
 	Ascending = 0,
 	Descending = 1
 )
-// clang-format on
 
 constexpr SortDirection InvertSortDirection(SortDirection direction)
 {
