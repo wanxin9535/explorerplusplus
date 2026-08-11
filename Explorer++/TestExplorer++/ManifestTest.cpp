@@ -9,15 +9,13 @@
 
 TEST(ManifestTest, TestParsing)
 {
-	// clang-format off
 	nlohmann::json json = {
-		{"name", "Test plugin"},
-		{"description", "Test description"},
-		{"file", "plugin.lua"},
-		{"version", "1.0"},
-		{"author", "John Smith"}
+		{ "name", "Test plugin" },
+		{ "description", "Test description" },
+		{ "file", "plugin.lua" },
+		{ "version", "1.0" },
+		{ "author", "John Smith" },
 	};
-	// clang-format on
 
 	Plugins::Manifest manifest = json.get<Plugins::Manifest>();
 

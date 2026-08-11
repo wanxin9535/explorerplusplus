@@ -89,15 +89,13 @@ std::unique_ptr<Gdiplus::Bitmap> Win32ResourceLoader::LoadGdiplusBitmapFromPNGAn
 	// This matrix will result in the RGB components all being inverted, while the alpha component
 	// will stay as-is. See the documentation on ColorMatrix for information on how this structure
 	// is laid out.
-	// clang-format off
-	Gdiplus::ColorMatrix colorMatrix = {{
-		{-1, 0, 0, 0, 0},
-		{0, -1, 0, 0, 0},
-		{0, 0, -1, 0, 0},
-		{0, 0, 0, 1, 0},
-		{1, 1, 1, 0, 1}
-	}};
-	// clang-format on
+	Gdiplus::ColorMatrix colorMatrix = { {
+		{ -1, 0, 0, 0, 0 },
+		{ 0, -1, 0, 0, 0 },
+		{ 0, 0, -1, 0, 0 },
+		{ 0, 0, 0, 1, 0 },
+		{ 1, 1, 1, 0, 1 },
+	} };
 
 	Gdiplus::ImageAttributes attributes;
 	attributes.SetColorMatrix(&colorMatrix);

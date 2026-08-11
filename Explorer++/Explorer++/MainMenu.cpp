@@ -25,9 +25,8 @@
 #include <wil/resource.h>
 #include <map>
 
-// clang-format off
 const std::map<UINT, Icon> MAIN_MENU_IMAGE_MAPPINGS = {
-	{ IDM_FILE_NEWTAB, Icon::NewTab},
+	{ IDM_FILE_NEWTAB, Icon::NewTab },
 	{ IDM_FILE_CLOSETAB, Icon::CloseTab },
 	{ IDM_FILE_OPENCOMMANDPROMPT, Icon::CommandLine },
 	{ IDM_FILE_OPENCOMMANDPROMPTADMINISTRATOR, Icon::CommandLineAdmin },
@@ -62,9 +61,8 @@ const std::map<UINT, Icon> MAIN_MENU_IMAGE_MAPPINGS = {
 	{ IDM_TOOLS_CUSTOMIZECOLORS, Icon::CustomizeColors },
 	{ IDM_TOOLS_OPTIONS, Icon::Options },
 
-	{ IDM_HELP_ONLINE_DOCUMENTATION, Icon::Help }
+	{ IDM_HELP_ONLINE_DOCUMENTATION, Icon::Help },
 };
-// clang-format on
 
 void Explorerplusplus::InitializeMainMenu()
 {

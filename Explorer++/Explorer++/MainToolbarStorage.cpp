@@ -18,7 +18,6 @@ using ToolbarButtonMapping = boost::bimap<MainToolbarButton, std::wstring>;
 // This matches the ID value used for a separator by TB_SAVERESTORE.
 const DWORD REGISTRY_SEPARATOR_STORAGE_ID = static_cast<DWORD>(-1);
 
-// clang-format off
 const ToolbarButtonMapping::value_type g_xmlButtonMappingValues[] = {
 	{ MainToolbarButton::Back, L"Back" },
 	{ MainToolbarButton::Forward, L"Forward" },
@@ -44,9 +43,8 @@ const ToolbarButtonMapping::value_type g_xmlButtonMappingValues[] = {
 	{ MainToolbarButton::MergeFiles, L"Merge Files" },
 	{ MainToolbarButton::CloseTab, L"Close Tab" },
 
-	{ MainToolbarButton::Separator, L"Separator" }
+	{ MainToolbarButton::Separator, L"Separator" },
 };
-// clang-format on
 
 static_assert(std::size(g_xmlButtonMappingValues) == MainToolbarButton::_size());
 

@@ -14,7 +14,6 @@ namespace
 // Note that the ordering of the items below has some importance. For items that have multiple
 // accelerator items defined, the first accelerator that appears will be used as the "default"
 // accelerator (i.e. the accelerator used in any associated menu items).
-// clang-format off
 constexpr ACCEL g_defaultAccelerators[] = {
 	{ FVIRTKEY | FALT, 'D', IDA_ADDRESSBAR },
 	{ FVIRTKEY | FCONTROL, 'L', IDA_ADDRESSBAR },
@@ -85,9 +84,8 @@ constexpr ACCEL g_defaultAccelerators[] = {
 	{ FVIRTKEY | FCONTROL | FSHIFT, '9', IDM_VIEW_TILES },
 	{ FVIRTKEY | FCONTROL | FSHIFT, 'A', IDM_WINDOW_SEARCH_TABS },
 	{ FVIRTKEY | FCONTROL | FSHIFT, '6', IDM_VIEW_EXTRALARGETHUMBNAILS },
-	{ FVIRTKEY | FCONTROL | FSHIFT, '7', IDM_VIEW_LARGETHUMBNAILS }
+	{ FVIRTKEY | FCONTROL | FSHIFT, '7', IDM_VIEW_LARGETHUMBNAILS },
 };
-// clang-format on
 
 static_assert(AreAcceleratorsValid(g_defaultAccelerators));
 
@@ -95,7 +93,6 @@ static_assert(AreAcceleratorsValid(g_defaultAccelerators));
 // should still be shown in menu entries. That's the reason for the array here.
 // Note that this is considered temporary. These shortcuts should be handled jointly with the rest
 // of the accelerator items. When that's done, this array can be removed.
-// clang-format off
 constexpr ACCEL g_nonAcceleratorShortcuts[] = {
 	{ FVIRTKEY | FCONTROL, 'C', IDM_EDIT_COPY },
 	{ FVIRTKEY | FCONTROL, 'X', IDM_EDIT_CUT },
@@ -103,9 +100,8 @@ constexpr ACCEL g_nonAcceleratorShortcuts[] = {
 	{ FVIRTKEY | FCONTROL, 'V', IDM_EDIT_PASTE },
 	{ FVIRTKEY | FCONTROL, 'A', IDM_EDIT_SELECTALL },
 	{ FVIRTKEY | FCONTROL, 'Z', IDM_EDIT_UNDO },
-	{ FVIRTKEY, VK_DELETE, IDM_FILE_DELETE }
+	{ FVIRTKEY, VK_DELETE, IDM_FILE_DELETE },
 };
-// clang-format on
 
 }
 

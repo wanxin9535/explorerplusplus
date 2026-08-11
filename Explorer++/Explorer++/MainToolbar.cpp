@@ -36,33 +36,32 @@ struct ToolbarButtonHash
 	}
 };
 
-// clang-format off
-const std::unordered_map<MainToolbarButton, Icon, ToolbarButtonHash> TOOLBAR_BUTTON_ICON_MAPPINGS = {
-	{MainToolbarButton::Back, Icon::Back},
-	{MainToolbarButton::Forward, Icon::Forward},
-	{MainToolbarButton::Up, Icon::Up},
-	{MainToolbarButton::Folders, Icon::FolderTree},
-	{MainToolbarButton::CopyTo, Icon::CopyTo},
-	{MainToolbarButton::MoveTo, Icon::MoveTo},
-	{MainToolbarButton::NewFolder, Icon::NewFolder},
-	{MainToolbarButton::Copy, Icon::Copy},
-	{MainToolbarButton::Cut, Icon::Cut},
-	{MainToolbarButton::Paste, Icon::Paste},
-	{MainToolbarButton::Delete, Icon::Delete},
-	{MainToolbarButton::Views, Icon::Views},
-	{MainToolbarButton::Search, Icon::Search},
-	{MainToolbarButton::Properties, Icon::Properties},
-	{MainToolbarButton::Refresh, Icon::Refresh},
-	{MainToolbarButton::AddBookmark, Icon::AddBookmark},
-	{MainToolbarButton::NewTab, Icon::NewTab},
-	{MainToolbarButton::OpenCommandPrompt, Icon::CommandLine},
-	{MainToolbarButton::Bookmarks, Icon::Bookmarks},
-	{MainToolbarButton::DeletePermanently, Icon::DeletePermanently},
-	{MainToolbarButton::SplitFile, Icon::SplitFiles},
-	{MainToolbarButton::MergeFiles, Icon::MergeFiles},
-	{MainToolbarButton::CloseTab, Icon::CloseTab}
-};
-// clang-format on
+const std::unordered_map<MainToolbarButton, Icon, ToolbarButtonHash>
+	TOOLBAR_BUTTON_ICON_MAPPINGS = {
+		{ MainToolbarButton::Back, Icon::Back },
+		{ MainToolbarButton::Forward, Icon::Forward },
+		{ MainToolbarButton::Up, Icon::Up },
+		{ MainToolbarButton::Folders, Icon::FolderTree },
+		{ MainToolbarButton::CopyTo, Icon::CopyTo },
+		{ MainToolbarButton::MoveTo, Icon::MoveTo },
+		{ MainToolbarButton::NewFolder, Icon::NewFolder },
+		{ MainToolbarButton::Copy, Icon::Copy },
+		{ MainToolbarButton::Cut, Icon::Cut },
+		{ MainToolbarButton::Paste, Icon::Paste },
+		{ MainToolbarButton::Delete, Icon::Delete },
+		{ MainToolbarButton::Views, Icon::Views },
+		{ MainToolbarButton::Search, Icon::Search },
+		{ MainToolbarButton::Properties, Icon::Properties },
+		{ MainToolbarButton::Refresh, Icon::Refresh },
+		{ MainToolbarButton::AddBookmark, Icon::AddBookmark },
+		{ MainToolbarButton::NewTab, Icon::NewTab },
+		{ MainToolbarButton::OpenCommandPrompt, Icon::CommandLine },
+		{ MainToolbarButton::Bookmarks, Icon::Bookmarks },
+		{ MainToolbarButton::DeletePermanently, Icon::DeletePermanently },
+		{ MainToolbarButton::SplitFile, Icon::SplitFiles },
+		{ MainToolbarButton::MergeFiles, Icon::MergeFiles },
+		{ MainToolbarButton::CloseTab, Icon::CloseTab },
+	};
 
 MainToolbar *MainToolbar::Create(HWND parent, App *app, BrowserWindow *browser,
 	CoreInterface *coreInterface, const ResourceLoader *resourceLoader,

@@ -60,23 +60,12 @@ using IconMapping = std::unordered_map<Icon, std::map<int, UINT>>;
 	{ Icon::Views, { ICON_SIZE_MAPPINGS(IDB_VIEWS##SetSuffix) } }
 // clang-format on
 
-// clang-format off
 const IconMapping ICON_RESOURCE_MAPPINGS_COLOR = {
 #pragma warning(push)
 #pragma warning(disable : 4003) // not enough actual parameters for macro 'identifier'
 	ICON_RESOURCE_MAPPINGS()
 #pragma warning(pop)
 };
-// clang-format on
 
-// clang-format off
-const IconMapping ICON_RESOURCE_MAPPINGS_WINDOWS_10 = {
-	ICON_RESOURCE_MAPPINGS(_WINDOWS_10)
-};
-// clang-format on
-
-// clang-format off
-const IconMapping ICON_RESOURCE_MAPPINGS_FLUENT_UI = {
-	ICON_RESOURCE_MAPPINGS(_FLUENT_UI)
-};
-// clang-format on
+const IconMapping ICON_RESOURCE_MAPPINGS_WINDOWS_10 = { ICON_RESOURCE_MAPPINGS(_WINDOWS_10) };
+const IconMapping ICON_RESOURCE_MAPPINGS_FLUENT_UI = { ICON_RESOURCE_MAPPINGS(_FLUENT_UI) };

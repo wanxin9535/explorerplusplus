@@ -8,7 +8,6 @@
 #include <array>
 #include <cassert>
 
-// clang-format off
 const std::array<ViewMode, 10> VIEW_MODES = {
 	ViewMode::ExtraLargeIcons,
 	ViewMode::LargeIcons,
@@ -19,9 +18,8 @@ const std::array<ViewMode, 10> VIEW_MODES = {
 	ViewMode::ExtraLargeThumbnails,
 	ViewMode::LargeThumbnails,
 	ViewMode::Thumbnails,
-	ViewMode::Tiles
+	ViewMode::Tiles,
 };
-// clang-format on
 
 template <std::size_t N>
 ViewMode GetNextViewMode(const std::array<ViewMode, N> &viewModes, ViewMode viewMode)

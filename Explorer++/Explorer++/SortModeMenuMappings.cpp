@@ -15,7 +15,6 @@ namespace
 using MenuItemIdToSortModePair = std::pair<UINT, SortMode>;
 using SortModeBimap = boost::bimap<UINT, SortMode>;
 
-// clang-format off
 constexpr MenuItemIdToSortModePair MENU_ITEM_SORT_MODE_MAPPINGS[] = {
 	{ IDM_SORTBY_NAME, SortMode::Name },
 	{ IDM_SORTBY_SIZE, SortMode::Size },
@@ -78,9 +77,8 @@ constexpr MenuItemIdToSortModePair MENU_ITEM_SORT_MODE_MAPPINGS[] = {
 	{ IDM_SORTBY_MEDIA_PRODUCER, SortMode::MediaProducer },
 	{ IDM_SORTBY_MEDIA_PUBLISHER, SortMode::MediaPublisher },
 	{ IDM_SORTBY_MEDIA_WRITER, SortMode::MediaWriter },
-	{ IDM_SORTBY_MEDIA_YEAR, SortMode::MediaYear }
+	{ IDM_SORTBY_MEDIA_YEAR, SortMode::MediaYear },
 };
-// clang-format on
 
 constexpr bool VerifyMappings(std::span<const MenuItemIdToSortModePair> mappings)
 {

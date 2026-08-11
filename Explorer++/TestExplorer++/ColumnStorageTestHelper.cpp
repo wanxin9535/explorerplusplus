@@ -10,7 +10,6 @@ FolderColumns BuildFolderColumnsLoadSaveReference()
 {
 	FolderColumns folderColumns;
 
-	// clang-format off
 	folderColumns.realFolderColumns = {
 		{ ColumnType::Name, true, 423 },
 		{ ColumnType::Type, true, 150 },
@@ -62,7 +61,7 @@ FolderColumns BuildFolderColumnsLoadSaveReference()
 		{ ColumnType::MediaProducer, false, 150 },
 		{ ColumnType::MediaPublisher, false, 150 },
 		{ ColumnType::MediaWriter, false, 150 },
-		{ ColumnType::MediaYear, false, 150 }
+		{ ColumnType::MediaYear, false, 150 },
 	};
 
 	folderColumns.myComputerColumns = {
@@ -71,12 +70,12 @@ FolderColumns BuildFolderColumnsLoadSaveReference()
 		{ ColumnType::TotalSize, true, 150 },
 		{ ColumnType::FreeSpace, true, 150 },
 		{ ColumnType::FileSystem, true, 80 },
-		{ ColumnType::VirtualComments, true, 111 }
+		{ ColumnType::VirtualComments, true, 111 },
 	};
 
 	folderColumns.controlPanelColumns = {
 		{ ColumnType::Name, true, 502 },
-		{ ColumnType::VirtualComments, false, 150 }
+		{ ColumnType::VirtualComments, false, 150 },
 	};
 
 	folderColumns.recycleBinColumns = {
@@ -85,7 +84,7 @@ FolderColumns BuildFolderColumnsLoadSaveReference()
 		{ ColumnType::OriginalLocation, true, 687 },
 		{ ColumnType::Size, true, 150 },
 		{ ColumnType::Type, false, 144 },
-		{ ColumnType::DateModified, false, 150 }
+		{ ColumnType::DateModified, false, 150 },
 	};
 
 	folderColumns.printersColumns = {
@@ -94,21 +93,20 @@ FolderColumns BuildFolderColumnsLoadSaveReference()
 		{ ColumnType::PrinterComments, true, 216 },
 		{ ColumnType::PrinterStatus, true, 150 },
 		{ ColumnType::PrinterLocation, true, 384 },
-		{ ColumnType::PrinterModel, true, 150 }
+		{ ColumnType::PrinterModel, true, 150 },
 	};
 
 	folderColumns.networkConnectionsColumns = {
 		{ ColumnType::Name, true, 718 },
 		{ ColumnType::Type, true, 150 },
 		{ ColumnType::NetworkAdaptorStatus, false, 206 },
-		{ ColumnType::Owner, true, 150 }
+		{ ColumnType::Owner, true, 150 },
 	};
 
 	folderColumns.myNetworkPlacesColumns = {
 		{ ColumnType::VirtualComments, true, 88 },
-		{ ColumnType::Name, true, 912 }
+		{ ColumnType::Name, true, 912 },
 	};
-	// clang-format on
 
 	return folderColumns;
 }

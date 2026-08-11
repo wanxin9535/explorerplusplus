@@ -7,7 +7,6 @@
 #include <gtest/gtest.h>
 #include <array>
 
-// clang-format off
 std::array<ViewMode, 8> viewModes = {
 	ViewMode::ExtraLargeIcons,
 	ViewMode::LargeIcons,
@@ -16,9 +15,8 @@ std::array<ViewMode, 8> viewModes = {
 	ViewMode::List,
 	ViewMode::Details,
 	ViewMode::Thumbnails,
-	ViewMode::Tiles
+	ViewMode::Tiles,
 };
-// clang-format on
 
 TEST(ViewModeHelperTest, TestGetNext)
 {

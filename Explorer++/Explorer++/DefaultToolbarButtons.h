@@ -6,9 +6,7 @@
 
 #include "MainToolbarButtons.h"
 
-// clang-format off
-const MainToolbarButton DEFAULT_TOOLBAR_BUTTONS[] =
-{
+const MainToolbarButton DEFAULT_TOOLBAR_BUTTONS[] = {
 	MainToolbarButton::Back,
 	MainToolbarButton::Forward,
 	MainToolbarButton::Up,
@@ -32,6 +30,5 @@ const MainToolbarButton DEFAULT_TOOLBAR_BUTTONS[] =
 	MainToolbarButton::Refresh,
 	MainToolbarButton::Separator,
 	MainToolbarButton::AddBookmark,
-	MainToolbarButton::Bookmarks
+	MainToolbarButton::Bookmarks,
 };
-// clang-format on

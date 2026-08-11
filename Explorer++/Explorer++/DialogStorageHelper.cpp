@@ -36,7 +36,6 @@ const TCHAR DIALOGS_XML_KEY[] = _T("State");
 GetInstance is stable throughout the lifetime of
 the program (which is true, as these are all
 singletons). */
-// clang-format off
 DialogSettings *const DIALOG_SETTINGS[] = {
 	&SearchDialogPersistentSettings::GetInstance(),
 	&WildcardSelectDialogPersistentSettings::GetInstance(),
@@ -55,9 +54,8 @@ DialogSettings *const DIALOG_SETTINGS[] = {
 	&ManageBookmarksDialogPersistentSettings::GetInstance(),
 	&DisplayColoursDialogPersistentSettings::GetInstance(),
 	&UpdateCheckDialogPersistentSettings::GetInstance(),
-	&SearchTabsDialogPersistentSettings::GetInstance()
+	&SearchTabsDialogPersistentSettings::GetInstance(),
 };
-// clang-format on
 
 }
 
