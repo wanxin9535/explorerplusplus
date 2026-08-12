@@ -5,6 +5,7 @@
 #pragma once
 
 #include "AcceleratorManager.h"
+#include "AppServices.h"
 #include "ApplicationModel.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
@@ -59,6 +60,7 @@ public:
 	const CommandLine::Settings *GetCommandLineSettings() const;
 	bool GetSavePreferencesToXmlFile() const;
 	void SetSavePreferencesToXmlFile(bool savePreferencesToXmlFile);
+	AppServices *GetAppServices();
 	PlatformContext *GetPlatformContext();
 	Runtime *GetRuntime();
 	ClipboardWatcher *GetClipboardWatcher();
@@ -103,6 +105,7 @@ private:
 	void LoadSettings(std::vector<WindowStorageData> &windows);
 	void SaveSettings();
 	void SetUpLanguageResourceInstance();
+	void SetUpAppServices();
 	bool IsModelessDialogMessage(MSG *msg);
 	bool MaybeTranslateAccelerator(MSG *msg);
 
@@ -113,6 +116,7 @@ private:
 
 	const CommandLine::Settings *const m_commandLineSettings;
 	bool m_savePreferencesToXmlFile = false;
+	AppServices m_appServices;
 	PlatformContextImpl m_platformContext;
 	Runtime m_runtime;
 	EventWindow m_eventWindow;

@@ -5,10 +5,12 @@
 #include "stdafx.h"
 #include "BrowserCommandController.h"
 #include "AboutDialog.h"
+#include "AppServices.h"
 #include "BrowserWindow.h"
 #include "Config.h"
 #include "DisplayColoursDialog.h"
 #include "MainResource.h"
+#include "PlatformContext.h"
 #include "ShellBrowser/ShellBrowser.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "SortModeMenuMappings.h"
@@ -45,12 +47,11 @@ static_assert(AreSelectTabItemIdsContiguous());
 
 }
 
-BrowserCommandController::BrowserCommandController(BrowserWindow *browser, Config *config,
-	ClipboardStore *clipboardStore, const ResourceLoader *resourceLoader) :
+BrowserCommandController::BrowserCommandController(BrowserWindow *browser,
+	AppServices *appServices) :
 	m_browser(browser),
-	m_config(config),
-	m_clipboardStore(clipboardStore),
-	m_resourceLoader(resourceLoader)
+	m_appServices(appServices),
+	m_config(appServices->GetConfig())
 {
 }
 
@@ -541,7 +542,8 @@ void BrowserCommandController::StartCommandPrompt(LaunchProcessFlags flags)
 void BrowserCommandController::CopyFolderPath() const
 {
 	const auto *shellBrowser = GetActiveShellBrowser();
-	CopyItemPathsToClipboard(m_clipboardStore, { shellBrowser->GetDirectory() }, PathType::Parsing);
+	CopyItemPathsToClipboard(m_appServices->GetPlatformContext()->GetClipboardStore(),
+		{ shellBrowser->GetDirectory() }, PathType::Parsing);
 }
 
 void BrowserCommandController::OnChangeMainFontSize(FontSizeType sizeType)
@@ -601,8 +603,8 @@ void BrowserCommandController::OnResetMainFontSize()
 
 void BrowserCommandController::OnChangeDisplayColors()
 {
-	auto *displayColoursDialog =
-		DisplayColoursDialog::Create(m_resourceLoader, m_browser->GetHWND(), m_config);
+	auto *displayColoursDialog = DisplayColoursDialog::Create(m_appServices->GetResourceLoader(),
+		m_browser->GetHWND(), m_config);
 	displayColoursDialog->ShowModalDialog();
 }
 
@@ -700,13 +702,15 @@ void BrowserCommandController::OnOpenOnlineDocumentation()
 
 void BrowserCommandController::OnCheckForUpdates()
 {
-	auto *updateCheckDialog = UpdateCheckDialog::Create(m_resourceLoader, m_browser->GetHWND());
+	auto *updateCheckDialog =
+		UpdateCheckDialog::Create(m_appServices->GetResourceLoader(), m_browser->GetHWND());
 	updateCheckDialog->ShowModalDialog();
 }
 
 void BrowserCommandController::OnAbout()
 {
-	auto *aboutDialog = AboutDialog::Create(m_resourceLoader, m_browser->GetHWND());
+	auto *aboutDialog =
+		AboutDialog::Create(m_appServices->GetResourceLoader(), m_browser->GetHWND());
 	aboutDialog->ShowModalDialog();
 }
 

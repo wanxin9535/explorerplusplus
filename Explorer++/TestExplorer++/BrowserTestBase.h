@@ -5,6 +5,7 @@
 #pragma once
 
 #include "AcceleratorManager.h"
+#include "AppServices.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
 #include "Config.h"
@@ -37,6 +38,7 @@ protected:
 
 	static void NavigateTab(Tab *tab, const std::wstring &path, PidlAbsolute *outputPidl = nullptr);
 
+	AppServices m_appServices;
 	PlatformContextFake m_platformContext;
 
 	Config m_config;
@@ -52,5 +54,7 @@ protected:
 	BrowserList m_browserList;
 
 private:
+	void SetUpAppServices();
+
 	std::vector<std::unique_ptr<BrowserWindowFake>> m_browsers;
 };

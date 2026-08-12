@@ -14,6 +14,15 @@ BrowserTestBase::BrowserTestBase() :
 	m_cachedIcons(10),
 	m_resourceLoader(GetModuleHandle(nullptr), IconSet::Color, nullptr, nullptr)
 {
+	SetUpAppServices();
+}
+
+void BrowserTestBase::SetUpAppServices()
+{
+	m_appServices.SetConfig(&m_config);
+	m_appServices.SetPlatformContext(&m_platformContext);
+	m_appServices.SetResourceLoader(&m_resourceLoader);
+	m_appServices.CheckFullyInitialized();
 }
 
 BrowserTestBase::~BrowserTestBase() = default;

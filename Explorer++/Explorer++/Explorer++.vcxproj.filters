@@ -583,9 +583,6 @@
     <ClCompile Include="AsyncIconFetcher.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="StartupCommandLineProcessor.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -921,6 +918,12 @@
     </ClCompile>
     <ClCompile Include="BrowserWindowFactoryImpl.cpp">
       <Filter>Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="AppServices.cpp">
+      <Filter>App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1545,9 +1548,6 @@
     <ClInclude Include="AsyncIconFetcher.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="ExitCode.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -1977,6 +1977,12 @@
     <ClInclude Include="BrowserWindowFactoryImpl.h">
       <Filter>Browser</Filter>
     </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="AppServices.h">
+      <Filter>App</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Explorer++.rc">
@@ -2222,6 +2228,9 @@
     </Filter>
     <Filter Include="Directory Watching">
       <UniqueIdentifier>{f250fc00-1a66-44d8-a30a-9840ad247acd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{7b67adcf-e09b-4104-ac39-b613fa2a15d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

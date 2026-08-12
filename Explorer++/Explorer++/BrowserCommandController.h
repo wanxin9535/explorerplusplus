@@ -10,17 +10,15 @@
 #include "../Helper/ShellHelper.h"
 #include <boost/core/noncopyable.hpp>
 
+class AppServices;
 class BrowserWindow;
-class ClipboardStore;
 struct Config;
-class ResourceLoader;
 class ShellBrowser;
 
 class BrowserCommandController : private boost::noncopyable
 {
 public:
-	BrowserCommandController(BrowserWindow *browser, Config *config, ClipboardStore *clipboardStore,
-		const ResourceLoader *resourceLoader);
+	BrowserCommandController(BrowserWindow *browser, AppServices *appServices);
 
 	bool IsCommandEnabled(int command) const;
 	void ExecuteCommand(int command,
@@ -67,7 +65,6 @@ private:
 	const ShellBrowser *GetActiveShellBrowser() const;
 
 	BrowserWindow *const m_browser;
+	AppServices *const m_appServices;
 	Config *const m_config;
-	ClipboardStore *const m_clipboardStore;
-	const ResourceLoader *const m_resourceLoader;
 };

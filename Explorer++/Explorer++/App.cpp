@@ -141,6 +141,7 @@ void App::SetUpSession()
 	}
 
 	SetUpLanguageResourceInstance();
+	SetUpAppServices();
 
 	SessionRestorer sessionRestorer(&m_config, &m_featureList, &m_browserList,
 		&m_browserWindowFactory);
@@ -262,6 +263,14 @@ void App::SetUpLanguageResourceInstance()
 		&m_darkModeManager, &m_themeManager);
 }
 
+void App::SetUpAppServices()
+{
+	m_appServices.SetConfig(&m_config);
+	m_appServices.SetPlatformContext(&m_platformContext);
+	m_appServices.SetResourceLoader(m_resourceLoader.get());
+	m_appServices.CheckFullyInitialized();
+}
+
 bool App::IsModelessDialogMessage(MSG *msg)
 {
 	for (auto modelessDialog : m_modelessDialogList.GetList())
@@ -302,6 +311,11 @@ bool App::GetSavePreferencesToXmlFile() const
 void App::SetSavePreferencesToXmlFile(bool savePreferencesToXmlFile)
 {
 	m_savePreferencesToXmlFile = savePreferencesToXmlFile;
+}
+
+AppServices *App::GetAppServices()
+{
+	return &m_appServices;
 }
 
 PlatformContext *App::GetPlatformContext()

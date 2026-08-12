@@ -1191,6 +1191,7 @@
     <ClCompile Include="AcceleratorManager.cpp" />
     <ClCompile Include="AddressBarView.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="AppServices.cpp" />
     <ClCompile Include="BackgroundContextMenuDelegate.cpp" />
     <ClCompile Include="BaseDialog.cpp" />
     <ClCompile Include="Bookmarks\UI\BookmarkColumnHelper.cpp" />
@@ -1535,6 +1536,7 @@
     <ClInclude Include="AddressBarViewDelegate.h" />
     <ClInclude Include="AddressBarView.h" />
     <ClInclude Include="App.h" />
+    <ClInclude Include="AppServices.h" />
     <ClInclude Include="AppStorage.h" />
     <ClInclude Include="BackgroundContextMenuDelegate.h" />
     <ClInclude Include="BaseDialog.h" />

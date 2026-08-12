@@ -22,8 +22,7 @@ protected:
 		m_browser(AddBrowser()),
 		m_originalPath(L"c:\\"),
 		m_tab(m_browser->AddTab(m_originalPath)),
-		m_commandController(m_browser, &m_config, m_platformContext.GetClipboardStore(),
-			&m_resourceLoader)
+		m_commandController(m_browser, &m_appServices)
 	{
 	}
 
