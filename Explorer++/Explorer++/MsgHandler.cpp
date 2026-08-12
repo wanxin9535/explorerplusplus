@@ -780,11 +780,6 @@ void Explorerplusplus::OnGroupSortDirectionSelected(SortDirection direction)
 	selectedTab.GetShellBrowserImpl()->SetGroupSortDirection(direction);
 }
 
-HWND Explorerplusplus::GetMainWindow() const
-{
-	return m_hContainer;
-}
-
 ShellBrowserImpl *Explorerplusplus::GetActiveShellBrowserImpl() const
 {
 	return m_pActiveShellBrowser;

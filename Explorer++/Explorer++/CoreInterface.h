@@ -26,8 +26,6 @@ class CoreInterface
 public:
 	virtual ~CoreInterface() = default;
 
-	virtual HWND GetMainWindow() const = 0;
-
 	virtual ShellBrowserImpl *GetActiveShellBrowserImpl() const = 0;
 
 	virtual TabContainer *GetTabContainer() const = 0;

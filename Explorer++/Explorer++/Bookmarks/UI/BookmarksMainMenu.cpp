@@ -22,13 +22,13 @@ BookmarksMainMenu::BookmarksMainMenu(App *app, BrowserWindow *browserWindow,
 	CoreInterface *coreInterface, const ResourceLoader *resourceLoader, IconFetcher *iconFetcher,
 	BookmarkTree *bookmarkTree, const BookmarkMenuBuilder::MenuIdRange &menuIdRange) :
 	m_app(app),
-	m_coreInterface(coreInterface),
+	m_browserWindow(browserWindow),
 	m_resourceLoader(resourceLoader),
 	m_bookmarkTree(bookmarkTree),
 	m_menuIdRange(menuIdRange),
 	m_menuBuilder(resourceLoader, iconFetcher),
 	m_controller(bookmarkTree, browserWindow, app->GetAcceleratorManager(),
-		app->GetResourceLoader(), coreInterface->GetMainWindow(), app->GetPlatformContext())
+		app->GetResourceLoader(), browserWindow->GetHWND(), app->GetPlatformContext())
 {
 	m_connections.push_back(coreInterface->AddMainMenuPreShowObserver(
 		std::bind_front(&BookmarksMainMenu::OnMainMenuPreShow, this)));
@@ -46,7 +46,7 @@ BookmarksMainMenu::~BookmarksMainMenu()
 	mii.cbSize = sizeof(mii);
 	mii.fMask = MIIM_SUBMENU;
 	mii.hSubMenu = nullptr;
-	SetMenuItemInfo(GetMenu(m_coreInterface->GetMainWindow()), IDM_BOOKMARKS, FALSE, &mii);
+	SetMenuItemInfo(GetMenu(m_browserWindow->GetHWND()), IDM_BOOKMARKS, FALSE, &mii);
 }
 
 void BookmarksMainMenu::OnMainMenuPreShow(HMENU mainMenu)
@@ -72,7 +72,7 @@ wil::unique_hmenu BookmarksMainMenu::BuildMainBookmarksMenu(
 {
 	wil::unique_hmenu menu(CreatePopupMenu());
 
-	UINT dpi = DpiCompatibility::GetInstance().GetDpiForWindow(m_coreInterface->GetMainWindow());
+	UINT dpi = DpiCompatibility::GetInstance().GetDpiForWindow(m_browserWindow->GetHWND());
 
 	std::wstring bookmarkThisTabText = m_resourceLoader->LoadString(IDS_MENU_BOOKMARK_THIS_TAB);
 	MenuHelper::AddStringItem(menu.get(), IDM_BOOKMARKS_BOOKMARKTHISTAB, bookmarkThisTabText, 0,
@@ -113,8 +113,8 @@ void BookmarksMainMenu::AddBookmarkItemsToMenu(HMENU menu,
 
 	MenuHelper::AddSeparator(menu, position++, TRUE);
 
-	m_menuBuilder.BuildMenu(m_coreInterface->GetMainWindow(), menu, bookmarksMenuFolder,
-		menuIdRange, position, menuImages, menuInfo);
+	m_menuBuilder.BuildMenu(m_browserWindow->GetHWND(), menu, bookmarksMenuFolder, menuIdRange,
+		position, menuImages, menuInfo);
 }
 
 void BookmarksMainMenu::AddOtherBookmarksToMenu(HMENU menu,
@@ -132,7 +132,7 @@ void BookmarksMainMenu::AddOtherBookmarksToMenu(HMENU menu,
 
 	// Note that as DestroyMenu is recursive, this menu will be destroyed when its parent menu is.
 	wil::unique_hmenu subMenu(CreatePopupMenu());
-	m_menuBuilder.BuildMenu(m_coreInterface->GetMainWindow(), subMenu.get(), otherBookmarksFolder,
+	m_menuBuilder.BuildMenu(m_browserWindow->GetHWND(), subMenu.get(), otherBookmarksFolder,
 		menuIdRange, 0, menuImages, menuInfo);
 
 	auto otherBookmarksId = menuInfo.nextMenuId++;

@@ -41,7 +41,7 @@ private:
 	bool OnMenuItemRightClicked(HMENU menu, int index, const POINT &pt);
 
 	App *const m_app;
-	CoreInterface *const m_coreInterface;
+	BrowserWindow *const m_browserWindow;
 	const ResourceLoader *const m_resourceLoader;
 	BookmarkTree *const m_bookmarkTree;
 	const BookmarkMenuBuilder::MenuIdRange m_menuIdRange;
