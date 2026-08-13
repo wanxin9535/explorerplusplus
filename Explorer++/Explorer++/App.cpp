@@ -265,6 +265,7 @@ void App::SetUpLanguageResourceInstance()
 
 void App::SetUpAppServices()
 {
+	m_appServices.SetAppController(this);
 	m_appServices.SetColorRuleModel(m_colorRuleModel.get());
 	m_appServices.SetConfig(&m_config);
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);

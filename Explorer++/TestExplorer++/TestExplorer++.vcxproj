@@ -215,6 +215,7 @@
     <ClCompile Include="AcceleratorManagerTest.cpp" />
     <ClCompile Include="AcceleratorTestHelper.cpp" />
     <ClCompile Include="AddressBarTest.cpp" />
+    <ClCompile Include="AppControllerFake.cpp" />
     <ClCompile Include="ApplicationDropperTest.cpp" />
     <ClCompile Include="ApplicationTest.cpp" />
     <ClCompile Include="ApplicationHelperTest.cpp" />
@@ -452,6 +453,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcceleratorTestHelper.h" />
+    <ClInclude Include="AppControllerFake.h" />
     <ClInclude Include="ApplicationExecutorMock.h" />
     <ClInclude Include="ApplicationToolbarStorageTestHelper.h" />
     <ClInclude Include="BookmarkStorageTestHelper.h" />

@@ -75,6 +75,12 @@ TEST_F(BrowserCommandControllerTest, CopyFolderPath)
 	EXPECT_THAT(*clipboardText, StrCaseEq(path));
 }
 
+TEST_F(BrowserCommandControllerTest, TryExit)
+{
+	m_commandController.ExecuteCommand(IDM_FILE_EXIT);
+	EXPECT_TRUE(m_appController.WasExitRequested());
+}
+
 TEST_F(BrowserCommandControllerTest, CanChangeMainFontSize)
 {
 	m_config.mainFont = std::nullopt;

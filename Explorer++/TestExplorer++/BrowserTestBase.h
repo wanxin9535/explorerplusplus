@@ -5,6 +5,7 @@
 #pragma once
 
 #include "AcceleratorManager.h"
+#include "AppControllerFake.h"
 #include "AppServices.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
@@ -43,6 +44,7 @@ protected:
 	static void NavigateTab(Tab *tab, const std::wstring &path, PidlAbsolute *outputPidl = nullptr);
 
 	AppServices m_appServices;
+	AppControllerFake m_appController;
 	PlatformContextFake m_platformContext;
 
 	Config m_config;

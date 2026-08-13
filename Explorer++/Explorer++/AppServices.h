@@ -6,6 +6,7 @@
 
 #include <tuple>
 
+class AppController;
 class ColorRuleModel;
 struct Config;
 class ModelessDialogList;
@@ -35,6 +36,10 @@ class TabRestorer;
 class AppServices
 {
 public:
+	AppController *GetAppController();
+	const AppController *GetAppController() const;
+	void SetAppController(AppController *appController);
+
 	ColorRuleModel *GetColorRuleModel();
 	const ColorRuleModel *GetColorRuleModel() const;
 	void SetColorRuleModel(ColorRuleModel *colorRuleModel);
@@ -87,8 +92,8 @@ private:
 	template <class T>
 	void Set(T *service);
 
-	std::tuple<ColorRuleModel *, Config *, ModelessDialogList *, NavigationEvents *,
-		PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *,
-		TabRestorer *>
+	std::tuple<AppController *, ColorRuleModel *, Config *, ModelessDialogList *,
+		NavigationEvents *, PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *,
+		TabList *, TabRestorer *>
 		m_services;
 };

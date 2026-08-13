@@ -21,6 +21,7 @@ BrowserTestBase::BrowserTestBase() :
 
 void BrowserTestBase::SetUpAppServices()
 {
+	m_appServices.SetAppController(&m_appController);
 	m_appServices.SetColorRuleModel(&m_colorRuleModel);
 	m_appServices.SetConfig(&m_config);
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);

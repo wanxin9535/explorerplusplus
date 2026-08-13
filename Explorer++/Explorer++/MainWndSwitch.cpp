@@ -349,7 +349,7 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 		break;
 
 	case IDM_FILE_EXIT:
-		m_app->TryExit();
+		m_commandController.ExecuteCommand(id);
 		break;
 
 	case IDM_EDIT_UNDO:

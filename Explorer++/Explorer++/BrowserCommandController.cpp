@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "BrowserCommandController.h"
 #include "AboutDialog.h"
+#include "AppController.h"
 #include "AppServices.h"
 #include "BrowserWindow.h"
 #include "Config.h"
@@ -194,6 +195,10 @@ void BrowserCommandController::ExecuteCommand(int command, OpenFolderDisposition
 
 	case IDM_FILE_COPYFOLDERPATH:
 		CopyFolderPath();
+		break;
+
+	case IDM_FILE_EXIT:
+		m_appServices->GetAppController()->TryExit();
 		break;
 
 	case IDM_EDIT_SELECTALL:

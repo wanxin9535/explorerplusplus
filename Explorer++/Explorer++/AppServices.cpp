@@ -5,6 +5,21 @@
 #include "stdafx.h"
 #include "AppServices.h"
 
+AppController *AppServices::GetAppController()
+{
+	return Get<AppController>();
+}
+
+const AppController *AppServices::GetAppController() const
+{
+	return Get<AppController>();
+}
+
+void AppServices::SetAppController(AppController *appController)
+{
+	Set(appController);
+}
+
 ColorRuleModel *AppServices::GetColorRuleModel()
 {
 	return Get<ColorRuleModel>();

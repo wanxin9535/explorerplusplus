@@ -5,6 +5,7 @@
 #pragma once
 
 #include "AcceleratorManager.h"
+#include "AppController.h"
 #include "AppServices.h"
 #include "ApplicationModel.h"
 #include "Bookmarks/BookmarkTree.h"
@@ -47,7 +48,7 @@ class ColorRuleModel;
 class ResourceLoader;
 struct WindowStorageData;
 
-class App : private boost::noncopyable
+class App : private AppController, private boost::noncopyable
 {
 public:
 	static constexpr wchar_t APP_NAME[] = L"Explorer++";
@@ -89,7 +90,6 @@ public:
 	FrequentLocationsModel *GetFrequentLocationsModel();
 	DriveModel *GetDriveModel();
 
-	void TryExit();
 	void SessionEnding();
 
 private:
@@ -107,6 +107,9 @@ private:
 	void SetUpAppServices();
 	bool IsModelessDialogMessage(MSG *msg);
 	bool MaybeTranslateAccelerator(MSG *msg);
+
+	// AppController
+	void TryExit() override;
 
 	void OnWillRemoveBrowser();
 	bool ConfirmExit();

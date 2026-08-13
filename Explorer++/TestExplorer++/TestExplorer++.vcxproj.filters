@@ -577,6 +577,9 @@
     <ClCompile Include="BrowserWindowTest.cpp">
       <Filter>Browser</Filter>
     </ClCompile>
+    <ClCompile Include="AppControllerFake.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Bookmarks">
@@ -758,6 +761,9 @@
     </Filter>
     <Filter Include="SimulatedFileSystem">
       <UniqueIdentifier>{a38d4a09-25d4-402f-a63d-efb4a6ff00e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{c1402477-54e5-41bb-8210-94b7fdef4293}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -950,6 +956,9 @@
     </ClInclude>
     <ClInclude Include="PidlTestHelper.h">
       <Filter>Helper\Shell</Filter>
+    </ClInclude>
+    <ClInclude Include="AppControllerFake.h">
+      <Filter>App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
