@@ -29,7 +29,7 @@
 
 void Explorerplusplus::CreateMainRebarAndChildren(const WindowStorageData *storageData)
 {
-	m_mainRebarView = MainRebarView::Create(m_hContainer);
+	m_mainRebarView = MainRebarView::Create(m_hwnd);
 
 	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(m_mainRebarView->GetHWND(),
 		std::bind_front(&Explorerplusplus::RebarSubclass, this)));
@@ -178,7 +178,7 @@ LRESULT Explorerplusplus::RebarSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 	switch (msg)
 	{
 	case WM_INITMENU:
-		SendMessage(m_hContainer, WM_INITMENU, wParam, lParam);
+		SendMessage(m_hwnd, WM_INITMENU, wParam, lParam);
 		break;
 
 	case WM_NOTIFY:
@@ -240,7 +240,7 @@ bool Explorerplusplus::OnToolbarRightClick(const NMMOUSE *mouseInfo)
 
 	PopupMenuView popupMenu(this);
 	ToolbarContextMenu toolbarContextMenu(&popupMenu, source, m_app, this);
-	popupMenu.Show(m_hContainer, ptScreen);
+	popupMenu.Show(m_hwnd, ptScreen);
 
 	return true;
 }

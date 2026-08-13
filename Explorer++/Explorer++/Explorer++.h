@@ -356,7 +356,7 @@ private:
 	void FinishShutdown();
 
 	App *const m_app;
-	HWND m_hContainer;
+	HWND m_hwnd;
 
 	BrowserCommandController m_commandController;
 

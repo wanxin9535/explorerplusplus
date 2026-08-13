@@ -423,5 +423,5 @@ void Explorerplusplus::FolderSizeCallback(FolderSizeExtraInfo *pfsei, int nFolde
 	the folder size can be displayed. It is up to the main
 	thread to determine whether the folder size should actually
 	be shown. */
-	PostMessage(m_hContainer, WM_APP_FOLDERSIZECOMPLETED, (WPARAM) pDWFolderSizeCompletion, 0);
+	PostMessage(m_hwnd, WM_APP_FOLDERSIZECOMPLETED, (WPARAM) pDWFolderSizeCompletion, 0);
 }

@@ -99,7 +99,7 @@ LRESULT Explorerplusplus::WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LP
 			UpdateDisplayWindow(selectedTab);
 			m_mainToolbar->UpdateToolbarButtonStates();
 
-			KillTimer(m_hContainer, LISTVIEW_ITEM_CHANGED_TIMER_ID);
+			KillTimer(m_hwnd, LISTVIEW_ITEM_CHANGED_TIMER_ID);
 		}
 		break;
 
@@ -1167,7 +1167,7 @@ LRESULT CALLBACK Explorerplusplus::NotifyHandler(HWND hwnd, UINT msg, WPARAM wPa
 			}
 			else
 			{
-				SendMessage(m_hContainer, WM_COMMAND, MAKEWPARAM(iCmd, 0), 0);
+				SendMessage(m_hwnd, WM_COMMAND, MAKEWPARAM(iCmd, 0), 0);
 			}
 		}
 

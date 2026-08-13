@@ -45,16 +45,16 @@ Explorerplusplus *Explorerplusplus::Create(App *app, const WindowStorageData *st
 
 Explorerplusplus::Explorerplusplus(App *app, const WindowStorageData *storageData) :
 	m_app(app),
-	m_hContainer(CreateMainWindow(storageData)),
+	m_hwnd(CreateMainWindow(storageData)),
 	m_commandController(this, app->GetAppServices()),
 	m_tabBarBackgroundBrush(CreateSolidBrush(TAB_BAR_DARK_MODE_BACKGROUND_COLOR)),
-	m_pluginMenuManager(m_hContainer, MENU_PLUGIN_START_ID, MENU_PLUGIN_END_ID),
+	m_pluginMenuManager(m_hwnd, MENU_PLUGIN_START_ID, MENU_PLUGIN_END_ID),
 	m_acceleratorUpdater(app->GetAcceleratorManager()),
 	m_pluginCommandManager(app->GetAcceleratorManager(), ACCELERATOR_PLUGIN_START_ID,
 		ACCELERATOR_PLUGIN_END_ID),
 	m_shellBrowserFactory(app, this, &m_fileActionHandler),
 	m_config(app->GetConfig()),
-	m_iconFetcher(m_hContainer, m_app->GetCachedIcons()),
+	m_iconFetcher(m_hwnd, m_app->GetCachedIcons()),
 	m_shellIconLoader(&m_iconFetcher),
 	m_applicationExecutor(this)
 {
@@ -74,7 +74,7 @@ Explorerplusplus::Explorerplusplus(App *app, const WindowStorageData *storageDat
 
 	SetUpControlVisibilityConfigListeners();
 
-	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(m_hContainer,
+	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(m_hwnd,
 		std::bind_front(&Explorerplusplus::WindowProcedure, this)));
 
 	Initialize(storageData);
@@ -86,8 +86,8 @@ Explorerplusplus::Explorerplusplus(App *app, const WindowStorageData *storageDat
 		showState = WindowShowState::Normal;
 	}
 
-	ShowWindow(m_hContainer, ShowStateToNativeShowState(showState));
-	UpdateWindow(m_hContainer);
+	ShowWindow(m_hwnd, ShowStateToNativeShowState(showState));
+	UpdateWindow(m_hwnd);
 
 	m_app->GetBrowserList()->AddBrowser(this);
 }
@@ -161,12 +161,12 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 		m_app->GetResourceLoader(), &m_iconFetcher, m_app->GetBookmarkTree(),
 		BookmarkMenuBuilder::MenuIdRange{ MENU_BOOKMARK_START_ID, MENU_BOOKMARK_END_ID });
 
-	m_view = BrowserView::Create(m_hContainer, this, m_config, m_app->GetTabEvents(),
+	m_view = BrowserView::Create(m_hwnd, this, m_config, m_app->GetTabEvents(),
 		m_app->GetShellBrowserEvents(), m_app->GetNavigationEvents(), m_app->GetResourceLoader());
 
 	InitializeMainMenu();
 
-	auto *statusBarView = StatusBarView::Create(m_hContainer, m_config);
+	auto *statusBarView = StatusBarView::Create(m_hwnd, m_config);
 	m_statusBar = StatusBar::Create(statusBarView, this, m_config, m_app->GetTabEvents(),
 		m_app->GetShellBrowserEvents(), m_app->GetNavigationEvents(), m_app->GetResourceLoader());
 
@@ -195,14 +195,14 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 	InitializePlugins();
 
 	m_themeWindowTracker =
-		std::make_unique<ThemeWindowTracker>(m_hContainer, m_app->GetThemeManager());
+		std::make_unique<ThemeWindowTracker>(m_hwnd, m_app->GetThemeManager());
 
 	SetLifecycleState(LifecycleState::Main);
 }
 
 void Explorerplusplus::InitializeDisplayWindow()
 {
-	m_displayWindow = DisplayWindow::Create(m_hContainer, m_config);
+	m_displayWindow = DisplayWindow::Create(m_hwnd, m_config);
 
 	ApplyDisplayWindowPosition();
 }
@@ -216,7 +216,7 @@ void Explorerplusplus::CreateFolderControls()
 		holderStyle |= WS_VISIBLE;
 	}
 
-	m_treeViewHolder = HolderWindow::Create(m_hContainer,
+	m_treeViewHolder = HolderWindow::Create(m_hwnd,
 		m_app->GetResourceLoader()->LoadString(IDS_FOLDERS_WINDOW_TEXT), holderStyle,
 		m_app->GetResourceLoader()->LoadString(IDS_HIDE_FOLDERS_PANE), m_app->GetConfig(),
 		m_app->GetResourceLoader(), m_app->GetDarkModeManager(), m_app->GetDarkModeColorProvider());
@@ -244,14 +244,14 @@ Tab *Explorerplusplus::CreateTabFromPreservedTab(const PreservedTab *tab)
 
 HWND Explorerplusplus::GetHWND() const
 {
-	return m_hContainer;
+	return m_hwnd;
 }
 
 WindowStorageData Explorerplusplus::GetStorageData() const
 {
 	WINDOWPLACEMENT placement = {};
 	placement.length = sizeof(placement);
-	BOOL res = GetWindowPlacement(m_hContainer, &placement);
+	BOOL res = GetWindowPlacement(m_hwnd, &placement);
 	CHECK(res);
 
 	const auto *tabContainer = GetActivePane()->GetTabContainer();
@@ -269,12 +269,12 @@ WindowStorageData Explorerplusplus::GetStorageData() const
 
 bool Explorerplusplus::IsActive() const
 {
-	return GetActiveWindow() == m_hContainer;
+	return GetActiveWindow() == m_hwnd;
 }
 
 void Explorerplusplus::Activate()
 {
-	BringWindowToForeground(m_hContainer);
+	BringWindowToForeground(m_hwnd);
 }
 
 void Explorerplusplus::TryClose()
@@ -305,7 +305,7 @@ bool Explorerplusplus::ConfirmClose()
 		fmt::format(fmt::runtime(m_app->GetResourceLoader()->LoadString(IDS_CLOSE_ALL_TABS)),
 			fmt::arg(L"num_tabs", numTabs));
 	int response =
-		MessageBox(m_hContainer, message.c_str(), App::APP_NAME, MB_ICONINFORMATION | MB_YESNO);
+		MessageBox(m_hwnd, message.c_str(), App::APP_NAME, MB_ICONINFORMATION | MB_YESNO);
 
 	if (response == IDNO)
 	{
@@ -341,7 +341,7 @@ void Explorerplusplus::BeginShutdown()
 
 	// Past this point, the remaining tabs will be closed, which can cause other UI updates. There's
 	// no need for that to be shown, however, since the window will be destroyed shortly afterwards.
-	ShowWindow(m_hContainer, SW_HIDE);
+	ShowWindow(m_hwnd, SW_HIDE);
 }
 
 void Explorerplusplus::FinishShutdown()
@@ -350,7 +350,7 @@ void Explorerplusplus::FinishShutdown()
 
 	m_app->GetBrowserList()->RemoveBrowser(this);
 
-	DestroyWindow(m_hContainer);
+	DestroyWindow(m_hwnd);
 }
 
 BrowserCommandController *Explorerplusplus::GetCommandController()

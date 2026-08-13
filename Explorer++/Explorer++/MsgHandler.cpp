@@ -111,7 +111,7 @@ void Explorerplusplus::OpenShortcutItem(PCIDLIST_ABSOLUTE pidlItem,
 	OpenFolderDisposition openFolderDisposition)
 {
 	unique_pidl_absolute target;
-	HRESULT hr = MaybeResolveLinkTarget(m_hContainer, pidlItem, target);
+	HRESULT hr = MaybeResolveLinkTarget(m_hwnd, pidlItem, target);
 
 	if (FAILED(hr))
 	{
@@ -229,21 +229,21 @@ void Explorerplusplus::OpenDirectoryInNewWindow(PCIDLIST_ABSOLUTE pidlDirectory)
 		TCHAR szParameters[512];
 		StringCchPrintf(szParameters, std::size(szParameters), _T("\"%s\""), path.c_str());
 
-		LaunchCurrentProcess(m_hContainer, szParameters);
+		LaunchCurrentProcess(m_hwnd, szParameters);
 	}
 }
 
 void Explorerplusplus::OpenFileItem(const std::wstring &itemPath, const std::wstring &parameters)
 {
 	auto shellBrowser = GetActiveShellBrowserImpl();
-	ExecuteFileAction(m_hContainer, itemPath, L"", parameters,
+	ExecuteFileAction(m_hwnd, itemPath, L"", parameters,
 		shellBrowser->InVirtualFolder() ? L"" : shellBrowser->GetDirectoryPath().c_str());
 }
 
 void Explorerplusplus::OpenFileItem(PCIDLIST_ABSOLUTE pidlItem, const std::wstring &parameters)
 {
 	auto shellBrowser = GetActiveShellBrowserImpl();
-	ExecuteFileAction(m_hContainer, pidlItem, L"", parameters,
+	ExecuteFileAction(m_hwnd, pidlItem, L"", parameters,
 		shellBrowser->InVirtualFolder() ? L"" : shellBrowser->GetDirectoryPath().c_str());
 }
 
@@ -292,7 +292,7 @@ void Explorerplusplus::UpdateLayout()
 #endif
 
 	RECT mainWindowRect;
-	GetClientRect(m_hContainer, &mainWindowRect);
+	GetClientRect(m_hwnd, &mainWindowRect);
 
 	int mainWindowWidth = GetRectWidth(&mainWindowRect);
 	int mainWindowHeight = GetRectHeight(&mainWindowRect);
@@ -476,7 +476,7 @@ void Explorerplusplus::UpdateLayout()
 
 void Explorerplusplus::OnDpiChanged(const RECT *updatedWindowRect)
 {
-	SetWindowPos(m_hContainer, nullptr, updatedWindowRect->left, updatedWindowRect->top,
+	SetWindowPos(m_hwnd, nullptr, updatedWindowRect->left, updatedWindowRect->top,
 		GetRectWidth(updatedWindowRect), GetRectHeight(updatedWindowRect),
 		SWP_NOZORDER | SWP_NOACTIVATE);
 }
@@ -556,16 +556,16 @@ void Explorerplusplus::OnFocusNextWindow(FocusChangeDirection direction)
 	// the focus even if there is no current focus or the focus is on the parent.
 	// GetNextDlgTabItem() may fail if the initial control is NULL or the parent window, so that
 	// situation is prevented here.
-	if (focus && IsChild(m_hContainer, focus))
+	if (focus && IsChild(m_hwnd, focus))
 	{
 		initialControl = focus;
 	}
 	else
 	{
-		initialControl = GetWindow(m_hContainer, GW_CHILD);
+		initialControl = GetWindow(m_hwnd, GW_CHILD);
 	}
 
-	HWND nextWindow = GetNextDlgTabItem(m_hContainer, initialControl,
+	HWND nextWindow = GetNextDlgTabItem(m_hwnd, initialControl,
 		direction == FocusChangeDirection::Previous);
 	assert(nextWindow);
 
@@ -582,12 +582,12 @@ void Explorerplusplus::OnAppCommand(UINT cmd)
 	case APPCOMMAND_BROWSER_BACKWARD:
 		/* This will cancel any menu that may be shown
 		at the moment. */
-		SendMessage(m_hContainer, WM_CANCELMODE, 0, 0);
+		SendMessage(m_hwnd, WM_CANCELMODE, 0, 0);
 		m_commandController.ExecuteCommand(IDM_GO_BACK);
 		break;
 
 	case APPCOMMAND_BROWSER_FORWARD:
-		SendMessage(m_hContainer, WM_CANCELMODE, 0, 0);
+		SendMessage(m_hwnd, WM_CANCELMODE, 0, 0);
 		m_commandController.ExecuteCommand(IDM_GO_FORWARD);
 		break;
 
@@ -599,7 +599,7 @@ void Explorerplusplus::OnAppCommand(UINT cmd)
 		break;
 
 	case APPCOMMAND_BROWSER_REFRESH:
-		SendMessage(m_hContainer, WM_CANCELMODE, 0, 0);
+		SendMessage(m_hwnd, WM_CANCELMODE, 0, 0);
 		m_commandController.ExecuteCommand(IDM_VIEW_REFRESH);
 		break;
 
@@ -695,7 +695,7 @@ void Explorerplusplus::CreateNewWindow(const std::vector<TabStorageData> &tabs)
 {
 	WINDOWPLACEMENT placement = {};
 	placement.length = sizeof(placement);
-	BOOL res = GetWindowPlacement(m_hContainer, &placement);
+	BOOL res = GetWindowPlacement(m_hwnd, &placement);
 	CHECK(res);
 
 	constexpr int windowOffsetInPixels = 10;
@@ -722,7 +722,7 @@ void Explorerplusplus::OnCloneWindow()
 	StringCchPrintf(szQuotedCurrentDirectory, std::size(szQuotedCurrentDirectory), _T("\"%s\""),
 		currentDirectory.c_str());
 
-	LaunchCurrentProcess(m_hContainer, szQuotedCurrentDirectory);
+	LaunchCurrentProcess(m_hwnd, szQuotedCurrentDirectory);
 }
 
 void Explorerplusplus::OnDisplayWindowRClick(POINT *ptClient)
@@ -748,7 +748,7 @@ void Explorerplusplus::OnDisplayWindowRClick(POINT *ptClient)
 	}
 
 	TrackPopupMenu(menu, TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_VERTICAL, ptScreen.x, ptScreen.y, 0,
-		m_hContainer, nullptr);
+		m_hwnd, nullptr);
 }
 
 void Explorerplusplus::OnGroupBy(SortMode groupMode)
@@ -813,7 +813,7 @@ bool Explorerplusplus::OnActivate(int activationState, bool minimized)
 	// This may be called while the window is being constructed, before it has been added to the
 	// browser list. In that case, the window won't be visible and there's no need to try and set it
 	// as the active browser.
-	if (IsWindowVisible(m_hContainer) && activationState != WA_INACTIVE && !minimized)
+	if (IsWindowVisible(m_hwnd) && activationState != WA_INACTIVE && !minimized)
 	{
 		m_app->GetBrowserList()->SetLastActive(this);
 	}

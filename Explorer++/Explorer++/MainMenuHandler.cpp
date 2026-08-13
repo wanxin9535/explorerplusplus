@@ -37,7 +37,7 @@ void Explorerplusplus::OnDestroyFiles()
 		fullFilenameList.push_back(fullFilename);
 	}
 
-	auto *destroyFilesDialog = DestroyFilesDialog::Create(m_app->GetResourceLoader(), m_hContainer,
+	auto *destroyFilesDialog = DestroyFilesDialog::Create(m_app->GetResourceLoader(), m_hwnd,
 		fullFilenameList, m_config->globalFolderSettings.showFriendlyDates);
 	destroyFilesDialog->ShowModalDialog();
 }
@@ -50,7 +50,7 @@ void Explorerplusplus::OnSearch()
 			Tab &selectedTab = GetActivePane()->GetTabContainer()->GetSelectedTab();
 			std::wstring currentDirectory = selectedTab.GetShellBrowserImpl()->GetDirectoryPath();
 
-			return SearchDialog::Create(m_app->GetResourceLoader(), m_hContainer, currentDirectory,
+			return SearchDialog::Create(m_app->GetResourceLoader(), m_hwnd, currentDirectory,
 				m_app->GetBrowserList());
 		});
 }
@@ -60,7 +60,7 @@ void Explorerplusplus::OnRunScript()
 	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"ScriptingDialog",
 		[this]
 		{
-			return ScriptingDialog::Create(m_app->GetResourceLoader(), m_hContainer, this,
+			return ScriptingDialog::Create(m_app->GetResourceLoader(), m_hwnd, this,
 				m_config);
 		});
 }
@@ -68,7 +68,7 @@ void Explorerplusplus::OnRunScript()
 void Explorerplusplus::OnShowOptions()
 {
 	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"OptionsDialog",
-		[this] { return OptionsDialog::Create(m_hContainer, m_app, m_config, this); });
+		[this] { return OptionsDialog::Create(m_hwnd, m_app, m_config, this); });
 }
 
 void Explorerplusplus::OnResolveLink()
@@ -84,7 +84,7 @@ void Explorerplusplus::OnResolveLink()
 	{
 		std::wstring shortcutFileName = m_pActiveShellBrowser->GetItemFullName(iItem);
 
-		hr = FileOperations::ResolveLink(m_hContainer, 0, shortcutFileName.c_str(), szFullFileName,
+		hr = FileOperations::ResolveLink(m_hwnd, 0, shortcutFileName.c_str(), szFullFileName,
 			std::size(szFullFileName));
 
 		if (hr == S_OK)
@@ -131,6 +131,6 @@ void Explorerplusplus::OnGoToOffset(int offset)
 void Explorerplusplus::OnSelectColumns()
 {
 	auto *selectColumnsDialog = SelectColumnsDialog::Create(m_app->GetResourceLoader(),
-		m_hContainer, GetActivePane()->GetTabContainer()->GetSelectedTab().GetShellBrowserImpl());
+		m_hwnd, GetActivePane()->GetTabContainer()->GetSelectedTab().GetShellBrowserImpl());
 	selectColumnsDialog->ShowModalDialog();
 }

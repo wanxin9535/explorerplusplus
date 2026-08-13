@@ -16,7 +16,7 @@
 
 void Explorerplusplus::InitializeTabs()
 {
-	m_tabBacking = TabBacking::Create(m_hContainer, this, this, m_app->GetResourceLoader(),
+	m_tabBacking = TabBacking::Create(m_hwnd, this, this, m_app->GetResourceLoader(),
 		m_config, m_app->GetTabEvents());
 
 	auto *mainTabView =
@@ -345,7 +345,7 @@ void Explorerplusplus::OnTabListViewSelectionChanged(const ShellBrowser *shellBr
 
 	if (GetActivePane()->GetTabContainer()->IsTabSelected(*tab))
 	{
-		SetTimer(m_hContainer, LISTVIEW_ITEM_CHANGED_TIMER_ID, LISTVIEW_ITEM_CHANGED_TIMEOUT,
+		SetTimer(m_hwnd, LISTVIEW_ITEM_CHANGED_TIMER_ID, LISTVIEW_ITEM_CHANGED_TIMEOUT,
 			nullptr);
 	}
 }

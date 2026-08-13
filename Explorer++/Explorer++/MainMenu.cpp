@@ -96,7 +96,7 @@ void Explorerplusplus::InitializeMainMenu()
 		DeleteMenu(mainMenu, IDM_TOOLS_RUNSCRIPT, MF_BYCOMMAND);
 	}
 
-	SetMenu(m_hContainer, mainMenu);
+	SetMenu(m_hwnd, mainMenu);
 
 	AddMainMenuSubmenu(mainMenu, IDM_FILE_REOPEN_RECENT_TAB,
 		[this](MenuView *menuView)
@@ -143,8 +143,8 @@ void Explorerplusplus::AddMainMenuSubmenu(HMENU mainMenu, UINT subMenuItemId,
 
 void Explorerplusplus::SetMainMenuImages()
 {
-	HMENU mainMenu = GetMenu(m_hContainer);
-	UINT dpi = DpiCompatibility::GetInstance().GetDpiForWindow(m_hContainer);
+	HMENU mainMenu = GetMenu(m_hwnd);
+	UINT dpi = DpiCompatibility::GetInstance().GetDpiForWindow(m_hwnd);
 
 	for (const auto &mapping : MAIN_MENU_IMAGE_MAPPINGS)
 	{
@@ -183,7 +183,7 @@ void Explorerplusplus::SetPasteSymLinkElevationIcon()
 	ImageHelper::ImageListIconToPBGRABitmap(m_mainMenuSystemImageList.get(), info.iSysImageIndex,
 		bitmap);
 
-	HMENU mainMenu = GetMenu(m_hContainer);
+	HMENU mainMenu = GetMenu(m_hwnd);
 	MenuHelper::SetBitmapForItem(mainMenu, IDM_EDIT_PASTE_SYMBOLIC_LINK, bitmap.get());
 	m_mainMenuImages.push_back(std::move(bitmap));
 }
@@ -302,7 +302,7 @@ void Explorerplusplus::OnInitMenu(HMENU menu)
 	// shouldn't have any functional issues. When an item is right-clicked, for example, the handle
 	// to the menu the click occurred on will be passed in and that can be used to determine whether
 	// or not the click should be processed.
-	if (menu == GetMenu(m_hContainer))
+	if (menu == GetMenu(m_hwnd))
 	{
 		SetMainMenuItemStates(menu);
 
@@ -373,7 +373,7 @@ void Explorerplusplus::OnMenuMiddleButtonUp(const POINT &pt, bool isCtrlKeyDown,
 		return;
 	}
 
-	auto menuItemId = MenuHelper::MaybeGetMenuItemAtPoint(GetMenu(m_hContainer), pt);
+	auto menuItemId = MenuHelper::MaybeGetMenuItemAtPoint(GetMenu(m_hwnd), pt);
 
 	if (menuItemId)
 	{
