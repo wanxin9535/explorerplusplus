@@ -22,9 +22,17 @@ class WindowSubclass;
 class BrowserView : private DropTargetInternal
 {
 public:
+	enum class FocusChangeDirection
+	{
+		Previous,
+		Next
+	};
+
 	static BrowserView *Create(HWND hwnd, BrowserWindow *browser, const Config *config,
 		TabEvents *tabEvents, ShellBrowserEvents *shellBrowserEvents,
 		NavigationEvents *navigationEvents, const ResourceLoader *resourceLoader);
+
+	void FocusNextWindow(FocusChangeDirection direction);
 
 private:
 	BrowserView(HWND hwnd, BrowserWindow *browser, const Config *config, TabEvents *tabEvents,

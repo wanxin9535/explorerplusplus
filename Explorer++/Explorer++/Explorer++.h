@@ -164,12 +164,6 @@ private:
 		int uId;
 	};
 
-	enum class FocusChangeDirection
-	{
-		Previous,
-		Next
-	};
-
 	struct MainMenuSubMenu
 	{
 		std::unique_ptr<MainMenuSubMenuView> view;
@@ -200,7 +194,6 @@ private:
 	void OnDpiChanged(const RECT *updatedWindowRect);
 	std::optional<LRESULT> OnCtlColorStatic(HWND hwnd, HDC hdc);
 	int OnDestroy();
-	void OnFocusNextWindow(FocusChangeDirection direction);
 	void OnAppCommand(UINT cmd);
 	void OnDirectoryContentsChanged(const ShellBrowser *shellBrowser);
 

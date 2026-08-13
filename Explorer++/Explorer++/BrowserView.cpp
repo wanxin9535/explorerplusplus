@@ -206,6 +206,39 @@ void BrowserView::UpdateWindowText()
 	SetWindowText(m_hwnd, title.c_str());
 }
 
+// This is used for both Tab/Shift+Tab and F6/Shift+F6. While IsDialogMessage() could be used to
+// handle Tab/Shift+Tab, the key combinations in this case are synonyms for each other. Since
+// F6/Shift+F6 would need to be handled manually anyway, handling both with the same function
+// ensures that they have identical behavior.
+void BrowserView::FocusNextWindow(FocusChangeDirection direction)
+{
+	HWND focus = GetFocus();
+	HWND initialControl;
+
+	// The focus should always be on one of the child windows, but this function should still set
+	// the focus even if there is no current focus or the focus is on the parent.
+	//
+	// GetNextDlgTabItem() may fail if the initial control is NULL or the parent window, so that
+	// situation is prevented here.
+	if (focus && IsChild(m_hwnd, focus))
+	{
+		initialControl = focus;
+	}
+	else
+	{
+		initialControl = GetWindow(m_hwnd, GW_CHILD);
+	}
+
+	HWND nextWindow =
+		GetNextDlgTabItem(m_hwnd, initialControl, direction == FocusChangeDirection::Previous);
+	DCHECK(nextWindow);
+
+	if (nextWindow)
+	{
+		SetFocus(nextWindow);
+	}
+}
+
 // DropTargetInternal
 // Note that, as described above, this window is registered as a drop target only so that drag
 // images are shown consistently. Dropping items isn't supported at all.

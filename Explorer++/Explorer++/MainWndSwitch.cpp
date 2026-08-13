@@ -16,6 +16,7 @@
 #include "Bookmarks/UI/BookmarksToolbar.h"
 #include "Bookmarks/UI/ManageBookmarksDialog.h"
 #include "Bookmarks/UI/Views/BookmarksToolbarView.h"
+#include "BrowserView.h"
 #include "ClipboardOperations.h"
 #include "Config.h"
 #include "DisplayWindow/DisplayWindow.h"
@@ -928,11 +929,11 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 		break;
 
 	case IDA_PREVIOUSWINDOW:
-		OnFocusNextWindow(FocusChangeDirection::Previous);
+		m_view->FocusNextWindow(BrowserView::FocusChangeDirection::Previous);
 		break;
 
 	case IDA_NEXTWINDOW:
-		OnFocusNextWindow(FocusChangeDirection::Next);
+		m_view->FocusNextWindow(BrowserView::FocusChangeDirection::Next);
 		break;
 
 	case IDA_DUPLICATE_TAB:
