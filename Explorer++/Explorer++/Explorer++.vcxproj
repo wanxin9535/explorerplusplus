@@ -1436,7 +1436,6 @@
     <ClCompile Include="MassRenameDialog.cpp" />
     <ClCompile Include="Plugins\MenuApi.cpp" />
     <ClCompile Include="MergeFilesDialog.cpp" />
-    <ClCompile Include="Misc.cpp" />
     <ClCompile Include="MsgHandler.cpp" />
     <ClCompile Include="OptionsDialog.cpp" />
     <ClCompile Include="Plugins\PluginCommandManager.cpp" />

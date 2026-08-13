@@ -64,9 +64,6 @@
     <ClCompile Include="MainWndSwitch.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Misc.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="MsgHandler.cpp">
       <Filter>Core</Filter>
     </ClCompile>

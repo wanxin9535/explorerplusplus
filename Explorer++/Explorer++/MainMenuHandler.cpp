@@ -15,6 +15,7 @@
 #include "ResourceLoader.h"
 #include "ScriptingDialog.h"
 #include "SearchDialog.h"
+#include "SelectColumnsDialog.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "TabContainer.h"
@@ -125,4 +126,11 @@ void Explorerplusplus::OnGoToOffset(int offset)
 {
 	Tab &selectedTab = GetActivePane()->GetTabContainer()->GetSelectedTab();
 	selectedTab.GetShellBrowserImpl()->GetNavigationController()->GoToOffset(offset);
+}
+
+void Explorerplusplus::OnSelectColumns()
+{
+	auto *selectColumnsDialog = SelectColumnsDialog::Create(m_app->GetResourceLoader(),
+		m_hContainer, GetActivePane()->GetTabContainer()->GetSelectedTab().GetShellBrowserImpl());
+	selectColumnsDialog->ShowModalDialog();
 }

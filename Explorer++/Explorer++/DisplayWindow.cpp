@@ -390,3 +390,38 @@ void Explorerplusplus::UpdateDisplayWindowForMultipleFiles(const Tab &tab)
 
 	DisplayWindow_BufferText(m_displayWindow->GetHWND(), szTotalSize);
 }
+
+void Explorerplusplus::ApplyDisplayWindowPosition()
+{
+	SendMessage(m_displayWindow->GetHWND(), WM_USER_DISPLAYWINDOWMOVED,
+		m_config->displayWindowVertical, NULL);
+}
+
+void Explorerplusplus::FolderSizeCallbackStub(int nFolders, int nFiles,
+	PULARGE_INTEGER lTotalFolderSize, LPVOID pData)
+{
+	auto *pfsei = reinterpret_cast<Explorerplusplus::FolderSizeExtraInfo *>(pData);
+	reinterpret_cast<Explorerplusplus *>(pfsei->pContainer)
+		->FolderSizeCallback(pfsei, nFolders, nFiles, lTotalFolderSize);
+	free(pfsei);
+}
+
+void Explorerplusplus::FolderSizeCallback(FolderSizeExtraInfo *pfsei, int nFolders, int nFiles,
+	PULARGE_INTEGER lTotalFolderSize)
+{
+	UNREFERENCED_PARAMETER(nFolders);
+	UNREFERENCED_PARAMETER(nFiles);
+
+	DWFolderSizeCompletion *pDWFolderSizeCompletion = nullptr;
+
+	pDWFolderSizeCompletion = (DWFolderSizeCompletion *) malloc(sizeof(DWFolderSizeCompletion));
+
+	pDWFolderSizeCompletion->liFolderSize = *lTotalFolderSize;
+	pDWFolderSizeCompletion->uId = pfsei->uId;
+
+	/* Queue the result back to the main thread, so that
+	the folder size can be displayed. It is up to the main
+	thread to determine whether the folder size should actually
+	be shown. */
+	PostMessage(m_hContainer, WM_APP_FOLDERSIZECOMPLETED, (WPARAM) pDWFolderSizeCompletion, 0);
+}
