@@ -349,3 +349,8 @@ void Explorerplusplus::OnTabListViewSelectionChanged(const ShellBrowser *shellBr
 			nullptr);
 	}
 }
+
+void Explorerplusplus::UpdateWindowStates(const Tab &tab)
+{
+	UpdateDisplayWindow(tab);
+}

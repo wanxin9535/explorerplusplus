@@ -261,9 +261,6 @@ private:
 	/* Plugins. */
 	void InitializePlugins();
 
-	/* Menus. */
-	void SetProgramMenuItemStates(HMENU hProgramMenu);
-
 	// Main rebar
 	void CreateMainRebarAndChildren(const WindowStorageData *storageData);
 	std::vector<RebarView::Band> InitializeMainRebarBands(const WindowStorageData *storageData);
@@ -344,6 +341,7 @@ private:
 		const MainMenuItemRightClickedSignal::slot_type &observer) override;
 	void OnMenuRightButtonUp(HMENU menu, int index, const POINT &pt);
 	MainMenuSubMenu *MaybeGetMainMenuSubMenuFromId(UINT id);
+	void SetMainMenuItemStates(HMENU mainMenu);
 
 	/* Miscellaneous. */
 	void InitializeDisplayWindow();
