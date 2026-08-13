@@ -8,21 +8,30 @@
 #include "Config.h"
 #include "MainResource.h"
 #include "ResourceLoader.h"
+#include "ShellBrowser/NavigationEvents.h"
+#include "ShellBrowser/ShellBrowserEvents.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "TabContainer.h"
+#include "TabEvents.h"
 #include "../Helper/Helper.h"
 #include "../Helper/ProcessHelper.h"
 #include "../Helper/WindowSubclass.h"
 
-BrowserView *BrowserView::Create(HWND hwnd, App *app, BrowserWindow *browser)
+BrowserView *BrowserView::Create(HWND hwnd, BrowserWindow *browser, const Config *config,
+	TabEvents *tabEvents, ShellBrowserEvents *shellBrowserEvents,
+	NavigationEvents *navigationEvents, const ResourceLoader *resourceLoader)
 {
-	return new BrowserView(hwnd, app, browser);
+	return new BrowserView(hwnd, browser, config, tabEvents, shellBrowserEvents, navigationEvents,
+		resourceLoader);
 }
 
-BrowserView::BrowserView(HWND hwnd, App *app, BrowserWindow *browser) :
+BrowserView::BrowserView(HWND hwnd, BrowserWindow *browser, const Config *config,
+	TabEvents *tabEvents, ShellBrowserEvents *shellBrowserEvents,
+	NavigationEvents *navigationEvents, const ResourceLoader *resourceLoader) :
 	m_hwnd(hwnd),
-	m_app(app),
-	m_browser(browser)
+	m_browser(browser),
+	m_config(config),
+	m_resourceLoader(resourceLoader)
 {
 	m_windowSubclasses.push_back(
 		std::make_unique<WindowSubclass>(m_hwnd, std::bind_front(&BrowserView::WndProc, this)));
@@ -30,22 +39,22 @@ BrowserView::BrowserView(HWND hwnd, App *app, BrowserWindow *browser) :
 	m_connections.push_back(m_browser->AddLifecycleStateChangedObserver(
 		std::bind_front(&BrowserView::OnBrowserLifecycleStateChanged, this)));
 
-	m_connections.push_back(m_app->GetTabEvents()->AddSelectedObserver(
+	m_connections.push_back(tabEvents->AddSelectedObserver(
 		std::bind_front(&BrowserView::OnTabSelected, this), TabEventScope::ForBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetShellBrowserEvents()->AddDirectoryPropertiesChangedObserver(
+	m_connections.push_back(shellBrowserEvents->AddDirectoryPropertiesChangedObserver(
 		std::bind_front(&BrowserView::OnDirectoryPropertiesChanged, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(navigationEvents->AddCommittedObserver(
 		std::bind_front(&BrowserView::OnNavigationCommitted, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetConfig()->showFullTitlePath.addObserver(
+	m_connections.push_back(m_config->showFullTitlePath.addObserver(
 		std::bind_front(&BrowserView::OnShowFullTitlePathUpdated, this)));
-	m_connections.push_back(m_app->GetConfig()->showUserNameInTitleBar.addObserver(
+	m_connections.push_back(m_config->showUserNameInTitleBar.addObserver(
 		std::bind_front(&BrowserView::OnShowUserNameInTitleBarUpdated, this)));
-	m_connections.push_back(m_app->GetConfig()->showPrivilegeLevelInTitleBar.addObserver(
+	m_connections.push_back(m_config->showPrivilegeLevelInTitleBar.addObserver(
 		std::bind_front(&BrowserView::OnShowPrivilegeLevelInTitleBarUpdated, this)));
 
 	// The window is registered as a drop target only so that the drag image will be consistently
@@ -136,8 +145,7 @@ void BrowserView::UpdateWindowText()
 
 	/* Don't show full paths for virtual folders (as only the folders
 	GUID will be shown). */
-	if (m_app->GetConfig()->showFullTitlePath.get()
-		&& !tab.GetShellBrowserImpl()->InVirtualFolder())
+	if (m_config->showFullTitlePath.get() && !tab.GetShellBrowserImpl()->InVirtualFolder())
 	{
 		GetDisplayName(pidlDirectory.get(), SHGDN_FORPARSING, folderDisplayName);
 	}
@@ -148,13 +156,12 @@ void BrowserView::UpdateWindowText()
 
 	std::wstring title = std::format(L"{} - {}", folderDisplayName, App::APP_NAME);
 
-	if (m_app->GetConfig()->showUserNameInTitleBar.get()
-		|| m_app->GetConfig()->showPrivilegeLevelInTitleBar.get())
+	if (m_config->showUserNameInTitleBar.get() || m_config->showPrivilegeLevelInTitleBar.get())
 	{
 		title += L" [";
 	}
 
-	if (m_app->GetConfig()->showUserNameInTitleBar.get())
+	if (m_config->showUserNameInTitleBar.get())
 	{
 		TCHAR owner[512];
 		GetProcessOwner(GetCurrentProcessId(), owner, std::size(owner));
@@ -162,31 +169,28 @@ void BrowserView::UpdateWindowText()
 		title += owner;
 	}
 
-	if (m_app->GetConfig()->showPrivilegeLevelInTitleBar.get())
+	if (m_config->showPrivilegeLevelInTitleBar.get())
 	{
 		std::wstring privilegeLevel;
 
 		if (CheckGroupMembership(GroupType::Administrators))
 		{
-			privilegeLevel =
-				m_app->GetResourceLoader()->LoadString(IDS_PRIVILEGE_LEVEL_ADMINISTRATORS);
+			privilegeLevel = m_resourceLoader->LoadString(IDS_PRIVILEGE_LEVEL_ADMINISTRATORS);
 		}
 		else if (CheckGroupMembership(GroupType::PowerUsers))
 		{
-			privilegeLevel =
-				m_app->GetResourceLoader()->LoadString(IDS_PRIVILEGE_LEVEL_POWER_USERS);
+			privilegeLevel = m_resourceLoader->LoadString(IDS_PRIVILEGE_LEVEL_POWER_USERS);
 		}
 		else if (CheckGroupMembership(GroupType::Users))
 		{
-			privilegeLevel = m_app->GetResourceLoader()->LoadString(IDS_PRIVILEGE_LEVEL_USERS);
+			privilegeLevel = m_resourceLoader->LoadString(IDS_PRIVILEGE_LEVEL_USERS);
 		}
 		else if (CheckGroupMembership(GroupType::UsersRestricted))
 		{
-			privilegeLevel =
-				m_app->GetResourceLoader()->LoadString(IDS_PRIVILEGE_LEVEL_USERS_RESTRICTED);
+			privilegeLevel = m_resourceLoader->LoadString(IDS_PRIVILEGE_LEVEL_USERS_RESTRICTED);
 		}
 
-		if (m_app->GetConfig()->showUserNameInTitleBar.get())
+		if (m_config->showUserNameInTitleBar.get())
 		{
 			title += L" - ";
 		}
@@ -194,8 +198,7 @@ void BrowserView::UpdateWindowText()
 		title += privilegeLevel;
 	}
 
-	if (m_app->GetConfig()->showUserNameInTitleBar.get()
-		|| m_app->GetConfig()->showPrivilegeLevelInTitleBar.get())
+	if (m_config->showUserNameInTitleBar.get() || m_config->showPrivilegeLevelInTitleBar.get())
 	{
 		title += L"]";
 	}

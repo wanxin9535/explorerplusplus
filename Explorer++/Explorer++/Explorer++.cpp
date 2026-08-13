@@ -161,7 +161,8 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 		m_app->GetResourceLoader(), &m_iconFetcher, m_app->GetBookmarkTree(),
 		BookmarkMenuBuilder::MenuIdRange{ MENU_BOOKMARK_START_ID, MENU_BOOKMARK_END_ID });
 
-	m_view = BrowserView::Create(m_hContainer, m_app, this);
+	m_view = BrowserView::Create(m_hContainer, this, m_config, m_app->GetTabEvents(),
+		m_app->GetShellBrowserEvents(), m_app->GetNavigationEvents(), m_app->GetResourceLoader());
 
 	InitializeMainMenu();
 

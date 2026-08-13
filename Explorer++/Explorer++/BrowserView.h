@@ -10,18 +10,26 @@
 #include "../Helper/WinRTBaseWrapper.h"
 #include <boost/signals2.hpp>
 
-class App;
+struct Config;
+class NavigationEvents;
 class NavigationRequest;
+class ResourceLoader;
 class ShellBrowser;
+class ShellBrowserEvents;
+class TabEvents;
 class WindowSubclass;
 
 class BrowserView : private DropTargetInternal
 {
 public:
-	static BrowserView *Create(HWND hwnd, App *app, BrowserWindow *browser);
+	static BrowserView *Create(HWND hwnd, BrowserWindow *browser, const Config *config,
+		TabEvents *tabEvents, ShellBrowserEvents *shellBrowserEvents,
+		NavigationEvents *navigationEvents, const ResourceLoader *resourceLoader);
 
 private:
-	BrowserView(HWND hwnd, App *app, BrowserWindow *browser);
+	BrowserView(HWND hwnd, BrowserWindow *browser, const Config *config, TabEvents *tabEvents,
+		ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
+		const ResourceLoader *resourceLoader);
 	~BrowserView() = default;
 
 	LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -46,8 +54,9 @@ private:
 	void OnNcDestroy();
 
 	const HWND m_hwnd;
-	App *const m_app;
 	BrowserWindow *const m_browser;
+	const Config *const m_config;
+	const ResourceLoader *const m_resourceLoader;
 
 	std::vector<std::unique_ptr<WindowSubclass>> m_windowSubclasses;
 	std::vector<boost::signals2::scoped_connection> m_connections;
