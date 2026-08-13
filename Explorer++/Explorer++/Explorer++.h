@@ -219,7 +219,6 @@ private:
 	void OnSearch();
 	void OnRunScript();
 	void OnShowOptions();
-	void OnSearchTabs();
 
 	void OnGoToOffset(int offset);
 

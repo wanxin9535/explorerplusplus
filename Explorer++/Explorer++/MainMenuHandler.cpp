@@ -15,8 +15,6 @@
 #include "ResourceLoader.h"
 #include "ScriptingDialog.h"
 #include "SearchDialog.h"
-#include "SearchTabsDialog.h"
-#include "SearchTabsModel.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "TabContainer.h"
@@ -70,18 +68,6 @@ void Explorerplusplus::OnShowOptions()
 {
 	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"OptionsDialog",
 		[this] { return OptionsDialog::Create(m_hContainer, m_app, m_config, this); });
-}
-
-void Explorerplusplus::OnSearchTabs()
-{
-	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"SearchTabsDialog",
-		[this]
-		{
-			return SearchTabsDialog::Create(m_hContainer,
-				std::make_unique<SearchTabsModel>(m_app->GetTabList(), m_app->GetTabEvents(),
-					m_app->GetShellBrowserEvents(), m_app->GetNavigationEvents()),
-				m_app->GetResourceLoader());
-		});
 }
 
 void Explorerplusplus::OnResolveLink()

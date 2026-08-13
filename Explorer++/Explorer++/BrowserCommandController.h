@@ -55,6 +55,7 @@ private:
 	void GoToPath(const std::wstring &path, OpenFolderDisposition disposition);
 	void GoToKnownFolder(REFKNOWNFOLDERID knownFolderId, OpenFolderDisposition disposition);
 	void OnCustomizeColors();
+	void OnSearchTabs();
 	void OnOpenOnlineDocumentation();
 	void OnCheckForUpdates();
 	void OnAbout();

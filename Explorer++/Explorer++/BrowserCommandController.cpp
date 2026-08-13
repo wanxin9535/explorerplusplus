@@ -11,7 +11,10 @@
 #include "CustomizeColorsDialog.h"
 #include "DisplayColoursDialog.h"
 #include "MainResource.h"
+#include "ModelessDialogHelper.h"
 #include "PlatformContext.h"
+#include "SearchTabsDialog.h"
+#include "SearchTabsModel.h"
 #include "ShellBrowser/ShellBrowser.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "SortModeMenuMappings.h"
@@ -21,6 +24,7 @@
 #include "UpdateCheckDialog.h"
 #include "../Helper/ClipboardHelper.h"
 #include "../Helper/DpiCompatibility.h"
+#include <memory>
 
 using namespace std::string_literals;
 
@@ -417,6 +421,10 @@ void BrowserCommandController::ExecuteCommand(int command, OpenFolderDisposition
 		OnCustomizeColors();
 		break;
 
+	case IDM_WINDOW_SEARCH_TABS:
+		OnSearchTabs();
+		break;
+
 	case IDM_HELP_ONLINE_DOCUMENTATION:
 		OnOpenOnlineDocumentation();
 		break;
@@ -710,6 +718,19 @@ void BrowserCommandController::OnCustomizeColors()
 	auto *customizeColorsDialog = CustomizeColorsDialog::Create(m_appServices->GetResourceLoader(),
 		m_browser->GetHWND(), m_appServices->GetColorRuleModel());
 	customizeColorsDialog->ShowModalDialog();
+}
+
+void BrowserCommandController::OnSearchTabs()
+{
+	CreateOrSwitchToModelessDialog(m_appServices->GetModelessDialogList(), L"SearchTabsDialog",
+		[this]
+		{
+			return SearchTabsDialog::Create(m_browser->GetHWND(),
+				std::make_unique<SearchTabsModel>(m_appServices->GetTabList(),
+					m_appServices->GetTabEvents(), m_appServices->GetShellBrowserEvents(),
+					m_appServices->GetNavigationEvents()),
+				m_appServices->GetResourceLoader());
+		});
 }
 
 void BrowserCommandController::OnOpenOnlineDocumentation()

@@ -910,9 +910,6 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 		break;
 
 	case IDM_WINDOW_SEARCH_TABS:
-		OnSearchTabs();
-		break;
-
 	case IDM_HELP_ONLINE_DOCUMENTATION:
 	case IDM_HELP_CHECKFORUPDATES:
 	case IDM_HELP_ABOUT:

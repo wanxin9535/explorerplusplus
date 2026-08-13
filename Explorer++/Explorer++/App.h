@@ -81,7 +81,6 @@ public:
 	TabEvents *GetTabEvents();
 	ShellBrowserEvents *GetShellBrowserEvents();
 	NavigationEvents *GetNavigationEvents();
-	TabList *GetTabList();
 	TabRestorer *GetTabRestorer();
 	DarkModeManager *GetDarkModeManager();
 	DarkModeColorProvider *GetDarkModeColorProvider();

@@ -8,8 +8,13 @@
 
 class ColorRuleModel;
 struct Config;
+class ModelessDialogList;
+class NavigationEvents;
 class PlatformContext;
 class ResourceLoader;
+class ShellBrowserEvents;
+class TabEvents;
+class TabList;
 class TabRestorer;
 
 // Provides access to various application services. A "service" here refers to an object instance
@@ -38,6 +43,14 @@ public:
 	const Config *GetConfig() const;
 	void SetConfig(Config *config);
 
+	ModelessDialogList *GetModelessDialogList();
+	const ModelessDialogList *GetModelessDialogList() const;
+	void SetModelessDialogList(ModelessDialogList *modelessDialogList);
+
+	NavigationEvents *GetNavigationEvents();
+	const NavigationEvents *GetNavigationEvents() const;
+	void SetNavigationEvents(NavigationEvents *navigationEvents);
+
 	PlatformContext *GetPlatformContext();
 	const PlatformContext *GetPlatformContext() const;
 	void SetPlatformContext(PlatformContext *platformContext);
@@ -45,6 +58,18 @@ public:
 	ResourceLoader *GetResourceLoader();
 	const ResourceLoader *GetResourceLoader() const;
 	void SetResourceLoader(ResourceLoader *resourceLoader);
+
+	ShellBrowserEvents *GetShellBrowserEvents();
+	const ShellBrowserEvents *GetShellBrowserEvents() const;
+	void SetShellBrowserEvents(ShellBrowserEvents *shellBrowserEvents);
+
+	TabEvents *GetTabEvents();
+	const TabEvents *GetTabEvents() const;
+	void SetTabEvents(TabEvents *tabEvents);
+
+	TabList *GetTabList();
+	const TabList *GetTabList() const;
+	void SetTabList(TabList *tabList);
 
 	TabRestorer *GetTabRestorer();
 	const TabRestorer *GetTabRestorer() const;
@@ -62,6 +87,8 @@ private:
 	template <class T>
 	void Set(T *service);
 
-	std::tuple<ColorRuleModel *, Config *, PlatformContext *, ResourceLoader *, TabRestorer *>
+	std::tuple<ColorRuleModel *, Config *, ModelessDialogList *, NavigationEvents *,
+		PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *,
+		TabRestorer *>
 		m_services;
 };

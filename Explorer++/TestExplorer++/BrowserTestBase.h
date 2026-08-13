@@ -11,10 +11,12 @@
 #include "ColorRuleModel.h"
 #include "Config.h"
 #include "MainRebarStorage.h"
+#include "ModelessDialogList.h"
 #include "PlatformContextFake.h"
 #include "ShellBrowser/NavigationEvents.h"
 #include "ShellBrowser/ShellBrowserEvents.h"
 #include "TabEvents.h"
+#include "TabList.h"
 #include "TabRestorer.h"
 #include "TabStorage.h"
 #include "Win32ResourceLoader.h"
@@ -45,6 +47,7 @@ protected:
 
 	Config m_config;
 	AcceleratorManager m_acceleratorManager;
+	ModelessDialogList m_modelessDialogList;
 	BookmarkTree m_bookmarkTree;
 	CachedIcons m_cachedIcons;
 	Win32ResourceLoader m_resourceLoader;
@@ -53,6 +56,7 @@ protected:
 	TabEvents m_tabEvents;
 	ShellBrowserEvents m_shellBrowserEvents;
 	NavigationEvents m_navigationEvents;
+	TabList m_tabList;
 
 	BrowserList m_browserList;
 

@@ -35,6 +35,36 @@ void AppServices::SetConfig(Config *config)
 	Set(config);
 }
 
+ModelessDialogList *AppServices::GetModelessDialogList()
+{
+	return Get<ModelessDialogList>();
+}
+
+const ModelessDialogList *AppServices::GetModelessDialogList() const
+{
+	return Get<ModelessDialogList>();
+}
+
+void AppServices::SetModelessDialogList(ModelessDialogList *modelessDialogList)
+{
+	Set(modelessDialogList);
+}
+
+NavigationEvents *AppServices::GetNavigationEvents()
+{
+	return Get<NavigationEvents>();
+}
+
+const NavigationEvents *AppServices::GetNavigationEvents() const
+{
+	return Get<NavigationEvents>();
+}
+
+void AppServices::SetNavigationEvents(NavigationEvents *navigationEvents)
+{
+	Set(navigationEvents);
+}
+
 PlatformContext *AppServices::GetPlatformContext()
 {
 	return Get<PlatformContext>();
@@ -63,6 +93,51 @@ const ResourceLoader *AppServices::GetResourceLoader() const
 void AppServices::SetResourceLoader(ResourceLoader *resourceLoader)
 {
 	Set(resourceLoader);
+}
+
+ShellBrowserEvents *AppServices::GetShellBrowserEvents()
+{
+	return Get<ShellBrowserEvents>();
+}
+
+const ShellBrowserEvents *AppServices::GetShellBrowserEvents() const
+{
+	return Get<ShellBrowserEvents>();
+}
+
+void AppServices::SetShellBrowserEvents(ShellBrowserEvents *shellBrowserEvents)
+{
+	Set(shellBrowserEvents);
+}
+
+TabEvents *AppServices::GetTabEvents()
+{
+	return Get<TabEvents>();
+}
+
+const TabEvents *AppServices::GetTabEvents() const
+{
+	return Get<TabEvents>();
+}
+
+void AppServices::SetTabEvents(TabEvents *tabEvents)
+{
+	Set(tabEvents);
+}
+
+TabList *AppServices::GetTabList()
+{
+	return Get<TabList>();
+}
+
+const TabList *AppServices::GetTabList() const
+{
+	return Get<TabList>();
+}
+
+void AppServices::SetTabList(TabList *tabList)
+{
+	Set(tabList);
 }
 
 TabRestorer *AppServices::GetTabRestorer()

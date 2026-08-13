@@ -13,6 +13,7 @@
 BrowserTestBase::BrowserTestBase() :
 	m_cachedIcons(10),
 	m_resourceLoader(GetModuleHandle(nullptr), IconSet::Color, nullptr, nullptr),
+	m_tabList(&m_tabEvents),
 	m_tabRestorer(&m_tabEvents, &m_browserList)
 {
 	SetUpAppServices();
@@ -22,8 +23,13 @@ void BrowserTestBase::SetUpAppServices()
 {
 	m_appServices.SetColorRuleModel(&m_colorRuleModel);
 	m_appServices.SetConfig(&m_config);
+	m_appServices.SetModelessDialogList(&m_modelessDialogList);
+	m_appServices.SetNavigationEvents(&m_navigationEvents);
 	m_appServices.SetPlatformContext(&m_platformContext);
 	m_appServices.SetResourceLoader(&m_resourceLoader);
+	m_appServices.SetShellBrowserEvents(&m_shellBrowserEvents);
+	m_appServices.SetTabEvents(&m_tabEvents);
+	m_appServices.SetTabList(&m_tabList);
 	m_appServices.SetTabRestorer(&m_tabRestorer);
 	m_appServices.CheckFullyInitialized();
 }

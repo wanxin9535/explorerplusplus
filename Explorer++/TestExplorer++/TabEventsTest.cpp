@@ -12,74 +12,113 @@ using namespace testing;
 class TabEventsTest : public BrowserTestBase
 {
 protected:
-	TabEventsTest() :
-		m_browser1(AddBrowser()),
-		m_tab1(m_browser1->AddTab(L"c:\\")),
-		m_browser2(AddBrowser()),
-		m_tab2(m_browser2->AddTab(L"c:\\"))
+	TabEventsTest() : m_browser1(AddBrowser()), m_browser2(AddBrowser())
 	{
 	}
 
 	BrowserWindowFake *const m_browser1;
-	Tab *const m_tab1;
-
 	BrowserWindowFake *const m_browser2;
-	Tab *const m_tab2;
-
-	StrictMock<MockFunction<void(const Tab &tab)>> m_tabCreatedCallback;
-	StrictMock<MockFunction<void(const Tab &tab, Tab::PropertyType propertyType)>>
-		m_tabUpdatedCallback;
-	StrictMock<MockFunction<void(const Tab &tab)>> m_tabSelectedCallback;
-	StrictMock<MockFunction<void(const Tab &tab, int fromIndex, int toIndex)>> m_tabMovedCallback;
-	StrictMock<MockFunction<void(const Tab &tab, int index)>> m_tabPreRemovalCallback;
-	StrictMock<MockFunction<void(const Tab &tab)>> m_tabRemovedCallback;
 };
 
-TEST_F(TabEventsTest, Signals)
+TEST_F(TabEventsTest, CreatedSignal)
 {
 	InSequence seq;
 
-	m_tabEvents.AddCreatedObserver(m_tabCreatedCallback.AsStdFunction(), TabEventScope::Global());
-	EXPECT_CALL(m_tabCreatedCallback, Call(Ref(*m_tab1)));
-	EXPECT_CALL(m_tabCreatedCallback, Call(Ref(*m_tab2)));
+	const Tab *firstCreatedTab = nullptr;
+	const Tab *secondCreatedTab = nullptr;
 
-	m_tabEvents.AddUpdatedObserver(m_tabUpdatedCallback.AsStdFunction(), TabEventScope::Global());
-	EXPECT_CALL(m_tabUpdatedCallback, Call(Ref(*m_tab1), Tab::PropertyType::Name));
-	EXPECT_CALL(m_tabUpdatedCallback, Call(Ref(*m_tab2), Tab::PropertyType::LockState));
+	MockFunction<void(const Tab &tab)> tabCreatedCallback;
+	m_tabEvents.AddCreatedObserver(tabCreatedCallback.AsStdFunction(), TabEventScope::Global());
+	EXPECT_CALL(tabCreatedCallback, Call(_))
+		.WillOnce([&firstCreatedTab](const auto &tab) { firstCreatedTab = &tab; });
+	EXPECT_CALL(tabCreatedCallback, Call(_))
+		.WillOnce([&secondCreatedTab](const auto &tab) { secondCreatedTab = &tab; });
 
-	m_tabEvents.AddSelectedObserver(m_tabSelectedCallback.AsStdFunction(), TabEventScope::Global());
-	EXPECT_CALL(m_tabSelectedCallback, Call(Ref(*m_tab1)));
+	auto *tab1 = m_browser1->AddTab(L"c:\\");
+	auto *tab2 = m_browser2->AddTab(L"c:\\");
+	EXPECT_EQ(firstCreatedTab, tab1);
+	EXPECT_EQ(secondCreatedTab, tab2);
+}
 
-	m_tabEvents.AddMovedObserver(m_tabMovedCallback.AsStdFunction(), TabEventScope::Global());
-	EXPECT_CALL(m_tabMovedCallback, Call(Ref(*m_tab2), 1, 2));
+TEST_F(TabEventsTest, UpdatedSignal)
+{
+	InSequence seq;
 
-	m_tabEvents.AddPreRemovalObserver(m_tabPreRemovalCallback.AsStdFunction(),
+	auto *tab1 = m_browser1->AddTab(L"c:\\");
+	auto *tab2 = m_browser2->AddTab(L"c:\\");
+
+	MockFunction<void(const Tab &tab, Tab::PropertyType propertyType)> tabUpdatedCallback;
+	m_tabEvents.AddUpdatedObserver(tabUpdatedCallback.AsStdFunction(), TabEventScope::Global());
+	EXPECT_CALL(tabUpdatedCallback, Call(Ref(*tab1), Tab::PropertyType::Name));
+	EXPECT_CALL(tabUpdatedCallback, Call(Ref(*tab2), Tab::PropertyType::LockState));
+
+	tab1->SetCustomName(L"Custom name");
+	tab2->SetLockState(Tab::LockState::AddressLocked);
+}
+
+TEST_F(TabEventsTest, SelectedSignal)
+{
+	m_browser1->AddTab(L"c:\\");
+	auto *tab2 = m_browser1->AddTab(L"c:\\");
+
+	MockFunction<void(const Tab &tab)> tabSelectedCallback;
+	m_tabEvents.AddSelectedObserver(tabSelectedCallback.AsStdFunction(), TabEventScope::Global());
+	EXPECT_CALL(tabSelectedCallback, Call(Ref(*tab2)));
+
+	m_browser1->GetActiveTabContainer()->SelectTab(*tab2);
+}
+
+TEST_F(TabEventsTest, MovedSignal)
+{
+	auto *tab1 = m_browser1->AddTab(L"c:\\");
+	m_browser1->AddTab(L"c:\\");
+
+	MockFunction<void(const Tab &tab, int fromIndex, int toIndex)> tabMovedCallback;
+	m_tabEvents.AddMovedObserver(tabMovedCallback.AsStdFunction(), TabEventScope::Global());
+	EXPECT_CALL(tabMovedCallback, Call(Ref(*tab1), 0, 1));
+
+	m_browser1->GetActiveTabContainer()->MoveTab(*tab1, 1);
+}
+
+TEST_F(TabEventsTest, PreRemovalSignal)
+{
+	m_browser1->AddTab(L"c:\\");
+	auto *tab2 = m_browser1->AddTab(L"c:\\");
+
+	MockFunction<void(const Tab &tab, int index)> tabPreRemovalCallback;
+	m_tabEvents.AddPreRemovalObserver(tabPreRemovalCallback.AsStdFunction(),
 		TabEventScope::Global());
-	EXPECT_CALL(m_tabPreRemovalCallback, Call(Ref(*m_tab2), 0));
+	EXPECT_CALL(tabPreRemovalCallback, Call(Ref(*tab2), 1));
 
-	m_tabEvents.AddRemovedObserver(m_tabRemovedCallback.AsStdFunction(), TabEventScope::Global());
-	EXPECT_CALL(m_tabRemovedCallback, Call(Ref(*m_tab2)));
-	EXPECT_CALL(m_tabRemovedCallback, Call(Ref(*m_tab1)));
+	m_browser1->GetActiveTabContainer()->CloseTab(*tab2);
+}
 
-	m_tabEvents.NotifyCreated(*m_tab1);
-	m_tabEvents.NotifyCreated(*m_tab2);
-	m_tabEvents.NotifyUpdated(*m_tab1, Tab::PropertyType::Name);
-	m_tabEvents.NotifyUpdated(*m_tab2, Tab::PropertyType::LockState);
-	m_tabEvents.NotifySelected(*m_tab1);
-	m_tabEvents.NotifyMoved(*m_tab2, 1, 2);
-	m_tabEvents.NotifyPreRemoval(*m_tab2, 0);
-	m_tabEvents.NotifyRemoved(*m_tab2);
-	m_tabEvents.NotifyRemoved(*m_tab1);
+TEST_F(TabEventsTest, RemovedSignal)
+{
+	auto *tab1 = m_browser1->AddTab(L"c:\\");
+	m_browser1->AddTab(L"c:\\");
+
+	MockFunction<void(const Tab &tab)> tabRemovedCallback;
+
+	m_tabEvents.AddRemovedObserver(tabRemovedCallback.AsStdFunction(), TabEventScope::Global());
+	EXPECT_CALL(tabRemovedCallback, Call(Ref(*tab1)));
+
+	m_browser1->GetActiveTabContainer()->CloseTab(*tab1);
 }
 
 TEST_F(TabEventsTest, SignalsFilteredByBrowser)
 {
 	// The observer here should only be triggered when a tab event in m_browser1 occurs. That is,
-	// only when m_tab1 is created.
-	m_tabEvents.AddCreatedObserver(m_tabCreatedCallback.AsStdFunction(),
+	// only when the first tab is created.
+	MockFunction<void(const Tab &tab)> tabCreatedCallback;
+	m_tabEvents.AddCreatedObserver(tabCreatedCallback.AsStdFunction(),
 		TabEventScope::ForBrowser(*m_browser1));
-	EXPECT_CALL(m_tabCreatedCallback, Call(Ref(*m_tab1)));
 
-	m_tabEvents.NotifyCreated(*m_tab1);
-	m_tabEvents.NotifyCreated(*m_tab2);
+	const Tab *createdTab = nullptr;
+	EXPECT_CALL(tabCreatedCallback, Call(_))
+		.WillOnce([&createdTab](const auto &tab) { createdTab = &tab; });
+
+	auto *tab1 = m_browser1->AddTab(L"c:\\");
+	m_browser2->AddTab(L"c:\\");
+	EXPECT_EQ(createdTab, tab1);
 }
