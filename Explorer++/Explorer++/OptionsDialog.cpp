@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "OptionsDialog.h"
 #include "AdvancedOptionsPage.h"
-#include "App.h"
 #include "AppearanceOptionsPage.h"
 #include "CoreInterface.h"
 #include "DarkModeManager.h"
@@ -25,16 +24,22 @@
 #include "../Helper/WindowSubclass.h"
 #include <boost/algorithm/string/predicate.hpp>
 
-OptionsDialog *OptionsDialog::Create(HWND parent, App *app, Config *config,
-	CoreInterface *coreInterface)
+OptionsDialog *OptionsDialog::Create(const ResourceLoader *resourceLoader, HWND parent,
+	AppController *appController, Config *config, DarkModeManager *darkModeManager,
+	ThemeManager *themeManager, CoreInterface *coreInterface)
 {
-	return new OptionsDialog(parent, app, config, coreInterface);
+	return new OptionsDialog(resourceLoader, parent, appController, config, darkModeManager,
+		themeManager, coreInterface);
 }
 
-OptionsDialog::OptionsDialog(HWND parent, App *app, Config *config, CoreInterface *coreInterface) :
-	BaseDialog(app->GetResourceLoader(), IDD_OPTIONS, parent, DialogSizingType::Both),
-	m_app(app),
+OptionsDialog::OptionsDialog(const ResourceLoader *resourceLoader, HWND parent,
+	AppController *appController, Config *config, DarkModeManager *darkModeManager,
+	ThemeManager *themeManager, CoreInterface *coreInterface) :
+	BaseDialog(resourceLoader, IDD_OPTIONS, parent, DialogSizingType::Both),
+	m_appController(appController),
 	m_config(config),
+	m_darkModeManager(darkModeManager),
+	m_themeManager(themeManager),
 	m_coreInterface(coreInterface)
 {
 }
@@ -130,13 +135,13 @@ std::vector<ResizableDialogControl> OptionsDialog::GetResizableControls()
 
 void OptionsDialog::AddPages()
 {
-	AddPage(std::make_unique<GeneralOptionsPage>(m_hDlg, m_resourceLoader, m_app, m_config,
-		std::bind(&OptionsDialog::OnSettingChanged, this), m_tipWnd));
+	AddPage(std::make_unique<GeneralOptionsPage>(m_hDlg, m_resourceLoader, m_appController,
+		m_config, std::bind(&OptionsDialog::OnSettingChanged, this), m_tipWnd));
 	AddPage(std::make_unique<StartupOptionsPage>(m_hDlg, m_resourceLoader, m_config,
-		std::bind(&OptionsDialog::OnSettingChanged, this), m_tipWnd, m_app->GetDarkModeManager(),
-		m_app->GetThemeManager()));
+		std::bind(&OptionsDialog::OnSettingChanged, this), m_tipWnd, m_darkModeManager,
+		m_themeManager));
 	AddPage(std::make_unique<AppearanceOptionsPage>(m_hDlg, m_resourceLoader, m_config,
-		std::bind(&OptionsDialog::OnSettingChanged, this), m_tipWnd, m_app->GetDarkModeManager()));
+		std::bind(&OptionsDialog::OnSettingChanged, this), m_tipWnd, m_darkModeManager));
 	AddPage(std::make_unique<FontsOptionsPage>(m_hDlg, m_resourceLoader, m_config,
 		std::bind(&OptionsDialog::OnSettingChanged, this), m_tipWnd));
 	AddPage(std::make_unique<FilesFoldersOptionsPage>(m_hDlg, m_resourceLoader, m_config,
@@ -278,7 +283,7 @@ INT_PTR OptionsDialog::OnCtlColorStatic(HWND hwnd, HDC hdc)
 
 	// In dark mode, the background color in the static control will be the same as the background
 	// color in the treeview, so there's no need to handle this message.
-	if (m_app->GetDarkModeManager()->IsDarkModeEnabled())
+	if (m_darkModeManager->IsDarkModeEnabled())
 	{
 		// This will result in the default message handling being performed.
 		return FALSE;

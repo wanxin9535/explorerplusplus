@@ -4,6 +4,12 @@
 
 #pragma once
 
+enum class SaveLocation
+{
+	Registry,
+	ConfigFile
+};
+
 // This allows application-level commands to be executed, without having to take a dependency on
 // App.
 class AppController
@@ -11,5 +17,7 @@ class AppController
 public:
 	virtual ~AppController() = default;
 
+	virtual SaveLocation GetSaveLocation() const = 0;
+	virtual void SetSaveLocation(SaveLocation saveLocation) = 0;
 	virtual void TryExit() = 0;
 };

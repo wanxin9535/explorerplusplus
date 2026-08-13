@@ -57,18 +57,19 @@ void Explorerplusplus::OnSearch()
 
 void Explorerplusplus::OnRunScript()
 {
-	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"ScriptingDialog",
-		[this]
-		{
-			return ScriptingDialog::Create(m_app->GetResourceLoader(), m_hwnd, this,
-				m_config);
-		});
+	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"ScriptingDialog", [this]
+		{ return ScriptingDialog::Create(m_app->GetResourceLoader(), m_hwnd, this, m_config); });
 }
 
 void Explorerplusplus::OnShowOptions()
 {
 	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"OptionsDialog",
-		[this] { return OptionsDialog::Create(m_hwnd, m_app, m_config, this); });
+		[this]
+		{
+			return OptionsDialog::Create(m_app->GetResourceLoader(), m_hwnd,
+				m_app->GetAppServices()->GetAppController(), m_config, m_app->GetDarkModeManager(),
+				m_app->GetThemeManager(), this);
+		});
 }
 
 void Explorerplusplus::OnResolveLink()
@@ -130,7 +131,7 @@ void Explorerplusplus::OnGoToOffset(int offset)
 
 void Explorerplusplus::OnSelectColumns()
 {
-	auto *selectColumnsDialog = SelectColumnsDialog::Create(m_app->GetResourceLoader(),
-		m_hwnd, GetActivePane()->GetTabContainer()->GetSelectedTab().GetShellBrowserImpl());
+	auto *selectColumnsDialog = SelectColumnsDialog::Create(m_app->GetResourceLoader(), m_hwnd,
+		GetActivePane()->GetTabContainer()->GetSelectedTab().GetShellBrowserImpl());
 	selectColumnsDialog->ShowModalDialog();
 }

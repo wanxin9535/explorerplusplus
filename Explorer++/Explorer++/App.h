@@ -59,8 +59,6 @@ public:
 	int Run();
 
 	const CommandLine::Settings *GetCommandLineSettings() const;
-	bool GetSavePreferencesToXmlFile() const;
-	void SetSavePreferencesToXmlFile(bool savePreferencesToXmlFile);
 	AppServices *GetAppServices();
 	PlatformContext *GetPlatformContext();
 	Runtime *GetRuntime();
@@ -109,6 +107,8 @@ private:
 	bool MaybeTranslateAccelerator(MSG *msg);
 
 	// AppController
+	SaveLocation GetSaveLocation() const override;
+	void SetSaveLocation(SaveLocation saveLocation) override;
 	void TryExit() override;
 
 	void OnWillRemoveBrowser();
@@ -117,7 +117,7 @@ private:
 	void OnExitStarted();
 
 	const CommandLine::Settings *const m_commandLineSettings;
-	bool m_savePreferencesToXmlFile = false;
+	SaveLocation m_saveLocation = SaveLocation::Registry;
 	AppServices m_appServices;
 	PlatformContextImpl m_platformContext;
 	Runtime m_runtime;

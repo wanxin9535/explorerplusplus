@@ -10,13 +10,14 @@
 #include <memory>
 #include <string>
 
-class App;
+class AppController;
 
 class GeneralOptionsPage : public OptionsPage
 {
 public:
-	GeneralOptionsPage(HWND parent, const ResourceLoader *resourceLoader, App *app, Config *config,
-		SettingChangedCallback settingChangedCallback, HWND tooltipWindow);
+	GeneralOptionsPage(HWND parent, const ResourceLoader *resourceLoader,
+		AppController *appController, Config *config, SettingChangedCallback settingChangedCallback,
+		HWND tooltipWindow);
 
 	void SaveSettings() override;
 
@@ -38,7 +39,7 @@ private:
 		DefaultFileManager::ReplaceExplorerMode updatedReplaceMode);
 	bool UpdateReplaceExplorerSetting(DefaultFileManager::ReplaceExplorerMode updatedReplaceMode);
 
-	App *const m_app;
+	AppController *const m_appController;
 	wil::unique_hicon m_newTabDirectoryIcon;
 	std::wstring m_newTabDirectory;
 };

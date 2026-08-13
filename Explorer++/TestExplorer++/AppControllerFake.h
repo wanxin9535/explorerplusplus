@@ -12,8 +12,11 @@ public:
 	// AppController
 	void TryExit() override;
 
+	SaveLocation GetSaveLocation() const override;
+	void SetSaveLocation(SaveLocation saveLocation) override;
 	bool WasExitRequested() const;
 
 private:
+	SaveLocation m_saveLocation = SaveLocation::Registry;
 	bool m_exitRequested = false;
 };

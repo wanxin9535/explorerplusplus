@@ -157,7 +157,7 @@ void App::LoadSettings(std::vector<WindowStorageData> &windows)
 
 	if (appStorage)
 	{
-		m_savePreferencesToXmlFile = true;
+		m_saveLocation = SaveLocation::ConfigFile;
 	}
 	else
 	{
@@ -191,7 +191,7 @@ void App::SaveSettings()
 
 	std::unique_ptr<AppStorage> appStorage;
 
-	if (m_savePreferencesToXmlFile)
+	if (m_saveLocation == SaveLocation::ConfigFile)
 	{
 		appStorage = XmlAppStorageFactory::MaybeCreate(Storage::GetConfigFilePath(),
 			Storage::OperationType::Save);
@@ -311,14 +311,14 @@ const CommandLine::Settings *App::GetCommandLineSettings() const
 	return m_commandLineSettings;
 }
 
-bool App::GetSavePreferencesToXmlFile() const
+SaveLocation App::GetSaveLocation() const
 {
-	return m_savePreferencesToXmlFile;
+	return m_saveLocation;
 }
 
-void App::SetSavePreferencesToXmlFile(bool savePreferencesToXmlFile)
+void App::SetSaveLocation(SaveLocation saveLocation)
 {
-	m_savePreferencesToXmlFile = savePreferencesToXmlFile;
+	m_saveLocation = saveLocation;
 }
 
 AppServices *App::GetAppServices()

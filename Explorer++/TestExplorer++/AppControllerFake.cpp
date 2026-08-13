@@ -14,3 +14,13 @@ bool AppControllerFake::WasExitRequested() const
 {
 	return m_exitRequested;
 }
+
+SaveLocation AppControllerFake::GetSaveLocation() const
+{
+	return m_saveLocation;
+}
+
+void AppControllerFake::SetSaveLocation(SaveLocation saveLocation)
+{
+	m_saveLocation = saveLocation;
+}
