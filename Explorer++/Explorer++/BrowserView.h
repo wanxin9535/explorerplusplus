@@ -15,14 +15,14 @@ class NavigationRequest;
 class ShellBrowser;
 class WindowSubclass;
 
-class MainWindow : private DropTargetInternal
+class BrowserView : private DropTargetInternal
 {
 public:
-	static MainWindow *Create(HWND hwnd, App *app, BrowserWindow *browser);
+	static BrowserView *Create(HWND hwnd, App *app, BrowserWindow *browser);
 
 private:
-	MainWindow(HWND hwnd, App *app, BrowserWindow *browser);
-	~MainWindow() = default;
+	BrowserView(HWND hwnd, App *app, BrowserWindow *browser);
+	~BrowserView() = default;
 
 	LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

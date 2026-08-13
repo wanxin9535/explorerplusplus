@@ -187,9 +187,6 @@
     <ClCompile Include="Plugins\TabsApi\TabProperties.cpp">
       <Filter>Plugins\TabsApi</Filter>
     </ClCompile>
-    <ClCompile Include="MainWindow.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceHelper.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -919,6 +916,9 @@
     <ClCompile Include="AppServices.cpp">
       <Filter>App</Filter>
     </ClCompile>
+    <ClCompile Include="BrowserView.cpp">
+      <Filter>Browser\UI\Views</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bookmarks\BookmarkHelper.h">
@@ -1084,9 +1084,6 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="CoreInterface.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="MainWindow.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="ResourceHelper.h">
@@ -1977,6 +1974,9 @@
     <ClInclude Include="AppServices.h">
       <Filter>App</Filter>
     </ClInclude>
+    <ClInclude Include="BrowserView.h">
+      <Filter>Browser\UI\Views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Explorer++.rc">
@@ -2225,6 +2225,12 @@
     </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{7b67adcf-e09b-4104-ac39-b613fa2a15d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Browser\UI">
+      <UniqueIdentifier>{ed7683a8-1628-4371-8f5e-77ac34983a9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Browser\UI\Views">
+      <UniqueIdentifier>{0beed1ab-8c7c-4099-971c-c8ba2eb8406c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

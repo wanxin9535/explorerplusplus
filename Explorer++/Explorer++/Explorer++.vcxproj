@@ -1421,7 +1421,7 @@
     <ClCompile Include="IDropFilesCallback.cpp" />
     <ClCompile Include="NewMenuClient.cpp" />
     <ClCompile Include="MainMenu.cpp" />
-    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="BrowserView.cpp" />
     <ClCompile Include="AcceleratorHelper.cpp" />
     <ClCompile Include="PluginInterface.cpp" />
     <ClCompile Include="ServiceProvider.cpp" />
@@ -1802,7 +1802,7 @@
     <ClInclude Include="Plugins\LuaPlugin.h" />
     <ClInclude Include="MainResource.h" />
     <ClInclude Include="MainToolbar.h" />
-    <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="BrowserView.h" />
     <ClInclude Include="Bookmarks\UI\ManageBookmarksDialog.h" />
     <ClInclude Include="Plugins\Manifest.h" />
     <ClInclude Include="MassRenameDialog.h" />

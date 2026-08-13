@@ -40,6 +40,7 @@ class AddressBar;
 class App;
 class BookmarksMainMenu;
 class BookmarksToolbar;
+class BrowserView;
 struct Config;
 class DisplayWindow;
 class DrivesToolbar;
@@ -49,7 +50,6 @@ class MainFontSetter;
 class MainMenuSubMenuView;
 class MainRebarView;
 class MainToolbar;
-class MainWindow;
 class MenuBase;
 class MenuView;
 struct NavigateParams;
@@ -372,7 +372,7 @@ private:
 	bool m_performingLayout = false;
 #endif
 
-	MainWindow *m_mainWindow = nullptr;
+	BrowserView *m_view = nullptr;
 	AddressBar *m_addressBar = nullptr;
 	TabBacking *m_tabBacking = nullptr;
 	StatusBar *m_statusBar = nullptr;

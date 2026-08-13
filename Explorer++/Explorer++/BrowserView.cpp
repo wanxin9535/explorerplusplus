@@ -3,7 +3,7 @@
 // See LICENSE in the top level directory
 
 #include "stdafx.h"
-#include "MainWindow.h"
+#include "BrowserView.h"
 #include "App.h"
 #include "Config.h"
 #include "MainResource.h"
@@ -13,46 +13,46 @@
 #include "../Helper/Helper.h"
 #include "../Helper/ProcessHelper.h"
 #include "../Helper/WindowSubclass.h"
-#include <wil/resource.h>
 
-MainWindow *MainWindow::Create(HWND hwnd, App *app, BrowserWindow *browser)
+BrowserView *BrowserView::Create(HWND hwnd, App *app, BrowserWindow *browser)
 {
-	return new MainWindow(hwnd, app, browser);
+	return new BrowserView(hwnd, app, browser);
 }
 
-MainWindow::MainWindow(HWND hwnd, App *app, BrowserWindow *browser) :
+BrowserView::BrowserView(HWND hwnd, App *app, BrowserWindow *browser) :
 	m_hwnd(hwnd),
 	m_app(app),
 	m_browser(browser)
 {
 	m_windowSubclasses.push_back(
-		std::make_unique<WindowSubclass>(m_hwnd, std::bind_front(&MainWindow::WndProc, this)));
+		std::make_unique<WindowSubclass>(m_hwnd, std::bind_front(&BrowserView::WndProc, this)));
 
 	m_connections.push_back(m_browser->AddLifecycleStateChangedObserver(
-		std::bind_front(&MainWindow::OnBrowserLifecycleStateChanged, this)));
+		std::bind_front(&BrowserView::OnBrowserLifecycleStateChanged, this)));
 
 	m_connections.push_back(m_app->GetTabEvents()->AddSelectedObserver(
-		std::bind_front(&MainWindow::OnTabSelected, this), TabEventScope::ForBrowser(*m_browser)));
+		std::bind_front(&BrowserView::OnTabSelected, this), TabEventScope::ForBrowser(*m_browser)));
 
 	m_connections.push_back(m_app->GetShellBrowserEvents()->AddDirectoryPropertiesChangedObserver(
-		std::bind_front(&MainWindow::OnDirectoryPropertiesChanged, this),
+		std::bind_front(&BrowserView::OnDirectoryPropertiesChanged, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
 	m_connections.push_back(m_app->GetNavigationEvents()->AddCommittedObserver(
-		std::bind_front(&MainWindow::OnNavigationCommitted, this),
+		std::bind_front(&BrowserView::OnNavigationCommitted, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
 	m_connections.push_back(m_app->GetConfig()->showFullTitlePath.addObserver(
-		std::bind_front(&MainWindow::OnShowFullTitlePathUpdated, this)));
+		std::bind_front(&BrowserView::OnShowFullTitlePathUpdated, this)));
 	m_connections.push_back(m_app->GetConfig()->showUserNameInTitleBar.addObserver(
-		std::bind_front(&MainWindow::OnShowUserNameInTitleBarUpdated, this)));
+		std::bind_front(&BrowserView::OnShowUserNameInTitleBarUpdated, this)));
 	m_connections.push_back(m_app->GetConfig()->showPrivilegeLevelInTitleBar.addObserver(
-		std::bind_front(&MainWindow::OnShowPrivilegeLevelInTitleBarUpdated, this)));
+		std::bind_front(&BrowserView::OnShowPrivilegeLevelInTitleBarUpdated, this)));
 
-	// The main window is registered as a drop target only so that the drag image will be
-	// consistently shown when an item is being dragged. For the drag image to be shown, the
-	// relevant IDropTargetHelper methods need to be called during the drag. To do that, the window
-	// under the mouse needs to be registered as a drop target.
+	// The window is registered as a drop target only so that the drag image will be consistently
+	// shown when an item is being dragged. For the drag image to be shown, the relevant
+	// IDropTargetHelper methods need to be called during the drag. To do that, the window under the
+	// mouse needs to be registered as a drop target.
+	//
 	// Rather than having to register every window, the top-level window can simply be registered
 	// instead. That way, it will act as a fallback if there isn't a more specific child window
 	// registered.
@@ -60,7 +60,7 @@ MainWindow::MainWindow(HWND hwnd, App *app, BrowserWindow *browser) :
 		winrt::make_self<DropTargetWindow>(m_hwnd, static_cast<DropTargetInternal *>(this));
 }
 
-LRESULT MainWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT BrowserView::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -72,7 +72,7 @@ LRESULT MainWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-void MainWindow::OnBrowserLifecycleStateChanged(BrowserWindow::LifecycleState updatedState)
+void BrowserView::OnBrowserLifecycleStateChanged(BrowserWindow::LifecycleState updatedState)
 {
 	if (updatedState == BrowserWindow::LifecycleState::Main)
 	{
@@ -80,49 +80,49 @@ void MainWindow::OnBrowserLifecycleStateChanged(BrowserWindow::LifecycleState up
 	}
 }
 
-void MainWindow::OnNavigationCommitted(const NavigationRequest *request)
+void BrowserView::OnNavigationCommitted(const NavigationRequest *request)
 {
 	UNREFERENCED_PARAMETER(request);
 
 	UpdateWindowText();
 }
 
-void MainWindow::OnDirectoryPropertiesChanged(const ShellBrowser *shellBrowser)
+void BrowserView::OnDirectoryPropertiesChanged(const ShellBrowser *shellBrowser)
 {
 	UNREFERENCED_PARAMETER(shellBrowser);
 
 	UpdateWindowText();
 }
 
-void MainWindow::OnTabSelected(const Tab &tab)
+void BrowserView::OnTabSelected(const Tab &tab)
 {
 	UNREFERENCED_PARAMETER(tab);
 
 	UpdateWindowText();
 }
 
-void MainWindow::OnShowFullTitlePathUpdated(BOOL newValue)
+void BrowserView::OnShowFullTitlePathUpdated(BOOL newValue)
 {
 	UNREFERENCED_PARAMETER(newValue);
 
 	UpdateWindowText();
 }
 
-void MainWindow::OnShowUserNameInTitleBarUpdated(BOOL newValue)
+void BrowserView::OnShowUserNameInTitleBarUpdated(BOOL newValue)
 {
 	UNREFERENCED_PARAMETER(newValue);
 
 	UpdateWindowText();
 }
 
-void MainWindow::OnShowPrivilegeLevelInTitleBarUpdated(BOOL newValue)
+void BrowserView::OnShowPrivilegeLevelInTitleBarUpdated(BOOL newValue)
 {
 	UNREFERENCED_PARAMETER(newValue);
 
 	UpdateWindowText();
 }
 
-void MainWindow::UpdateWindowText()
+void BrowserView::UpdateWindowText()
 {
 	if (m_browser->GetLifecycleState() != BrowserWindow::LifecycleState::Main)
 	{
@@ -206,7 +206,7 @@ void MainWindow::UpdateWindowText()
 // DropTargetInternal
 // Note that, as described above, this window is registered as a drop target only so that drag
 // images are shown consistently. Dropping items isn't supported at all.
-DWORD MainWindow::DragEnter(IDataObject *dataObject, DWORD keyState, POINT pt, DWORD effect)
+DWORD BrowserView::DragEnter(IDataObject *dataObject, DWORD keyState, POINT pt, DWORD effect)
 {
 	UNREFERENCED_PARAMETER(dataObject);
 	UNREFERENCED_PARAMETER(keyState);
@@ -216,7 +216,7 @@ DWORD MainWindow::DragEnter(IDataObject *dataObject, DWORD keyState, POINT pt, D
 	return DROPEFFECT_NONE;
 }
 
-DWORD MainWindow::DragOver(DWORD keyState, POINT pt, DWORD effect)
+DWORD BrowserView::DragOver(DWORD keyState, POINT pt, DWORD effect)
 {
 	UNREFERENCED_PARAMETER(keyState);
 	UNREFERENCED_PARAMETER(pt);
@@ -225,11 +225,11 @@ DWORD MainWindow::DragOver(DWORD keyState, POINT pt, DWORD effect)
 	return DROPEFFECT_NONE;
 }
 
-void MainWindow::DragLeave()
+void BrowserView::DragLeave()
 {
 }
 
-DWORD MainWindow::Drop(IDataObject *dataObject, DWORD keyState, POINT pt, DWORD effect)
+DWORD BrowserView::Drop(IDataObject *dataObject, DWORD keyState, POINT pt, DWORD effect)
 {
 	UNREFERENCED_PARAMETER(dataObject);
 	UNREFERENCED_PARAMETER(keyState);
@@ -239,7 +239,7 @@ DWORD MainWindow::Drop(IDataObject *dataObject, DWORD keyState, POINT pt, DWORD 
 	return DROPEFFECT_NONE;
 }
 
-void MainWindow::OnNcDestroy()
+void BrowserView::OnNcDestroy()
 {
 	delete this;
 }

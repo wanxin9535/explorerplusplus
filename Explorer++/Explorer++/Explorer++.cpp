@@ -8,6 +8,7 @@
 #include "Application.h"
 #include "Bookmarks/BookmarkIconManager.h"
 #include "Bookmarks/UI/BookmarksMainMenu.h"
+#include "BrowserView.h"
 #include "Config.h"
 #include "DisplayWindow/DisplayWindow.h"
 #include "FrequentLocationsMenu.h"
@@ -19,7 +20,6 @@
 #include "MainRebarView.h"
 #include "MainResource.h"
 #include "MainToolbar.h"
-#include "MainWindow.h"
 #include "MenuRanges.h"
 #include "Plugins/PluginManager.h"
 #include "ResourceLoader.h"
@@ -161,7 +161,7 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 		m_app->GetResourceLoader(), &m_iconFetcher, m_app->GetBookmarkTree(),
 		BookmarkMenuBuilder::MenuIdRange{ MENU_BOOKMARK_START_ID, MENU_BOOKMARK_END_ID });
 
-	m_mainWindow = MainWindow::Create(m_hContainer, m_app, this);
+	m_view = BrowserView::Create(m_hContainer, m_app, this);
 
 	InitializeMainMenu();
 
