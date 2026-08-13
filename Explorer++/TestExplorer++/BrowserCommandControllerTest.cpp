@@ -287,3 +287,16 @@ TEST_F(BrowserCommandControllerTest, SelectLastTab)
 	m_commandController.ExecuteCommand(IDA_SELECT_LAST_TAB);
 	EXPECT_EQ(m_browser->GetActiveTabContainer()->GetSelectedTabIndex(), 3);
 }
+
+TEST_F(BrowserCommandControllerTest, RestoreLastTab)
+{
+	auto pidl = CreateSimplePidlForTest(L"c:\\path\\to\\folder");
+	m_browser->AddTab(pidl);
+
+	auto *tabContainer = m_browser->GetActiveTabContainer();
+	tabContainer->CloseTab(tabContainer->GetTabByIndex(1));
+
+	m_commandController.ExecuteCommand(IDA_RESTORE_LAST_TAB);
+	ASSERT_EQ(tabContainer->GetNumTabs(), 2);
+	EXPECT_EQ(tabContainer->GetTabByIndex(1).GetShellBrowser()->GetDirectory(), pidl);
+}

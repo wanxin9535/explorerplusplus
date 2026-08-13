@@ -269,6 +269,7 @@ void App::SetUpAppServices()
 	m_appServices.SetConfig(&m_config);
 	m_appServices.SetPlatformContext(&m_platformContext);
 	m_appServices.SetResourceLoader(m_resourceLoader.get());
+	m_appServices.SetTabRestorer(&m_tabRestorer);
 	m_appServices.CheckFullyInitialized();
 }
 

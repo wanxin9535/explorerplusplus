@@ -10,6 +10,7 @@ class ColorRuleModel;
 struct Config;
 class PlatformContext;
 class ResourceLoader;
+class TabRestorer;
 
 // Provides access to various application services. A "service" here refers to an object instance
 // that will be available for the lifetime of the application.
@@ -45,6 +46,10 @@ public:
 	const ResourceLoader *GetResourceLoader() const;
 	void SetResourceLoader(ResourceLoader *resourceLoader);
 
+	TabRestorer *GetTabRestorer();
+	const TabRestorer *GetTabRestorer() const;
+	void SetTabRestorer(TabRestorer *tabRestorer);
+
 	void CheckFullyInitialized() const;
 
 private:
@@ -57,5 +62,6 @@ private:
 	template <class T>
 	void Set(T *service);
 
-	std::tuple<ColorRuleModel *, Config *, PlatformContext *, ResourceLoader *> m_services;
+	std::tuple<ColorRuleModel *, Config *, PlatformContext *, ResourceLoader *, TabRestorer *>
+		m_services;
 };

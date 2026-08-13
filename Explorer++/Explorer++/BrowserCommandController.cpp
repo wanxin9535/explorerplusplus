@@ -17,6 +17,7 @@
 #include "SortModeMenuMappings.h"
 #include "SystemFontHelper.h"
 #include "TabContainer.h"
+#include "TabRestorer.h"
 #include "UpdateCheckDialog.h"
 #include "../Helper/ClipboardHelper.h"
 #include "../Helper/DpiCompatibility.h"
@@ -459,6 +460,10 @@ void BrowserCommandController::ExecuteCommand(int command, OpenFolderDisposition
 
 	case IDA_SELECT_LAST_TAB:
 		OnSelectLastTab();
+		break;
+
+	case IDA_RESTORE_LAST_TAB:
+		m_appServices->GetTabRestorer()->RestoreLastTab();
 		break;
 
 	default:

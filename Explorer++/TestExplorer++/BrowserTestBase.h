@@ -15,6 +15,7 @@
 #include "ShellBrowser/NavigationEvents.h"
 #include "ShellBrowser/ShellBrowserEvents.h"
 #include "TabEvents.h"
+#include "TabRestorer.h"
 #include "TabStorage.h"
 #include "Win32ResourceLoader.h"
 #include "WindowStorage.h"
@@ -54,6 +55,8 @@ protected:
 	NavigationEvents m_navigationEvents;
 
 	BrowserList m_browserList;
+
+	TabRestorer m_tabRestorer;
 
 private:
 	void SetUpAppServices();

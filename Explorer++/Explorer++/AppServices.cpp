@@ -65,6 +65,21 @@ void AppServices::SetResourceLoader(ResourceLoader *resourceLoader)
 	Set(resourceLoader);
 }
 
+TabRestorer *AppServices::GetTabRestorer()
+{
+	return Get<TabRestorer>();
+}
+
+const TabRestorer *AppServices::GetTabRestorer() const
+{
+	return Get<TabRestorer>();
+}
+
+void AppServices::SetTabRestorer(TabRestorer *tabRestorer)
+{
+	Set(tabRestorer);
+}
+
 void AppServices::CheckFullyInitialized() const
 {
 	std::apply([](const auto *...services) { CHECK((services && ...)); }, m_services);

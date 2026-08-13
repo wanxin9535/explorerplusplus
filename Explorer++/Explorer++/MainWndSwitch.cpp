@@ -949,11 +949,8 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 	case IDA_SELECT_TAB_7:
 	case IDA_SELECT_TAB_8:
 	case IDA_SELECT_LAST_TAB:
-		m_commandController.ExecuteCommand(id);
-		break;
-
 	case IDA_RESTORE_LAST_TAB:
-		m_app->GetTabRestorer()->RestoreLastTab();
+		m_commandController.ExecuteCommand(id);
 		break;
 
 	case MainToolbarButton::Views:
