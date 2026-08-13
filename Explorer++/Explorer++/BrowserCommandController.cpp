@@ -8,6 +8,7 @@
 #include "AppServices.h"
 #include "BrowserWindow.h"
 #include "Config.h"
+#include "CustomizeColorsDialog.h"
 #include "DisplayColoursDialog.h"
 #include "MainResource.h"
 #include "PlatformContext.h"
@@ -411,6 +412,10 @@ void BrowserCommandController::ExecuteCommand(int command, OpenFolderDisposition
 		GoToPath(WSL_DISTRIBUTIONS_PATH, disposition);
 		break;
 
+	case IDM_TOOLS_CUSTOMIZECOLORS:
+		OnCustomizeColors();
+		break;
+
 	case IDM_HELP_ONLINE_DOCUMENTATION:
 		OnOpenOnlineDocumentation();
 		break;
@@ -693,6 +698,13 @@ void BrowserCommandController::GoToKnownFolder(REFKNOWNFOLDERID knownFolderId,
 	}
 
 	m_browser->OpenItem(pidl.get(), disposition);
+}
+
+void BrowserCommandController::OnCustomizeColors()
+{
+	auto *customizeColorsDialog = CustomizeColorsDialog::Create(m_appServices->GetResourceLoader(),
+		m_browser->GetHWND(), m_appServices->GetColorRuleModel());
+	customizeColorsDialog->ShowModalDialog();
 }
 
 void BrowserCommandController::OnOpenOnlineDocumentation()

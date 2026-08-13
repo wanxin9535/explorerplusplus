@@ -217,7 +217,6 @@ private:
 	void OnSelectColumns();
 	void OnDestroyFiles();
 	void OnSearch();
-	void OnCustomizeColors();
 	void OnRunScript();
 	void OnShowOptions();
 	void OnSearchTabs();

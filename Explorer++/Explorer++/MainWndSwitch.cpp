@@ -898,7 +898,7 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 		break;
 
 	case IDM_TOOLS_CUSTOMIZECOLORS:
-		OnCustomizeColors();
+		m_commandController.ExecuteCommand(id);
 		break;
 
 	case IDM_TOOLS_RUNSCRIPT:

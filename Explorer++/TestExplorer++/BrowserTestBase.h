@@ -8,6 +8,7 @@
 #include "AppServices.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
+#include "ColorRuleModel.h"
 #include "Config.h"
 #include "MainRebarStorage.h"
 #include "PlatformContextFake.h"
@@ -46,6 +47,7 @@ protected:
 	BookmarkTree m_bookmarkTree;
 	CachedIcons m_cachedIcons;
 	Win32ResourceLoader m_resourceLoader;
+	ColorRuleModel m_colorRuleModel;
 
 	TabEvents m_tabEvents;
 	ShellBrowserEvents m_shellBrowserEvents;

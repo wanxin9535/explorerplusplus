@@ -6,6 +6,7 @@
 
 #include <tuple>
 
+class ColorRuleModel;
 struct Config;
 class PlatformContext;
 class ResourceLoader;
@@ -28,6 +29,10 @@ class ResourceLoader;
 class AppServices
 {
 public:
+	ColorRuleModel *GetColorRuleModel();
+	const ColorRuleModel *GetColorRuleModel() const;
+	void SetColorRuleModel(ColorRuleModel *colorRuleModel);
+
 	Config *GetConfig();
 	const Config *GetConfig() const;
 	void SetConfig(Config *config);
@@ -52,5 +57,5 @@ private:
 	template <class T>
 	void Set(T *service);
 
-	std::tuple<Config *, PlatformContext *, ResourceLoader *> m_services;
+	std::tuple<ColorRuleModel *, Config *, PlatformContext *, ResourceLoader *> m_services;
 };

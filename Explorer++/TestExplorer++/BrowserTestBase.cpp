@@ -19,6 +19,7 @@ BrowserTestBase::BrowserTestBase() :
 
 void BrowserTestBase::SetUpAppServices()
 {
+	m_appServices.SetColorRuleModel(&m_colorRuleModel);
 	m_appServices.SetConfig(&m_config);
 	m_appServices.SetPlatformContext(&m_platformContext);
 	m_appServices.SetResourceLoader(&m_resourceLoader);

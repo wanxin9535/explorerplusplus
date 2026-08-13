@@ -6,7 +6,6 @@
 #include "Explorer++.h"
 #include "App.h"
 #include "Config.h"
-#include "CustomizeColorsDialog.h"
 #include "DestroyFilesDialog.h"
 #include "DisplayWindow/DisplayWindow.h"
 #include "FileProgressSink.h"
@@ -55,13 +54,6 @@ void Explorerplusplus::OnSearch()
 			return SearchDialog::Create(m_app->GetResourceLoader(), m_hContainer, currentDirectory,
 				m_app->GetBrowserList());
 		});
-}
-
-void Explorerplusplus::OnCustomizeColors()
-{
-	auto *customizeColorsDialog = CustomizeColorsDialog::Create(m_app->GetResourceLoader(),
-		m_hContainer, m_app->GetColorRuleModel());
-	customizeColorsDialog->ShowModalDialog();
 }
 
 void Explorerplusplus::OnRunScript()
