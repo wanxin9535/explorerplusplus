@@ -157,10 +157,9 @@ void Explorerplusplus::SetUpControlVisibilityConfigListeners()
 
 void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 {
-	m_bookmarksMainMenu = std::make_unique<BookmarksMainMenu>(m_app, this, this,
-		m_app->GetAppServices()->GetResourceLoader(), &m_iconFetcher,
-		m_app->GetAppServices()->GetBookmarkTree(),
-		BookmarkMenuBuilder::MenuIdRange{ MENU_BOOKMARK_START_ID, MENU_BOOKMARK_END_ID });
+	m_bookmarksMainMenu = std::make_unique<BookmarksMainMenu>(this,
+		BookmarkMenuBuilder::MenuIdRange{ MENU_BOOKMARK_START_ID, MENU_BOOKMARK_END_ID },
+		m_app->GetAppServices(), &m_iconFetcher, this);
 
 	m_view = BrowserView::Create(m_hwnd, this, m_config, m_app->GetAppServices()->GetTabEvents(),
 		m_app->GetAppServices()->GetShellBrowserEvents(),

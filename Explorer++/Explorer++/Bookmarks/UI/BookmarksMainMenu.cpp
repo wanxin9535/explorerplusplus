@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "Bookmarks/UI/BookmarksMainMenu.h"
 #include "AcceleratorHelper.h"
-#include "App.h"
+#include "AppServices.h"
 #include "Bookmarks/BookmarkHelper.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserWindow.h"
@@ -18,18 +18,18 @@
 #include "../Helper/DpiCompatibility.h"
 #include "../Helper/MenuHelper.h"
 
-BookmarksMainMenu::BookmarksMainMenu(App *app, BrowserWindow *browserWindow,
-	CoreInterface *coreInterface, const ResourceLoader *resourceLoader, IconFetcher *iconFetcher,
-	BookmarkTree *bookmarkTree, const BookmarkMenuBuilder::MenuIdRange &menuIdRange) :
-	m_app(app),
+BookmarksMainMenu::BookmarksMainMenu(BrowserWindow *browserWindow,
+	const BookmarkMenuBuilder::MenuIdRange &menuIdRange, AppServices *appServices,
+	IconFetcher *iconFetcher, CoreInterface *coreInterface) :
 	m_browserWindow(browserWindow),
-	m_resourceLoader(resourceLoader),
-	m_bookmarkTree(bookmarkTree),
+	m_resourceLoader(appServices->GetResourceLoader()),
+	m_bookmarkTree(appServices->GetBookmarkTree()),
+	m_acceleratorManager(appServices->GetAcceleratorManager()),
 	m_menuIdRange(menuIdRange),
-	m_menuBuilder(resourceLoader, iconFetcher),
-	m_controller(bookmarkTree, browserWindow, app->GetAppServices()->GetAcceleratorManager(),
-		app->GetAppServices()->GetResourceLoader(), browserWindow->GetHWND(),
-		app->GetAppServices()->GetPlatformContext())
+	m_menuBuilder(appServices->GetResourceLoader(), iconFetcher),
+	m_controller(appServices->GetBookmarkTree(), browserWindow,
+		appServices->GetAcceleratorManager(), appServices->GetResourceLoader(),
+		browserWindow->GetHWND(), appServices->GetPlatformContext())
 {
 	m_connections.push_back(coreInterface->AddMainMenuPreShowObserver(
 		std::bind_front(&BookmarksMainMenu::OnMainMenuPreShow, this)));
@@ -96,7 +96,7 @@ wil::unique_hmenu BookmarksMainMenu::BuildMainBookmarksMenu(
 	AddOtherBookmarksToMenu(menu.get(), { menuInfo.nextMenuId, m_menuIdRange.endId },
 		GetMenuItemCount(menu.get()), menuImages, menuInfo);
 
-	UpdateMenuAcceleratorStrings(menu.get(), m_app->GetAppServices()->GetAcceleratorManager());
+	UpdateMenuAcceleratorStrings(menu.get(), m_acceleratorManager);
 
 	return menu;
 }
