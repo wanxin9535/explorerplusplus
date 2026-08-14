@@ -5,7 +5,6 @@
 #include "pch.h"
 #include "SessionRestorer.h"
 #include "BrowserTestBase.h"
-#include "BrowserWindowFactory.h"
 #include "BrowserWindowFake.h"
 #include "MainRebarStorage.h"
 #include "PidlTestHelper.h"
@@ -16,36 +15,10 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-namespace
-{
-
-class BrowserWindowFactoryFake : public BrowserWindowFactory
-{
-public:
-	using CreationCallback = std::function<BrowserWindow *(const WindowStorageData *storageData)>;
-
-	BrowserWindowFactoryFake(CreationCallback creationCallback) :
-		m_creationCallback(creationCallback)
-	{
-	}
-
-	BrowserWindow *CreateBrowserWindow(const WindowStorageData *storageData) override
-	{
-		return m_creationCallback(storageData);
-	}
-
-private:
-	CreationCallback m_creationCallback;
-};
-
-}
-
 class SessionRestorerTest : public BrowserTestBase
 {
 protected:
 	SessionRestorerTest() :
-		m_browserWindowFactory(
-			std::bind_front(&SessionRestorerTest::CreateBrowserWindowCallback, this)),
 		m_sessionRestorer(&m_config, &m_featureList, &m_browserList, &m_browserWindowFactory)
 	{
 	}
@@ -64,14 +37,7 @@ protected:
 		}
 	}
 
-	BrowserWindowFactoryFake m_browserWindowFactory;
 	SessionRestorer m_sessionRestorer;
-
-private:
-	BrowserWindow *CreateBrowserWindowCallback(const WindowStorageData *storageData)
-	{
-		return AddBrowser(storageData ? *storageData : WindowStorageData{});
-	}
 };
 
 TEST_F(SessionRestorerTest, RestorePrevious)

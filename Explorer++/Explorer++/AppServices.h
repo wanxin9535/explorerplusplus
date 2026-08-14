@@ -10,6 +10,7 @@ class AcceleratorManager;
 class AppController;
 class BookmarkTree;
 class BrowserList;
+class BrowserWindowFactory;
 class ColorRuleModel;
 struct Config;
 class DarkModeColorProvider;
@@ -78,6 +79,10 @@ public:
 	BrowserList *GetBrowserList();
 	const BrowserList *GetBrowserList() const;
 	void SetBrowserList(BrowserList *browserList);
+
+	BrowserWindowFactory *GetBrowserWindowFactory();
+	const BrowserWindowFactory *GetBrowserWindowFactory() const;
+	void SetBrowserWindowFactory(BrowserWindowFactory *browserWindowFactory);
 
 	ColorRuleModel *GetColorRuleModel();
 	const ColorRuleModel *GetColorRuleModel() const;
@@ -159,10 +164,10 @@ private:
 	void Set(T *service);
 
 	std::tuple<AcceleratorManager *, AppController *, Applications::ApplicationModel *,
-		BookmarkTree *, BrowserList *, ColorRuleModel *, const CommandLine::Settings *, Config *,
-		DarkModeColorProvider *, DarkModeManager *, DriveModel *, FeatureList *,
-		FrequentLocationsModel *, HistoryModel *, ModelessDialogList *, NavigationEvents *,
-		PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *,
-		TabRestorer *>
+		BookmarkTree *, BrowserList *, BrowserWindowFactory *, ColorRuleModel *,
+		const CommandLine::Settings *, Config *, DarkModeColorProvider *, DarkModeManager *,
+		DriveModel *, FeatureList *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
+		NavigationEvents *, PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *,
+		TabList *, TabRestorer *>
 		m_services;
 };

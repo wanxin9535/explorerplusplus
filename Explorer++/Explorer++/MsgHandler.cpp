@@ -680,7 +680,7 @@ void Explorerplusplus::CreateNewWindow(const std::vector<TabStorageData> &tabs)
 	initialData.displayWindowHeight = m_displayWindowHeight;
 	initialData.tabs = tabs;
 
-	m_app->GetBrowserWindowFactory()->CreateBrowserWindow(&initialData);
+	m_app->GetAppServices()->GetBrowserWindowFactory()->CreateBrowserWindow(&initialData);
 }
 
 void Explorerplusplus::OnCloneWindow()

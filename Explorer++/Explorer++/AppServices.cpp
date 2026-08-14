@@ -80,6 +80,21 @@ void AppServices::SetBrowserList(BrowserList *browserList)
 	Set(browserList);
 }
 
+BrowserWindowFactory *AppServices::GetBrowserWindowFactory()
+{
+	return Get<BrowserWindowFactory>();
+}
+
+const BrowserWindowFactory *AppServices::GetBrowserWindowFactory() const
+{
+	return Get<BrowserWindowFactory>();
+}
+
+void AppServices::SetBrowserWindowFactory(BrowserWindowFactory *browserWindowFactory)
+{
+	Set(browserWindowFactory);
+}
+
 ColorRuleModel *AppServices::GetColorRuleModel()
 {
 	return Get<ColorRuleModel>();

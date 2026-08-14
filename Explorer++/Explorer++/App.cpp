@@ -270,6 +270,7 @@ void App::SetUpAppServices()
 	m_appServices.SetApplicationModel(&m_applicationModel);
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
+	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);
 	m_appServices.SetColorRuleModel(m_colorRuleModel.get());
 	m_appServices.SetCommandLineSettings(m_commandLineSettings);
 	m_appServices.SetConfig(&m_config);
@@ -355,11 +356,6 @@ CachedIcons *App::GetCachedIcons()
 std::shared_ptr<AsyncIconFetcher> App::GetIconFetcher()
 {
 	return m_iconFetcher;
-}
-
-BrowserWindowFactory *App::GetBrowserWindowFactory()
-{
-	return &m_browserWindowFactory;
 }
 
 HINSTANCE App::GetResourceInstance() const

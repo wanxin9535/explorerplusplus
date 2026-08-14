@@ -10,6 +10,7 @@
 #include "ApplicationModel.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
+#include "BrowserWindowFactoryFake.h"
 #include "ColorRuleModel.h"
 #include "CommandLine.h"
 #include "Config.h"
@@ -80,6 +81,7 @@ protected:
 	FrequentLocationsModel m_frequentLocationsModel;
 	FrequentLocationsTracker m_frequentLocationsTracker;
 	BrowserList m_browserList;
+	BrowserWindowFactoryFake m_browserWindowFactory;
 	TabRestorer m_tabRestorer;
 
 	DriveWatcherFake m_driveWatcher;

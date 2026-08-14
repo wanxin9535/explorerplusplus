@@ -18,6 +18,8 @@ BrowserTestBase::BrowserTestBase() :
 	m_historyTracker(&m_historyModel, &m_navigationEvents),
 	m_frequentLocationsModel(m_platformContext.GetSystemClock()),
 	m_frequentLocationsTracker(&m_frequentLocationsModel, &m_navigationEvents),
+	m_browserWindowFactory([this](const WindowStorageData *storageData)
+		{ return AddBrowser(storageData ? *storageData : WindowStorageData{}); }),
 	m_tabRestorer(&m_tabEvents, &m_browserList),
 	m_driveModel(std::make_unique<DriveEnumeratorFake>(), &m_driveWatcher)
 {
@@ -31,6 +33,7 @@ void BrowserTestBase::SetUpAppServices()
 	m_appServices.SetApplicationModel(&m_applicationModel);
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
+	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);
 	m_appServices.SetColorRuleModel(&m_colorRuleModel);
 	m_appServices.SetCommandLineSettings(&m_commandLineSettings);
 	m_appServices.SetConfig(&m_config);

@@ -64,7 +64,6 @@ public:
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
 	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();
-	BrowserWindowFactory *GetBrowserWindowFactory();
 	HINSTANCE GetResourceInstance() const;
 	ResourceLoader *GetResourceLoader() const;
 	ThemeManager *GetThemeManager();

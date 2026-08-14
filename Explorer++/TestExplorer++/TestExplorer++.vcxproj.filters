@@ -583,6 +583,9 @@
     <ClCompile Include="DarkModeManagerFake.cpp">
       <Filter>Dark Mode Support</Filter>
     </ClCompile>
+    <ClCompile Include="BrowserWindowFactoryFake.cpp">
+      <Filter>Browser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Bookmarks">
@@ -968,6 +971,9 @@
     </ClInclude>
     <ClInclude Include="DarkModeManagerFake.h">
       <Filter>Dark Mode Support</Filter>
+    </ClInclude>
+    <ClInclude Include="BrowserWindowFactoryFake.h">
+      <Filter>Browser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

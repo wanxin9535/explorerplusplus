@@ -238,6 +238,7 @@
     <ClCompile Include="BrowserCommandTargetFake.cpp" />
     <ClCompile Include="BrowserListTest.cpp" />
     <ClCompile Include="BrowserTestBase.cpp" />
+    <ClCompile Include="BrowserWindowFactoryFake.cpp" />
     <ClCompile Include="BrowserWindowFake.cpp" />
     <ClCompile Include="BrowserWindowTest.cpp" />
     <ClCompile Include="ClangCLLibs.cpp" />
@@ -461,6 +462,7 @@
     <ClInclude Include="BookmarkTestHelper.h" />
     <ClInclude Include="BookmarkTreeHelper.h" />
     <ClInclude Include="BrowserTestBase.h" />
+    <ClInclude Include="BrowserWindowFactoryFake.h" />
     <ClInclude Include="BrowserWindowFake.h" />
     <ClInclude Include="BrowserWindowMock.h" />
     <ClInclude Include="CopiedBookmark.h" />
