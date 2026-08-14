@@ -268,6 +268,7 @@ void App::SetUpAppServices()
 	m_appServices.SetAcceleratorManager(&m_acceleratorManager);
 	m_appServices.SetAppController(this);
 	m_appServices.SetApplicationModel(&m_applicationModel);
+	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetColorRuleModel(m_colorRuleModel.get());
 	m_appServices.SetCommandLineSettings(m_commandLineSettings);
@@ -373,11 +374,6 @@ std::shared_ptr<AsyncIconFetcher> App::GetIconFetcher()
 BrowserWindowFactory *App::GetBrowserWindowFactory()
 {
 	return &m_browserWindowFactory;
-}
-
-BookmarkTree *App::GetBookmarkTree()
-{
-	return &m_bookmarkTree;
 }
 
 HINSTANCE App::GetResourceInstance() const

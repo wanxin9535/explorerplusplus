@@ -8,6 +8,7 @@
 
 class AcceleratorManager;
 class AppController;
+class BookmarkTree;
 class BrowserList;
 class ColorRuleModel;
 struct Config;
@@ -68,6 +69,10 @@ public:
 	Applications::ApplicationModel *GetApplicationModel();
 	const Applications::ApplicationModel *GetApplicationModel() const;
 	void SetApplicationModel(Applications::ApplicationModel *applicationModel);
+
+	BookmarkTree *GetBookmarkTree();
+	const BookmarkTree *GetBookmarkTree() const;
+	void SetBookmarkTree(BookmarkTree *bookmarkTree);
 
 	BrowserList *GetBrowserList();
 	const BrowserList *GetBrowserList() const;
@@ -149,7 +154,7 @@ private:
 	void Set(T *service);
 
 	std::tuple<AcceleratorManager *, AppController *, Applications::ApplicationModel *,
-		BrowserList *, ColorRuleModel *, const CommandLine::Settings *, Config *,
+		BookmarkTree *, BrowserList *, ColorRuleModel *, const CommandLine::Settings *, Config *,
 		DarkModeColorProvider *, DarkModeManager *, DriveModel *, FrequentLocationsModel *,
 		HistoryModel *, ModelessDialogList *, NavigationEvents *, PlatformContext *,
 		ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *, TabRestorer *>

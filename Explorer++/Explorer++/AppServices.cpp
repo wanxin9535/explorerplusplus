@@ -50,6 +50,21 @@ void AppServices::SetApplicationModel(Applications::ApplicationModel *applicatio
 	Set(applicationModel);
 }
 
+BookmarkTree *AppServices::GetBookmarkTree()
+{
+	return Get<BookmarkTree>();
+}
+
+const BookmarkTree *AppServices::GetBookmarkTree() const
+{
+	return Get<BookmarkTree>();
+}
+
+void AppServices::SetBookmarkTree(BookmarkTree *bookmarkTree)
+{
+	Set(bookmarkTree);
+}
+
 BrowserList *AppServices::GetBrowserList()
 {
 	return Get<BrowserList>();

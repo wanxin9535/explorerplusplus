@@ -68,7 +68,6 @@ public:
 	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();
 	BrowserWindowFactory *GetBrowserWindowFactory();
-	BookmarkTree *GetBookmarkTree();
 	HINSTANCE GetResourceInstance() const;
 	ResourceLoader *GetResourceLoader() const;
 	ThemeManager *GetThemeManager();

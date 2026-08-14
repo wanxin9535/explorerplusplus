@@ -156,7 +156,7 @@ void ToolbarContextMenu::OnMenuItemSelected(UINT menuItemId)
 
 void ToolbarContextMenu::OnNewBookmarkItem(BookmarkItem::Type type)
 {
-	auto *bookmarkTree = m_app->GetBookmarkTree();
+	auto *bookmarkTree = m_app->GetAppServices()->GetBookmarkTree();
 	BookmarkHelper::AddBookmarkItem(bookmarkTree, type, bookmarkTree->GetBookmarksToolbarFolder(),
 		std::nullopt, m_browser->GetHWND(), m_browser,
 		m_app->GetAppServices()->GetAcceleratorManager(), m_app->GetResourceLoader(),
@@ -165,7 +165,7 @@ void ToolbarContextMenu::OnNewBookmarkItem(BookmarkItem::Type type)
 
 void ToolbarContextMenu::OnPasteBookmark()
 {
-	auto *bookmarkTree = m_app->GetBookmarkTree();
+	auto *bookmarkTree = m_app->GetAppServices()->GetBookmarkTree();
 	auto *bookmarksToolbarFolder = bookmarkTree->GetBookmarksToolbarFolder();
 	BookmarkHelper::PasteBookmarkItems(m_app->GetPlatformContext()->GetClipboardStore(),
 		bookmarkTree, bookmarksToolbarFolder, bookmarksToolbarFolder->GetChildren().size());
