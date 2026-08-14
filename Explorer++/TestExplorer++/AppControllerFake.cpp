@@ -5,16 +5,6 @@
 #include "pch.h"
 #include "AppControllerFake.h"
 
-void AppControllerFake::TryExit()
-{
-	m_exitRequested = true;
-}
-
-bool AppControllerFake::WasExitRequested() const
-{
-	return m_exitRequested;
-}
-
 SaveLocation AppControllerFake::GetSaveLocation() const
 {
 	return m_saveLocation;
@@ -23,4 +13,18 @@ SaveLocation AppControllerFake::GetSaveLocation() const
 void AppControllerFake::SetSaveLocation(SaveLocation saveLocation)
 {
 	m_saveLocation = saveLocation;
+}
+
+void AppControllerFake::TryExit()
+{
+	m_exitRequested = true;
+}
+
+void AppControllerFake::NotifySessionEnding()
+{
+}
+
+bool AppControllerFake::WasExitRequested() const
+{
+	return m_exitRequested;
 }

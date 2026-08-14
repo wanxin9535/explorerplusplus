@@ -19,5 +19,9 @@ public:
 
 	virtual SaveLocation GetSaveLocation() const = 0;
 	virtual void SetSaveLocation(SaveLocation saveLocation) = 0;
+
 	virtual void TryExit() = 0;
+
+	// Indicates that the session is ending (i.e. that WM_ENDSESSION has been received).
+	virtual void NotifySessionEnding() = 0;
 };

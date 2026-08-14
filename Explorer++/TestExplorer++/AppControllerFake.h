@@ -10,10 +10,11 @@ class AppControllerFake : public AppController
 {
 public:
 	// AppController
-	void TryExit() override;
-
 	SaveLocation GetSaveLocation() const override;
 	void SetSaveLocation(SaveLocation saveLocation) override;
+	void TryExit() override;
+	void NotifySessionEnding() override;
+
 	bool WasExitRequested() const;
 
 private:

@@ -489,7 +489,7 @@ void App::OnExitStarted()
 	m_exitStarted = true;
 }
 
-void App::SessionEnding()
+void App::NotifySessionEnding()
 {
 	if (m_exitStarted)
 	{

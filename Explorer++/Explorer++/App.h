@@ -74,8 +74,6 @@ public:
 	ResourceLoader *GetResourceLoader() const;
 	ThemeManager *GetThemeManager();
 
-	void SessionEnding();
-
 private:
 	// Represents the maximum number of icons that can be cached. This cache is shared between
 	// various components in the application.
@@ -96,6 +94,7 @@ private:
 	SaveLocation GetSaveLocation() const override;
 	void SetSaveLocation(SaveLocation saveLocation) override;
 	void TryExit() override;
+	void NotifySessionEnding() override;
 
 	void OnWillRemoveBrowser();
 	bool ConfirmExit();

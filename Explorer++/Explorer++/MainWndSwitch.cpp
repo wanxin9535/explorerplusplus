@@ -215,7 +215,7 @@ LRESULT Explorerplusplus::WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LP
 	case WM_ENDSESSION:
 		if (wParam)
 		{
-			m_app->SessionEnding();
+			m_app->GetAppServices()->GetAppController()->NotifySessionEnding();
 		}
 		return 0;
 
