@@ -351,11 +351,6 @@ FeatureList *App::GetFeatureList()
 	return &m_featureList;
 }
 
-Config *App::GetConfig()
-{
-	return &m_config;
-}
-
 DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()
 {
 	return &m_directoryWatcherFactory;

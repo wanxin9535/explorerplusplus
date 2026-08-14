@@ -63,7 +63,6 @@ public:
 	Runtime *GetRuntime();
 	ClipboardWatcher *GetClipboardWatcher();
 	FeatureList *GetFeatureList();
-	Config *GetConfig();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
 	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();

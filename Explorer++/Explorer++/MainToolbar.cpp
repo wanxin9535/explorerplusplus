@@ -82,9 +82,9 @@ MainToolbar::MainToolbar(HWND parent, App *app, BrowserWindow *browser,
 	m_coreInterface(coreInterface),
 	m_resourceLoader(resourceLoader),
 	m_shellIconLoader(shellIconLoader),
-	m_fontSetter(m_hwnd, m_app->GetConfig()),
+	m_fontSetter(m_hwnd, m_app->GetAppServices()->GetConfig()),
 	m_tooltipFontSetter(reinterpret_cast<HWND>(SendMessage(m_hwnd, TB_GETTOOLTIPS, 0, 0)),
-		m_app->GetConfig())
+		m_app->GetAppServices()->GetConfig())
 {
 	Initialize(parent, initialButtons);
 }
@@ -144,9 +144,9 @@ void MainToolbar::Initialize(HWND parent,
 
 	m_connections.push_back(m_browser->GetCommandTargetManager()->targetChangedSignal.AddObserver(
 		std::bind_front(&MainToolbar::OnBrowserCommandTargetChanged, this)));
-	m_connections.push_back(m_app->GetConfig()->useLargeToolbarIcons.addObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetConfig()->useLargeToolbarIcons.addObserver(
 		std::bind_front(&MainToolbar::OnUseLargeToolbarIconsUpdated, this)));
-	m_connections.push_back(m_app->GetConfig()->showFolders.addObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetConfig()->showFolders.addObserver(
 		std::bind_front(&MainToolbar::OnShowFoldersUpdated, this)));
 
 	m_connections.push_back(m_app->GetClipboardWatcher()->updateSignal.AddObserver(
@@ -160,7 +160,7 @@ void MainToolbar::SetTooolbarImageList()
 {
 	HIMAGELIST himl;
 
-	if (m_app->GetConfig()->useLargeToolbarIcons.get())
+	if (m_app->GetAppServices()->GetConfig()->useLargeToolbarIcons.get())
 	{
 		himl = m_imageListLarge.get();
 	}
@@ -315,7 +315,7 @@ TBBUTTON MainToolbar::GetToolbarButtonDetails(MainToolbarButton button) const
 
 		int imagePosition;
 
-		if (m_app->GetConfig()->useLargeToolbarIcons.get())
+		if (m_app->GetAppServices()->GetConfig()->useLargeToolbarIcons.get())
 		{
 			imagePosition = m_toolbarImageMapLarge.at(button);
 		}
@@ -486,7 +486,7 @@ void MainToolbar::UpdateToolbarButtonImageIndexes()
 
 		int imagePosition;
 
-		if (m_app->GetConfig()->useLargeToolbarIcons.get())
+		if (m_app->GetAppServices()->GetConfig()->useLargeToolbarIcons.get())
 		{
 			imagePosition = m_toolbarImageMapLarge.at(tbButton.idCommand);
 		}
@@ -736,7 +736,7 @@ HWND MainToolbar::GetHWND() const
 void MainToolbar::UpdateConfigDependentButtonStates()
 {
 	SendMessage(m_hwnd, TB_CHECKBUTTON, MainToolbarButton::Folders,
-		m_app->GetConfig()->showFolders.get());
+		m_app->GetAppServices()->GetConfig()->showFolders.get());
 }
 
 void MainToolbar::UpdateToolbarButtonStates()

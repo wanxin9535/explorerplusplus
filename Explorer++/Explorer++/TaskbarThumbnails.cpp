@@ -36,7 +36,7 @@ TaskbarThumbnails::TaskbarThumbnails(App *app, BrowserWindow *browser, TabContai
 	m_app(app),
 	m_browser(browser),
 	m_tabContainer(tabContainer),
-	m_enabled(app->GetConfig()->showTaskbarThumbnails)
+	m_enabled(app->GetAppServices()->GetConfig()->showTaskbarThumbnails)
 {
 	Initialize();
 }

@@ -82,9 +82,9 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
 	m_progressCursor(LoadCursor(nullptr, IDC_APPSTARTING)),
 	m_commandTarget(browser->GetCommandTargetManager(), this),
 	m_fileActionHandler(fileActionHandler),
-	m_fontSetter(GetHWND(), app->GetConfig()),
+	m_fontSetter(GetHWND(), app->GetAppServices()->GetConfig()),
 	m_tooltipFontSetter(reinterpret_cast<HWND>(SendMessage(GetHWND(), LVM_GETTOOLTIPS, 0, 0)),
-		app->GetConfig()),
+		app->GetAppServices()->GetConfig()),
 	m_columnThreadPool(1, std::bind(CoInitializeEx, nullptr, COINIT_APARTMENTTHREADED),
 		CoUninitialize),
 	m_columnResultIDCounter(0),
@@ -97,11 +97,12 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
 	m_infoTipResultIDCounter(0),
 	m_resourceInstance(app->GetResourceInstance()),
 	m_acceleratorManager(app->GetAppServices()->GetAcceleratorManager()),
-	m_config(app->GetConfig()),
+	m_config(app->GetAppServices()->GetConfig()),
 	m_folderSettings(folderSettings),
 	m_shellWindowRegistered(false),
-	m_folderColumns(
-		initialColumns ? *initialColumns : app->GetConfig()->globalFolderSettings.folderColumns),
+	m_folderColumns(initialColumns
+			? *initialColumns
+			: app->GetAppServices()->GetConfig()->globalFolderSettings.folderColumns),
 	m_weakPtrFactory(this)
 {
 	InitializeListView();
