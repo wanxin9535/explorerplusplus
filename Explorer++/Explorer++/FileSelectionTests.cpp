@@ -19,8 +19,8 @@ BOOL Explorerplusplus::CanPaste(PasteType pasteType) const
 		return false;
 	}
 
-	return CanPasteInDirectory(m_app->GetPlatformContext()->GetClipboardStore(), directory.Raw(),
-		pasteType);
+	return CanPasteInDirectory(m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
+		directory.Raw(), pasteType);
 }
 
 // Tests whether a hard link or symlink can be pasted.
@@ -28,7 +28,7 @@ bool Explorerplusplus::CanPasteLink() const
 {
 	const auto *activeShellBrowser = GetActiveShellBrowserImpl();
 	return ClipboardOperations::CanPasteLinkInDirectory(
-		m_app->GetPlatformContext()->GetClipboardStore(),
+		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
 		activeShellBrowser->GetDirectoryIdl().get());
 }
 

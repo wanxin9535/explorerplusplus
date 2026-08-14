@@ -649,7 +649,8 @@ void Explorerplusplus::CopyColumnInfoToClipboard()
 	/* Remove the trailing newline. */
 	strColumnInfo = strColumnInfo.substr(0, strColumnInfo.size() - 2);
 
-	BulkClipboardWriter clipboardWriter(m_app->GetPlatformContext()->GetClipboardStore());
+	BulkClipboardWriter clipboardWriter(
+		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore());
 	clipboardWriter.WriteText(strColumnInfo);
 }
 

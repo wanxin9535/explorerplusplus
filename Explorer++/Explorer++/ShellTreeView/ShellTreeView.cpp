@@ -140,7 +140,7 @@ HWND ShellTreeView::CreateTreeView(HWND parent)
 ShellTreeView::~ShellTreeView()
 {
 	auto *clipboardDataObject = m_cutCopiedItemManager.GetCutCopiedClipboardDataObject();
-	auto *clipboardStore = m_app->GetPlatformContext()->GetClipboardStore();
+	auto *clipboardStore = m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore();
 
 	if (clipboardDataObject && clipboardStore->IsDataObjectCurrent(clipboardDataObject))
 	{
@@ -1416,8 +1416,8 @@ void ShellTreeView::ExecuteCommand(int command)
 void ShellTreeView::CopySelectedItemPath(PathType pathType) const
 {
 	auto pidl = GetSelectedNodePidl();
-	CopyItemPathsToClipboard(m_app->GetPlatformContext()->GetClipboardStore(), { pidl.get() },
-		pathType);
+	CopyItemPathsToClipboard(m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
+		{ pidl.get() }, pathType);
 }
 
 void ShellTreeView::SetFileAttributesForSelectedItem()
@@ -1490,7 +1490,7 @@ void ShellTreeView::CopyItemToClipboard(PCIDLIST_ABSOLUTE pidl, ClipboardAction 
 
 void ShellTreeView::CopyItemToClipboard(HTREEITEM treeItem, ClipboardAction action)
 {
-	auto *clipboardStore = m_app->GetPlatformContext()->GetClipboardStore();
+	auto *clipboardStore = m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore();
 
 	auto *node = GetNodeFromTreeViewItem(treeItem);
 	auto pidl = node->GetFullPidl();
@@ -1521,7 +1521,8 @@ void ShellTreeView::CopyItemToClipboard(HTREEITEM treeItem, ClipboardAction acti
 
 void ShellTreeView::Paste()
 {
-	auto clipboardObject = m_app->GetPlatformContext()->GetClipboardStore()->GetDataObject();
+	auto clipboardObject =
+		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore()->GetDataObject();
 
 	if (!clipboardObject)
 	{
@@ -1564,7 +1565,7 @@ void ShellTreeView::OnClipboardUpdate()
 	auto *clipboardDataObject = m_cutCopiedItemManager.GetCutCopiedClipboardDataObject();
 
 	if (clipboardDataObject
-		&& !m_app->GetPlatformContext()->GetClipboardStore()->IsDataObjectCurrent(
+		&& !m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore()->IsDataObjectCurrent(
 			clipboardDataObject))
 	{
 		m_cutCopiedItemManager.ClearCutCopiedItem();

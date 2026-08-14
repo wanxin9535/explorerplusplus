@@ -28,7 +28,7 @@ void Explorerplusplus::InitializeTabs()
 		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetAppServices()->GetTabRestorer(),
 		m_app->GetCachedIcons(), m_app->GetAppServices()->GetBookmarkTree(),
 		m_app->GetAppServices()->GetAcceleratorManager(), m_config, m_app->GetResourceLoader(),
-		m_app->GetPlatformContext());
+		m_app->GetAppServices()->GetPlatformContext());
 	m_browserPane = std::make_unique<BrowserPane>(tabContainer);
 
 	m_connections.push_back(m_config->alwaysShowTabBar.addObserver(

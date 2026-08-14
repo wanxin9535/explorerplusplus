@@ -59,7 +59,6 @@ public:
 	int Run();
 
 	AppServices *GetAppServices();
-	PlatformContext *GetPlatformContext();
 	Runtime *GetRuntime();
 	ClipboardWatcher *GetClipboardWatcher();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();

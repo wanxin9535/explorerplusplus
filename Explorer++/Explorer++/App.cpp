@@ -332,11 +332,6 @@ AppServices *App::GetAppServices()
 	return &m_appServices;
 }
 
-PlatformContext *App::GetPlatformContext()
-{
-	return &m_platformContext;
-}
-
 Runtime *App::GetRuntime()
 {
 	return &m_runtime;

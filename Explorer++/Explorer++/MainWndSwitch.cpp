@@ -874,13 +874,14 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 		BookmarkHelper::AddBookmarkItem(m_app->GetAppServices()->GetBookmarkTree(),
 			BookmarkItem::Type::Bookmark, nullptr, std::nullopt, hwnd, this,
 			m_app->GetAppServices()->GetAcceleratorManager(), m_app->GetResourceLoader(),
-			m_app->GetPlatformContext());
+			m_app->GetAppServices()->GetPlatformContext());
 		break;
 
 	case IDM_BOOKMARKS_BOOKMARK_ALL_TABS:
 		BookmarkHelper::BookmarkAllTabs(m_app->GetAppServices()->GetBookmarkTree(),
 			m_app->GetResourceLoader(), hwnd, this,
-			m_app->GetAppServices()->GetAcceleratorManager(), m_app->GetPlatformContext());
+			m_app->GetAppServices()->GetAcceleratorManager(),
+			m_app->GetAppServices()->GetPlatformContext());
 		break;
 
 	case MainToolbarButton::Bookmarks:
@@ -893,7 +894,7 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 					m_app->GetResourceInstance(), hwnd, m_app->GetAppServices()->GetBookmarkTree(),
 					m_app->GetAppServices()->GetBrowserList(), m_config,
 					m_app->GetAppServices()->GetAcceleratorManager(), &m_iconFetcher,
-					m_app->GetPlatformContext());
+					m_app->GetAppServices()->GetPlatformContext());
 			});
 		break;
 

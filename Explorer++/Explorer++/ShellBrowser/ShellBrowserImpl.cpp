@@ -143,7 +143,7 @@ ShellBrowserImpl::~ShellBrowserImpl()
 {
 	m_destroyedSignal();
 
-	auto *clipboardStore = m_app->GetPlatformContext()->GetClipboardStore();
+	auto *clipboardStore = m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore();
 
 	if (m_clipboardDataObject && clipboardStore->IsDataObjectCurrent(m_clipboardDataObject.get()))
 	{
@@ -1044,7 +1044,7 @@ HRESULT ShellBrowserImpl::CopyItemsToClipboard(const std::vector<PidlAbsolute> &
 		return E_UNEXPECTED;
 	}
 
-	auto *clipboardStore = m_app->GetPlatformContext()->GetClipboardStore();
+	auto *clipboardStore = m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore();
 
 	wil::com_ptr_nothrow<IDataObject> clipboardDataObject;
 	HRESULT hr;
@@ -1092,7 +1092,7 @@ void ShellBrowserImpl::UpdateCurrentClipboardObject(
 void ShellBrowserImpl::OnClipboardUpdate()
 {
 	if (m_clipboardDataObject
-		&& !m_app->GetPlatformContext()->GetClipboardStore()->IsDataObjectCurrent(
+		&& !m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore()->IsDataObjectCurrent(
 			m_clipboardDataObject.get()))
 	{
 		RestoreStateOfCutItems();
@@ -1129,14 +1129,14 @@ void ShellBrowserImpl::PasteShortcut()
 void ShellBrowserImpl::PasteHardLinks()
 {
 	auto pastedItems = ClipboardOperations::PasteHardLinks(
-		m_app->GetPlatformContext()->GetClipboardStore(), GetDirectoryPath());
+		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(), GetDirectoryPath());
 	OnInternalPaste(pastedItems);
 }
 
 void ShellBrowserImpl::PasteSymLinks()
 {
 	auto pastedItems = ClipboardOperations::PasteSymLinks(
-		m_app->GetPlatformContext()->GetClipboardStore(), GetDirectoryPath());
+		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(), GetDirectoryPath());
 	OnInternalPaste(pastedItems);
 }
 
@@ -1259,8 +1259,8 @@ void ShellBrowserImpl::ExecuteCommand(int command)
 void ShellBrowserImpl::CopySelectedItemPaths(PathType pathType) const
 {
 	auto selectedItems = GetSelectedItemPidls();
-	CopyItemPathsToClipboard(m_app->GetPlatformContext()->GetClipboardStore(), selectedItems,
-		pathType);
+	CopyItemPathsToClipboard(m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
+		selectedItems, pathType);
 }
 
 void ShellBrowserImpl::SetFileAttributesForSelectedItems()
