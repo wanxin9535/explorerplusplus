@@ -265,6 +265,7 @@ void App::SetUpLanguageResourceInstance()
 
 void App::SetUpAppServices()
 {
+	m_appServices.SetAcceleratorManager(&m_acceleratorManager);
 	m_appServices.SetAppController(this);
 	m_appServices.SetApplicationModel(&m_applicationModel);
 	m_appServices.SetBrowserList(&m_browserList);
@@ -347,11 +348,6 @@ ClipboardWatcher *App::GetClipboardWatcher()
 FeatureList *App::GetFeatureList()
 {
 	return &m_featureList;
-}
-
-AcceleratorManager *App::GetAcceleratorManager()
-{
-	return &m_acceleratorManager;
 }
 
 Config *App::GetConfig()

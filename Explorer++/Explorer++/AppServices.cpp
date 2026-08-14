@@ -5,6 +5,21 @@
 #include "stdafx.h"
 #include "AppServices.h"
 
+AcceleratorManager *AppServices::GetAcceleratorManager()
+{
+	return Get<AcceleratorManager>();
+}
+
+const AcceleratorManager *AppServices::GetAcceleratorManager() const
+{
+	return Get<AcceleratorManager>();
+}
+
+void AppServices::SetAcceleratorManager(AcceleratorManager *acceleratorManager)
+{
+	Set(acceleratorManager);
+}
+
 AppController *AppServices::GetAppController()
 {
 	return Get<AppController>();

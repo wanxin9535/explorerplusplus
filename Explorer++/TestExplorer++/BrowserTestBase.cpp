@@ -26,6 +26,7 @@ BrowserTestBase::BrowserTestBase() :
 
 void BrowserTestBase::SetUpAppServices()
 {
+	m_appServices.SetAcceleratorManager(&m_acceleratorManager);
 	m_appServices.SetAppController(&m_appController);
 	m_appServices.SetApplicationModel(&m_applicationModel);
 	m_appServices.SetBrowserList(&m_browserList);

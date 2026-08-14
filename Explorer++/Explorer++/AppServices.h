@@ -6,6 +6,7 @@
 
 #include <tuple>
 
+class AcceleratorManager;
 class AppController;
 class BrowserList;
 class ColorRuleModel;
@@ -56,6 +57,10 @@ struct Settings;
 class AppServices
 {
 public:
+	AcceleratorManager *GetAcceleratorManager();
+	const AcceleratorManager *GetAcceleratorManager() const;
+	void SetAcceleratorManager(AcceleratorManager *acceleratorManager);
+
 	AppController *GetAppController();
 	const AppController *GetAppController() const;
 	void SetAppController(AppController *appController);
@@ -143,10 +148,10 @@ private:
 	template <class T>
 	void Set(T *service);
 
-	std::tuple<AppController *, Applications::ApplicationModel *, BrowserList *, ColorRuleModel *,
-		const CommandLine::Settings *, Config *, DarkModeColorProvider *, DarkModeManager *,
-		DriveModel *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
-		NavigationEvents *, PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *,
-		TabList *, TabRestorer *>
+	std::tuple<AcceleratorManager *, AppController *, Applications::ApplicationModel *,
+		BrowserList *, ColorRuleModel *, const CommandLine::Settings *, Config *,
+		DarkModeColorProvider *, DarkModeManager *, DriveModel *, FrequentLocationsModel *,
+		HistoryModel *, ModelessDialogList *, NavigationEvents *, PlatformContext *,
+		ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *, TabRestorer *>
 		m_services;
 };

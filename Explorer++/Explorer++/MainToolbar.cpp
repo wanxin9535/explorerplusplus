@@ -689,15 +689,15 @@ void MainToolbar::ShowHistoryMenu(TabHistoryMenu::MenuType historyType)
 	}
 
 	PopupMenuView popupMenu(m_browser);
-	TabHistoryMenu menu(&popupMenu, m_app->GetAcceleratorManager(), m_browser, m_shellIconLoader,
-		historyType);
+	TabHistoryMenu menu(&popupMenu, m_app->GetAppServices()->GetAcceleratorManager(), m_browser,
+		m_shellIconLoader, historyType);
 	popupMenu.Show(m_hwnd, GetMenuPositionForButton(button));
 }
 
 void MainToolbar::ShowUpNavigationMenu()
 {
 	PopupMenuView popupMenu(m_browser);
-	TabParentItemsMenu menu(&popupMenu, m_app->GetAcceleratorManager(), m_browser,
+	TabParentItemsMenu menu(&popupMenu, m_app->GetAppServices()->GetAcceleratorManager(), m_browser,
 		m_shellIconLoader);
 	popupMenu.Show(m_hwnd, GetMenuPositionForButton(MainToolbarButton::Up));
 }

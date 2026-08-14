@@ -63,7 +63,6 @@ public:
 	Runtime *GetRuntime();
 	ClipboardWatcher *GetClipboardWatcher();
 	FeatureList *GetFeatureList();
-	AcceleratorManager *GetAcceleratorManager();
 	Config *GetConfig();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
 	CachedIcons *GetCachedIcons();

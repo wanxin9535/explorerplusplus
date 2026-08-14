@@ -101,7 +101,8 @@ void Explorerplusplus::InitializeMainMenu()
 	AddMainMenuSubmenu(mainMenu, IDM_FILE_REOPEN_RECENT_TAB,
 		[this](MenuView *menuView)
 		{
-			return std::make_unique<TabRestorerMenu>(menuView, m_app->GetAcceleratorManager(),
+			return std::make_unique<TabRestorerMenu>(menuView,
+				m_app->GetAppServices()->GetAcceleratorManager(),
 				m_app->GetAppServices()->GetTabRestorer(), &m_shellIconLoader,
 				m_app->GetResourceLoader(), MENU_RECENT_TABS_START_ID, MENU_RECENT_TABS_END_ID);
 		});
@@ -117,7 +118,8 @@ void Explorerplusplus::InitializeMainMenu()
 	AddMainMenuSubmenu(mainMenu, IDM_GO_HISTORY,
 		[this](MenuView *menuView)
 		{
-			return std::make_unique<HistoryMenu>(menuView, m_app->GetAcceleratorManager(),
+			return std::make_unique<HistoryMenu>(menuView,
+				m_app->GetAppServices()->GetAcceleratorManager(),
 				m_app->GetAppServices()->GetHistoryModel(), this, &m_shellIconLoader,
 				MENU_HISTORY_START_ID, MENU_HISTORY_END_ID);
 		});
@@ -125,12 +127,13 @@ void Explorerplusplus::InitializeMainMenu()
 	AddMainMenuSubmenu(mainMenu, IDM_GO_FREQUENT_LOCATIONS,
 		[this](MenuView *menuView)
 		{
-			return std::make_unique<FrequentLocationsMenu>(menuView, m_app->GetAcceleratorManager(),
+			return std::make_unique<FrequentLocationsMenu>(menuView,
+				m_app->GetAppServices()->GetAcceleratorManager(),
 				m_app->GetAppServices()->GetFrequentLocationsModel(), this, &m_shellIconLoader,
 				MENU_FREQUENT_LOCATIONS_START_ID, MENU_FREQUENT_LOCATIONS_END_ID);
 		});
 
-	UpdateMenuAcceleratorStrings(mainMenu, m_app->GetAcceleratorManager());
+	UpdateMenuAcceleratorStrings(mainMenu, m_app->GetAppServices()->GetAcceleratorManager());
 }
 
 void Explorerplusplus::AddMainMenuSubmenu(HMENU mainMenu, UINT subMenuItemId,

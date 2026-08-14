@@ -27,7 +27,7 @@ BookmarksMainMenu::BookmarksMainMenu(App *app, BrowserWindow *browserWindow,
 	m_bookmarkTree(bookmarkTree),
 	m_menuIdRange(menuIdRange),
 	m_menuBuilder(resourceLoader, iconFetcher),
-	m_controller(bookmarkTree, browserWindow, app->GetAcceleratorManager(),
+	m_controller(bookmarkTree, browserWindow, app->GetAppServices()->GetAcceleratorManager(),
 		app->GetResourceLoader(), browserWindow->GetHWND(), app->GetPlatformContext())
 {
 	m_connections.push_back(coreInterface->AddMainMenuPreShowObserver(
@@ -95,7 +95,7 @@ wil::unique_hmenu BookmarksMainMenu::BuildMainBookmarksMenu(
 	AddOtherBookmarksToMenu(menu.get(), { menuInfo.nextMenuId, m_menuIdRange.endId },
 		GetMenuItemCount(menu.get()), menuImages, menuInfo);
 
-	UpdateMenuAcceleratorStrings(menu.get(), m_app->GetAcceleratorManager());
+	UpdateMenuAcceleratorStrings(menu.get(), m_app->GetAppServices()->GetAcceleratorManager());
 
 	return menu;
 }

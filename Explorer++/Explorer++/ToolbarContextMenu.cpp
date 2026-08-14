@@ -18,7 +18,7 @@
 
 ToolbarContextMenu::ToolbarContextMenu(MenuView *menuView, Source source, App *app,
 	BrowserWindow *browser) :
-	MenuBase(menuView, app->GetAcceleratorManager()),
+	MenuBase(menuView, app->GetAppServices()->GetAcceleratorManager()),
 	m_app(app),
 	m_browser(browser)
 {
@@ -158,8 +158,9 @@ void ToolbarContextMenu::OnNewBookmarkItem(BookmarkItem::Type type)
 {
 	auto *bookmarkTree = m_app->GetBookmarkTree();
 	BookmarkHelper::AddBookmarkItem(bookmarkTree, type, bookmarkTree->GetBookmarksToolbarFolder(),
-		std::nullopt, m_browser->GetHWND(), m_browser, m_app->GetAcceleratorManager(),
-		m_app->GetResourceLoader(), m_app->GetPlatformContext());
+		std::nullopt, m_browser->GetHWND(), m_browser,
+		m_app->GetAppServices()->GetAcceleratorManager(), m_app->GetResourceLoader(),
+		m_app->GetPlatformContext());
 }
 
 void ToolbarContextMenu::OnPasteBookmark()

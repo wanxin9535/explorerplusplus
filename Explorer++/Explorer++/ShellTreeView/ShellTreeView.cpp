@@ -1200,7 +1200,8 @@ bool ShellTreeView::OnBeginLabelEdit(const NMTVDISPINFO *dispInfo)
 	HWND editControl = TreeView_GetEditControl(m_hTreeView);
 	SetWindowText(editControl, editingName.get());
 
-	LabelEditHandler::CreateForMainWindow(editControl, m_app->GetAcceleratorManager(), false);
+	LabelEditHandler::CreateForMainWindow(editControl,
+		m_app->GetAppServices()->GetAcceleratorManager(), false);
 
 	return false;
 }
