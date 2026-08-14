@@ -268,7 +268,7 @@ void Explorerplusplus::CreateMainToolbar(
 	const std::optional<MainToolbarStorage::MainToolbarButtons> &initialButtons)
 {
 	m_mainToolbar = MainToolbar::Create(m_mainRebarView->GetHWND(), m_app, this, this,
-		m_app->GetResourceLoader(), &m_shellIconLoader, initialButtons);
+		m_app->GetAppServices()->GetResourceLoader(), &m_shellIconLoader, initialButtons);
 	m_mainToolbar->sizeUpdatedSignal.AddObserver(
 		std::bind(&Explorerplusplus::OnRebarToolbarSizeUpdated, this, m_mainToolbar->GetHWND()));
 }
@@ -278,9 +278,9 @@ void Explorerplusplus::CreateBookmarksToolbar()
 	auto bookmarksToolbarView = BookmarksToolbarView::Create(m_mainRebarView->GetHWND(), m_config);
 
 	m_bookmarksToolbar = BookmarksToolbar::Create(bookmarksToolbarView, this,
-		m_app->GetAppServices()->GetAcceleratorManager(), m_app->GetResourceLoader(),
-		&m_iconFetcher, m_app->GetAppServices()->GetBookmarkTree(),
-		m_app->GetAppServices()->GetPlatformContext());
+		m_app->GetAppServices()->GetAcceleratorManager(),
+		m_app->GetAppServices()->GetResourceLoader(), &m_iconFetcher,
+		m_app->GetAppServices()->GetBookmarkTree(), m_app->GetAppServices()->GetPlatformContext());
 	m_bookmarksToolbar->GetView()->AddToolbarSizeUpdatedObserver(
 		std::bind(&Explorerplusplus::OnRebarToolbarSizeUpdated, this,
 			m_bookmarksToolbar->GetView()->GetHWND()));
@@ -289,8 +289,9 @@ void Explorerplusplus::CreateBookmarksToolbar()
 void Explorerplusplus::CreateDrivesToolbar()
 {
 	auto drivesToolbarView = DrivesToolbarView::Create(m_mainRebarView->GetHWND(), m_config);
-	m_drivesToolbar = DrivesToolbar::Create(drivesToolbarView,
-		m_app->GetAppServices()->GetDriveModel(), this, m_app->GetResourceLoader());
+	m_drivesToolbar =
+		DrivesToolbar::Create(drivesToolbarView, m_app->GetAppServices()->GetDriveModel(), this,
+			m_app->GetAppServices()->GetResourceLoader());
 	m_drivesToolbar->GetView()->AddToolbarSizeUpdatedObserver(std::bind(
 		&Explorerplusplus::OnRebarToolbarSizeUpdated, this, m_drivesToolbar->GetView()->GetHWND()));
 }
@@ -302,7 +303,8 @@ void Explorerplusplus::CreateApplicationToolbar()
 
 	m_applicationToolbar = Applications::ApplicationToolbar::Create(applicationToolbarView,
 		m_app->GetAppServices()->GetApplicationModel(), &m_applicationExecutor, this,
-		m_app->GetAppServices()->GetAcceleratorManager(), m_app->GetResourceLoader());
+		m_app->GetAppServices()->GetAcceleratorManager(),
+		m_app->GetAppServices()->GetResourceLoader());
 	m_applicationToolbar->GetView()->AddToolbarSizeUpdatedObserver(
 		std::bind(&Explorerplusplus::OnRebarToolbarSizeUpdated, this,
 			m_applicationToolbar->GetView()->GetHWND()));

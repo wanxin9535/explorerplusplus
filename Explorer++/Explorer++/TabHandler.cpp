@@ -16,18 +16,20 @@
 
 void Explorerplusplus::InitializeTabs()
 {
-	m_tabBacking = TabBacking::Create(m_hwnd, this, this, m_app->GetResourceLoader(), m_config,
-		m_app->GetAppServices()->GetTabEvents());
+	m_tabBacking =
+		TabBacking::Create(m_hwnd, this, this, m_app->GetAppServices()->GetResourceLoader(),
+			m_config, m_app->GetAppServices()->GetTabEvents());
 
-	auto *mainTabView =
-		MainTabView::Create(m_tabBacking->GetHWND(), m_config, m_app->GetResourceLoader());
+	auto *mainTabView = MainTabView::Create(m_tabBacking->GetHWND(), m_config,
+		m_app->GetAppServices()->GetResourceLoader());
 	m_connections.push_back(mainTabView->sizeUpdatedSignal.AddObserver([this] { UpdateLayout(); }));
 
 	auto *tabContainer = TabContainer::Create(mainTabView, this, &m_shellBrowserFactory,
 		m_app->GetAppServices()->GetTabEvents(), m_app->GetAppServices()->GetShellBrowserEvents(),
 		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetAppServices()->GetTabRestorer(),
 		m_app->GetCachedIcons(), m_app->GetAppServices()->GetBookmarkTree(),
-		m_app->GetAppServices()->GetAcceleratorManager(), m_config, m_app->GetResourceLoader(),
+		m_app->GetAppServices()->GetAcceleratorManager(), m_config,
+		m_app->GetAppServices()->GetResourceLoader(),
 		m_app->GetAppServices()->GetPlatformContext());
 	m_browserPane = std::make_unique<BrowserPane>(tabContainer);
 

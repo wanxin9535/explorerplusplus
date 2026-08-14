@@ -1313,7 +1313,8 @@ void ShellTreeView::OnShowContextMenu(const POINT &ptScreen)
 
 	ShellItemContextMenu contextMenu(pidl.get(), { child.get() }, m_browser);
 
-	OpenItemsContextMenuDelegate openItemsDelegate(m_browser, m_app->GetResourceLoader());
+	OpenItemsContextMenuDelegate openItemsDelegate(m_browser,
+		m_app->GetAppServices()->GetResourceLoader());
 	contextMenu.AddDelegate(&openItemsDelegate);
 
 	ShellTreeViewContextMenuDelegate treeViewDelegate(this);
@@ -1423,8 +1424,8 @@ void ShellTreeView::CopySelectedItemPath(PathType pathType) const
 void ShellTreeView::SetFileAttributesForSelectedItem()
 {
 	auto pidl = GetSelectedNodePidl();
-	DialogHelper::MaybeShowSetFileAttributesDialog(m_app->GetResourceLoader(), m_browser->GetHWND(),
-		{ { pidl.get() } });
+	DialogHelper::MaybeShowSetFileAttributesDialog(m_app->GetAppServices()->GetResourceLoader(),
+		m_browser->GetHWND(), { { pidl.get() } });
 }
 
 void ShellTreeView::CopySelectedItemToFolder(TransferAction action)
@@ -1432,7 +1433,7 @@ void ShellTreeView::CopySelectedItemToFolder(TransferAction action)
 	auto pidl = GetSelectedNodePidl();
 	std::vector<PCIDLIST_ABSOLUTE> rawPidls = { pidl.get() };
 	Epp::FileOperations::CopyFilesToFolder(m_hTreeView, rawPidls, action,
-		m_app->GetResourceLoader());
+		m_app->GetAppServices()->GetResourceLoader());
 }
 
 void ShellTreeView::UpdateSelection()

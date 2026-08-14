@@ -873,13 +873,14 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 	case IDM_BOOKMARKS_BOOKMARKTHISTAB:
 		BookmarkHelper::AddBookmarkItem(m_app->GetAppServices()->GetBookmarkTree(),
 			BookmarkItem::Type::Bookmark, nullptr, std::nullopt, hwnd, this,
-			m_app->GetAppServices()->GetAcceleratorManager(), m_app->GetResourceLoader(),
+			m_app->GetAppServices()->GetAcceleratorManager(),
+			m_app->GetAppServices()->GetResourceLoader(),
 			m_app->GetAppServices()->GetPlatformContext());
 		break;
 
 	case IDM_BOOKMARKS_BOOKMARK_ALL_TABS:
 		BookmarkHelper::BookmarkAllTabs(m_app->GetAppServices()->GetBookmarkTree(),
-			m_app->GetResourceLoader(), hwnd, this,
+			m_app->GetAppServices()->GetResourceLoader(), hwnd, this,
 			m_app->GetAppServices()->GetAcceleratorManager(),
 			m_app->GetAppServices()->GetPlatformContext());
 		break;
@@ -890,7 +891,7 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 			L"ManageBookmarksDialog",
 			[this, hwnd]
 			{
-				return ManageBookmarksDialog::Create(m_app->GetResourceLoader(),
+				return ManageBookmarksDialog::Create(m_app->GetAppServices()->GetResourceLoader(),
 					m_app->GetResourceInstance(), hwnd, m_app->GetAppServices()->GetBookmarkTree(),
 					m_app->GetAppServices()->GetBrowserList(), m_config,
 					m_app->GetAppServices()->GetAcceleratorManager(), &m_iconFetcher,
@@ -1116,7 +1117,8 @@ LRESULT CALLBACK Explorerplusplus::NotifyHandler(HWND hwnd, UINT msg, WPARAM wPa
 
 							case MainToolbarButton::Views:
 							{
-								ViewsMenuBuilder viewsMenuBuilder(m_app->GetResourceLoader());
+								ViewsMenuBuilder viewsMenuBuilder(
+									m_app->GetAppServices()->GetResourceLoader());
 								auto viewsMenu = viewsMenuBuilder.BuildMenu(this);
 
 								// The submenu will be destroyed when the parent menu is

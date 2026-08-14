@@ -471,7 +471,7 @@ void ShellBrowserImpl::ShowBackgroundContextMenu(const POINT &pt)
 
 	BackgroundContextMenuDelegate backgroundDelegate(m_browser,
 		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
-		m_app->GetResourceLoader());
+		m_app->GetAppServices()->GetResourceLoader());
 	contextMenu.AddDelegate(&backgroundDelegate);
 
 	auto serviceProvider = winrt::make_self<ServiceProvider>();
@@ -509,7 +509,8 @@ void ShellBrowserImpl::ShowItemContextMenu(const POINT &pt)
 
 	ShellItemContextMenu contextMenu(m_directoryState.pidlDirectory.Raw(), childPidls, m_browser);
 
-	OpenItemsContextMenuDelegate openItemsDelegate(m_browser, m_app->GetResourceLoader());
+	OpenItemsContextMenuDelegate openItemsDelegate(m_browser,
+		m_app->GetAppServices()->GetResourceLoader());
 	contextMenu.AddDelegate(&openItemsDelegate);
 
 	ShellBrowserContextMenuDelegate shellBrowserDelegate(m_weakPtrFactory.GetWeakPtr());
@@ -659,7 +660,8 @@ BOOL ShellBrowserImpl::OnListViewGetEmptyMarkup(NMLVEMPTYMARKUP *emptyMarkup)
 {
 	emptyMarkup->dwFlags = EMF_CENTERED;
 
-	auto folderEmptyText = m_app->GetResourceLoader()->LoadString(IDS_LISTVIEW_FOLDER_EMPTY);
+	auto folderEmptyText =
+		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_LISTVIEW_FOLDER_EMPTY);
 	StringCchCopy(emptyMarkup->szMarkup, std::size(emptyMarkup->szMarkup), folderEmptyText.c_str());
 
 	return TRUE;
@@ -1111,7 +1113,8 @@ void ShellBrowserImpl::OnListViewHeaderRightClick(const POINTS &cursorPos)
 		mii.cbSize = sizeof(mii);
 		mii.fMask = MIIM_STRING | MIIM_STATE | MIIM_ID;
 
-		std::wstring columnName = GetColumnName(m_app->GetResourceLoader(), column.type);
+		std::wstring columnName =
+			GetColumnName(m_app->GetAppServices()->GetResourceLoader(), column.type);
 
 		if (column.checked)
 		{
@@ -1207,7 +1210,7 @@ void ShellBrowserImpl::OnListViewHeaderMenuItemSelected(int menuItemId,
 void ShellBrowserImpl::OnShowMoreColumnsSelected()
 {
 	auto *selectColumnsDialog =
-		SelectColumnsDialog::Create(m_app->GetResourceLoader(), m_listView, this);
+		SelectColumnsDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_listView, this);
 	selectColumnsDialog->ShowModalDialog();
 }
 

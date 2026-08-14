@@ -104,10 +104,11 @@ void Explorerplusplus::InitializeMainMenu()
 			return std::make_unique<TabRestorerMenu>(menuView,
 				m_app->GetAppServices()->GetAcceleratorManager(),
 				m_app->GetAppServices()->GetTabRestorer(), &m_shellIconLoader,
-				m_app->GetResourceLoader(), MENU_RECENT_TABS_START_ID, MENU_RECENT_TABS_END_ID);
+				m_app->GetAppServices()->GetResourceLoader(), MENU_RECENT_TABS_START_ID,
+				MENU_RECENT_TABS_END_ID);
 		});
 
-	ViewsMenuBuilder viewsMenuBuilder(m_app->GetResourceLoader());
+	ViewsMenuBuilder viewsMenuBuilder(m_app->GetAppServices()->GetResourceLoader());
 	viewsMenuBuilder.AddViewModesToMenu(mainMenu, IDM_VIEW_PLACEHOLDER, false);
 	DeleteMenu(mainMenu, IDM_VIEW_PLACEHOLDER, MF_BYCOMMAND);
 
@@ -151,8 +152,8 @@ void Explorerplusplus::SetMainMenuImages()
 
 	for (const auto &mapping : MAIN_MENU_IMAGE_MAPPINGS)
 	{
-		ResourceHelper::SetMenuItemImage(mainMenu, mapping.first, m_app->GetResourceLoader(),
-			mapping.second, dpi, m_mainMenuImages);
+		ResourceHelper::SetMenuItemImage(mainMenu, mapping.first,
+			m_app->GetAppServices()->GetResourceLoader(), mapping.second, dpi, m_mainMenuImages);
 	}
 
 	SetPasteSymLinkElevationIcon();
@@ -549,7 +550,7 @@ void Explorerplusplus::SetMainMenuItemStates(HMENU mainMenu)
 			tab.GetShellBrowser()->IsAutoArrangeEnabled());
 	}
 
-	SortMenuBuilder sortMenuBuilder(m_app->GetResourceLoader());
+	SortMenuBuilder sortMenuBuilder(m_app->GetAppServices()->GetResourceLoader());
 	auto [sortByMenu, groupByMenu] = sortMenuBuilder.BuildMenus(tab);
 
 	MenuHelper::AttachSubMenu(mainMenu, std::move(sortByMenu), IDM_VIEW_SORTBY, FALSE);

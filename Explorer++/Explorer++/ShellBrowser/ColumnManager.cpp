@@ -187,7 +187,8 @@ void ShellBrowserImpl::SetUpListViewColumns()
 
 void ShellBrowserImpl::InsertColumn(ColumnType columnType, int columnIndex, int width)
 {
-	std::wstring columnName = GetColumnName(m_app->GetResourceLoader(), columnType);
+	std::wstring columnName =
+		GetColumnName(m_app->GetAppServices()->GetResourceLoader(), columnType);
 
 	LV_COLUMN lvColumn;
 	lvColumn.mask = LVCF_TEXT | LVCF_WIDTH;

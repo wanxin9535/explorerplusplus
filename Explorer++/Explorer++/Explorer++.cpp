@@ -158,19 +158,22 @@ void Explorerplusplus::SetUpControlVisibilityConfigListeners()
 void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 {
 	m_bookmarksMainMenu = std::make_unique<BookmarksMainMenu>(m_app, this, this,
-		m_app->GetResourceLoader(), &m_iconFetcher, m_app->GetAppServices()->GetBookmarkTree(),
+		m_app->GetAppServices()->GetResourceLoader(), &m_iconFetcher,
+		m_app->GetAppServices()->GetBookmarkTree(),
 		BookmarkMenuBuilder::MenuIdRange{ MENU_BOOKMARK_START_ID, MENU_BOOKMARK_END_ID });
 
 	m_view = BrowserView::Create(m_hwnd, this, m_config, m_app->GetAppServices()->GetTabEvents(),
 		m_app->GetAppServices()->GetShellBrowserEvents(),
-		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetResourceLoader());
+		m_app->GetAppServices()->GetNavigationEvents(),
+		m_app->GetAppServices()->GetResourceLoader());
 
 	InitializeMainMenu();
 
 	auto *statusBarView = StatusBarView::Create(m_hwnd, m_config);
 	m_statusBar = StatusBar::Create(statusBarView, this, m_config,
 		m_app->GetAppServices()->GetTabEvents(), m_app->GetAppServices()->GetShellBrowserEvents(),
-		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetResourceLoader());
+		m_app->GetAppServices()->GetNavigationEvents(),
+		m_app->GetAppServices()->GetResourceLoader());
 
 	CreateMainRebarAndChildren(storageData);
 	InitializeDisplayWindow();
@@ -218,9 +221,10 @@ void Explorerplusplus::CreateFolderControls()
 	}
 
 	m_treeViewHolder = HolderWindow::Create(m_hwnd,
-		m_app->GetResourceLoader()->LoadString(IDS_FOLDERS_WINDOW_TEXT), holderStyle,
-		m_app->GetResourceLoader()->LoadString(IDS_HIDE_FOLDERS_PANE),
-		m_app->GetAppServices()->GetConfig(), m_app->GetResourceLoader(),
+		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_FOLDERS_WINDOW_TEXT),
+		holderStyle,
+		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_HIDE_FOLDERS_PANE),
+		m_app->GetAppServices()->GetConfig(), m_app->GetAppServices()->GetResourceLoader(),
 		m_app->GetAppServices()->GetDarkModeManager(),
 		m_app->GetAppServices()->GetDarkModeColorProvider());
 	m_treeViewHolder->SetCloseButtonClickedCallback(
@@ -304,9 +308,9 @@ bool Explorerplusplus::ConfirmClose()
 		return true;
 	}
 
-	std::wstring message =
-		fmt::format(fmt::runtime(m_app->GetResourceLoader()->LoadString(IDS_CLOSE_ALL_TABS)),
-			fmt::arg(L"num_tabs", numTabs));
+	std::wstring message = fmt::format(
+		fmt::runtime(m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_CLOSE_ALL_TABS)),
+		fmt::arg(L"num_tabs", numTabs));
 	int response =
 		MessageBox(m_hwnd, message.c_str(), App::APP_NAME, MB_ICONINFORMATION | MB_YESNO);
 
@@ -408,7 +412,7 @@ std::optional<std::wstring> Explorerplusplus::RequestMenuHelpText(HMENU menu, UI
 
 	if (!helpText)
 	{
-		helpText = m_app->GetResourceLoader()->MaybeLoadString(id);
+		helpText = m_app->GetAppServices()->GetResourceLoader()->MaybeLoadString(id);
 	}
 
 	return helpText;

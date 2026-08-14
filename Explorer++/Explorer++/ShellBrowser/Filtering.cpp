@@ -183,6 +183,7 @@ void ShellBrowserImpl::RestoreFilteredItem(int internalIndex)
 
 void ShellBrowserImpl::EditFilterSettings()
 {
-	auto *filterDialog = FilterDialog::Create(m_app->GetResourceLoader(), m_owner, this);
+	auto *filterDialog =
+		FilterDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_owner, this);
 	filterDialog->ShowModalDialog();
 }

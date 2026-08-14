@@ -363,11 +363,6 @@ HINSTANCE App::GetResourceInstance() const
 	return m_resourceInstance;
 }
 
-ResourceLoader *App::GetResourceLoader() const
-{
-	return m_resourceLoader.get();
-}
-
 ThemeManager *App::GetThemeManager()
 {
 	return &m_themeManager;

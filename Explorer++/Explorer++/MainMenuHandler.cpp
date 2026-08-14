@@ -37,8 +37,9 @@ void Explorerplusplus::OnDestroyFiles()
 		fullFilenameList.push_back(fullFilename);
 	}
 
-	auto *destroyFilesDialog = DestroyFilesDialog::Create(m_app->GetResourceLoader(), m_hwnd,
-		fullFilenameList, m_config->globalFolderSettings.showFriendlyDates);
+	auto *destroyFilesDialog =
+		DestroyFilesDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_hwnd,
+			fullFilenameList, m_config->globalFolderSettings.showFriendlyDates);
 	destroyFilesDialog->ShowModalDialog();
 }
 
@@ -51,16 +52,20 @@ void Explorerplusplus::OnSearch()
 			Tab &selectedTab = GetActivePane()->GetTabContainer()->GetSelectedTab();
 			std::wstring currentDirectory = selectedTab.GetShellBrowserImpl()->GetDirectoryPath();
 
-			return SearchDialog::Create(m_app->GetResourceLoader(), m_hwnd, currentDirectory,
-				m_app->GetAppServices()->GetBrowserList());
+			return SearchDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_hwnd,
+				currentDirectory, m_app->GetAppServices()->GetBrowserList());
 		});
 }
 
 void Explorerplusplus::OnRunScript()
 {
 	CreateOrSwitchToModelessDialog(m_app->GetAppServices()->GetModelessDialogList(),
-		L"ScriptingDialog", [this]
-		{ return ScriptingDialog::Create(m_app->GetResourceLoader(), m_hwnd, this, m_config); });
+		L"ScriptingDialog",
+		[this]
+		{
+			return ScriptingDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_hwnd,
+				this, m_config);
+		});
 }
 
 void Explorerplusplus::OnShowOptions()
@@ -69,7 +74,7 @@ void Explorerplusplus::OnShowOptions()
 		L"OptionsDialog",
 		[this]
 		{
-			return OptionsDialog::Create(m_app->GetResourceLoader(), m_hwnd,
+			return OptionsDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_hwnd,
 				m_app->GetAppServices()->GetAppController(), m_config,
 				m_app->GetAppServices()->GetDarkModeManager(), m_app->GetThemeManager(), this);
 		});
@@ -134,7 +139,8 @@ void Explorerplusplus::OnGoToOffset(int offset)
 
 void Explorerplusplus::OnSelectColumns()
 {
-	auto *selectColumnsDialog = SelectColumnsDialog::Create(m_app->GetResourceLoader(), m_hwnd,
-		GetActivePane()->GetTabContainer()->GetSelectedTab().GetShellBrowserImpl());
+	auto *selectColumnsDialog =
+		SelectColumnsDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_hwnd,
+			GetActivePane()->GetTabContainer()->GetSelectedTab().GetShellBrowserImpl());
 	selectColumnsDialog->ShowModalDialog();
 }

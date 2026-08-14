@@ -618,7 +618,8 @@ void Explorerplusplus::CopyColumnInfoToClipboard()
 	{
 		if (column.checked)
 		{
-			strColumnInfo += GetColumnName(m_app->GetResourceLoader(), column.type) + L"\t";
+			strColumnInfo +=
+				GetColumnName(m_app->GetAppServices()->GetResourceLoader(), column.type) + L"\t";
 
 			nActiveColumns++;
 		}

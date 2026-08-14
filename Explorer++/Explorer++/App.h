@@ -65,7 +65,6 @@ public:
 	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();
 	HINSTANCE GetResourceInstance() const;
-	ResourceLoader *GetResourceLoader() const;
 	ThemeManager *GetThemeManager();
 
 private:

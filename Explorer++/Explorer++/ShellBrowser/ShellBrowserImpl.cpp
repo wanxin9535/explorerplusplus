@@ -1026,7 +1026,7 @@ void ShellBrowserImpl::StartRenamingMultipleItems(const std::vector<PidlAbsolute
 		return;
 	}
 
-	auto *massRenameDialog = MassRenameDialog::Create(m_app->GetResourceLoader(),
+	auto *massRenameDialog = MassRenameDialog::Create(m_app->GetAppServices()->GetResourceLoader(),
 		m_resourceInstance, m_listView, fullFilenameList, m_fileActionHandler);
 	massRenameDialog->ShowModalDialog();
 }
@@ -1274,8 +1274,8 @@ void ShellBrowserImpl::SetFileAttributesForSelectedItems()
 		selectedItems.emplace_back(item.pidlComplete, item.wfd);
 	}
 
-	DialogHelper::MaybeShowSetFileAttributesDialog(m_app->GetResourceLoader(), m_owner,
-		selectedItems);
+	DialogHelper::MaybeShowSetFileAttributesDialog(m_app->GetAppServices()->GetResourceLoader(),
+		m_owner, selectedItems);
 }
 
 bool ShellBrowserImpl::CanCreateNewFolder() const
@@ -1304,7 +1304,8 @@ void ShellBrowserImpl::CreateNewFolder()
 			QueueRename(pidl);
 		});
 
-	auto newFolderName = m_app->GetResourceLoader()->LoadString(IDS_NEW_FOLDER_NAME);
+	auto newFolderName =
+		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_NEW_FOLDER_NAME);
 	FileOperations::CreateNewFolder(directoryShellItem.get(), newFolderName, sink.get());
 }
 
@@ -1322,7 +1323,8 @@ void ShellBrowserImpl::SplitFile()
 		return;
 	}
 
-	auto *splitFileDialog = SplitFileDialog::Create(m_app->GetResourceLoader(), m_owner, *itemPath);
+	auto *splitFileDialog =
+		SplitFileDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_owner, *itemPath);
 	splitFileDialog->ShowModalDialog();
 }
 
@@ -1371,8 +1373,9 @@ void ShellBrowserImpl::MergeFiles()
 		return;
 	}
 
-	auto *mergeFilesDialog = MergeFilesDialog::Create(m_app->GetResourceLoader(), m_owner,
-		m_directoryState.directory, *items, m_config->globalFolderSettings.showFriendlyDates);
+	auto *mergeFilesDialog =
+		MergeFilesDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_owner,
+			m_directoryState.directory, *items, m_config->globalFolderSettings.showFriendlyDates);
 	mergeFilesDialog->ShowModalDialog();
 }
 
@@ -1425,7 +1428,8 @@ void ShellBrowserImpl::CopySelectedItemsToFolder(TransferAction action)
 	std::ranges::transform(pidls, std::back_inserter(rawPidls),
 		[](const auto &pidl) { return pidl.Raw(); });
 
-	Epp::FileOperations::CopyFilesToFolder(m_owner, rawPidls, action, m_app->GetResourceLoader());
+	Epp::FileOperations::CopyFilesToFolder(m_owner, rawPidls, action,
+		m_app->GetAppServices()->GetResourceLoader());
 }
 
 void ShellBrowserImpl::SelectAllItems()
@@ -1453,8 +1457,8 @@ bool ShellBrowserImpl::CanStartWildcardSelection(SelectionType selectionType) co
 
 void ShellBrowserImpl::StartWildcardSelection(SelectionType selectionType)
 {
-	auto *wilcardSelectDialog =
-		WildcardSelectDialog::Create(m_app->GetResourceLoader(), m_owner, this, selectionType);
+	auto *wilcardSelectDialog = WildcardSelectDialog::Create(
+		m_app->GetAppServices()->GetResourceLoader(), m_owner, this, selectionType);
 	wilcardSelectDialog->ShowModalDialog();
 }
 
@@ -1497,7 +1501,7 @@ void ShellBrowserImpl::SaveDirectoryListing()
 		return;
 	}
 
-	const auto *resourceLoader = m_app->GetResourceLoader();
+	const auto *resourceLoader = m_app->GetAppServices()->GetResourceLoader();
 	auto defaultFileName = resourceLoader->LoadString(IDS_DIRECTORY_LISTING_FILENAME);
 
 	std::vector<FileDialogs::FileType> fileTypes = {
