@@ -13,7 +13,7 @@
 
 void Explorerplusplus::InitializePlugins()
 {
-	if (!m_app->GetFeatureList()->IsEnabled(Feature::Plugins))
+	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::Plugins))
 	{
 		return;
 	}

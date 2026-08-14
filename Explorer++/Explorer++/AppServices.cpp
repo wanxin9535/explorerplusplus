@@ -165,6 +165,21 @@ void AppServices::SetDriveModel(DriveModel *driveModel)
 	Set(driveModel);
 }
 
+FeatureList *AppServices::GetFeatureList()
+{
+	return Get<FeatureList>();
+}
+
+const FeatureList *AppServices::GetFeatureList() const
+{
+	return Get<FeatureList>();
+}
+
+void AppServices::SetFeatureList(FeatureList *featureList)
+{
+	Set(featureList);
+}
+
 FrequentLocationsModel *AppServices::GetFrequentLocationsModel()
 {
 	return Get<FrequentLocationsModel>();

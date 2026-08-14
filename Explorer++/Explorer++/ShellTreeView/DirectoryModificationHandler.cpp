@@ -289,7 +289,7 @@ void ShellTreeView::OnDirectoryUpdated(PCIDLIST_ABSOLUTE simplePidl)
 		return;
 	}
 
-	if (!m_app->GetFeatureList()->IsEnabled(Feature::AutomaticQuickAccessUpdates))
+	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::AutomaticQuickAccessUpdates))
 	{
 		return;
 	}

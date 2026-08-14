@@ -62,7 +62,6 @@ public:
 	PlatformContext *GetPlatformContext();
 	Runtime *GetRuntime();
 	ClipboardWatcher *GetClipboardWatcher();
-	FeatureList *GetFeatureList();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
 	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();

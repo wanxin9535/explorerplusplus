@@ -7,7 +7,6 @@
 #include "BrowserTestBase.h"
 #include "BrowserWindowFactory.h"
 #include "BrowserWindowFake.h"
-#include "FeatureList.h"
 #include "MainRebarStorage.h"
 #include "PidlTestHelper.h"
 #include "ShellBrowser/ShellBrowser.h"
@@ -45,7 +44,6 @@ class SessionRestorerTest : public BrowserTestBase
 {
 protected:
 	SessionRestorerTest() :
-		m_featureList({}),
 		m_browserWindowFactory(
 			std::bind_front(&SessionRestorerTest::CreateBrowserWindowCallback, this)),
 		m_sessionRestorer(&m_config, &m_featureList, &m_browserList, &m_browserWindowFactory)
@@ -66,7 +64,6 @@ protected:
 		}
 	}
 
-	FeatureList m_featureList;
 	BrowserWindowFactoryFake m_browserWindowFactory;
 	SessionRestorer m_sessionRestorer;
 

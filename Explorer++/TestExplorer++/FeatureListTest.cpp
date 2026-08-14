@@ -8,7 +8,7 @@
 
 TEST(FeatureListTest, DisabledByDefault)
 {
-	FeatureList featureList({});
+	FeatureList featureList;
 	EXPECT_FALSE(featureList.IsEnabled(Feature::Plugins));
 	EXPECT_FALSE(featureList.IsEnabled(Feature::DualPane));
 }

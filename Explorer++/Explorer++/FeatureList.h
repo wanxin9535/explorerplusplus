@@ -13,7 +13,7 @@
 class FeatureList
 {
 public:
-	FeatureList(const std::set<Feature> &featuresToEnable);
+	FeatureList(const std::set<Feature> &featuresToEnable = {});
 	bool IsEnabled(Feature feature) const;
 
 private:

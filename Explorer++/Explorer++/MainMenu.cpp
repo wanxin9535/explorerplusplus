@@ -74,7 +74,7 @@ void Explorerplusplus::InitializeMainMenu()
 	// before the tabs are restored.
 	HMENU mainMenu = LoadMenu(m_app->GetResourceInstance(), MAKEINTRESOURCE(IDR_MAINMENU));
 
-	if (!m_app->GetFeatureList()->IsEnabled(Feature::MultipleWindowsPerSession))
+	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::MultipleWindowsPerSession))
 	{
 		DeleteMenu(mainMenu, IDM_FILE_NEW_WINDOW, MF_BYCOMMAND);
 	}
@@ -86,12 +86,12 @@ void Explorerplusplus::InitializeMainMenu()
 		DeleteMenu(mainMenu, IDM_FILE_CLONEWINDOW, MF_BYCOMMAND);
 	}
 
-	if (!m_app->GetFeatureList()->IsEnabled(Feature::DualPane))
+	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::DualPane))
 	{
 		DeleteMenu(mainMenu, IDM_VIEW_DUAL_PANE, MF_BYCOMMAND);
 	}
 
-	if (!m_app->GetFeatureList()->IsEnabled(Feature::Plugins))
+	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::Plugins))
 	{
 		DeleteMenu(mainMenu, IDM_TOOLS_RUNSCRIPT, MF_BYCOMMAND);
 	}
@@ -476,7 +476,7 @@ void Explorerplusplus::SetMainMenuItemStates(HMENU mainMenu)
 		m_commandController.IsCommandEnabled(IDM_EDIT_SELECTNONE));
 	MenuHelper::EnableItem(mainMenu, IDM_EDIT_RESOLVELINK, anySelected);
 
-	if (m_app->GetFeatureList()->IsEnabled(Feature::DualPane))
+	if (m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::DualPane))
 	{
 		MenuHelper::CheckItem(mainMenu, IDM_VIEW_DUAL_PANE, m_config->dualPane);
 	}

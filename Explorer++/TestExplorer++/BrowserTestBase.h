@@ -17,6 +17,7 @@
 #include "DarkModeManagerFake.h"
 #include "DriveModel.h"
 #include "DriveWatcherFake.h"
+#include "FeatureList.h"
 #include "FrequentLocationsModel.h"
 #include "FrequentLocationsTracker.h"
 #include "HistoryModel.h"
@@ -58,6 +59,7 @@ protected:
 	AppControllerFake m_appController;
 	PlatformContextFake m_platformContext;
 
+	FeatureList m_featureList;
 	Config m_config;
 	AcceleratorManager m_acceleratorManager;
 	ModelessDialogList m_modelessDialogList;

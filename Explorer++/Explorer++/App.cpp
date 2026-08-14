@@ -276,6 +276,7 @@ void App::SetUpAppServices()
 	m_appServices.SetDarkModeColorProvider(&m_darkModeColorProvider);
 	m_appServices.SetDarkModeManager(&m_darkModeManager);
 	m_appServices.SetDriveModel(&m_driveModel);
+	m_appServices.SetFeatureList(&m_featureList);
 	m_appServices.SetFrequentLocationsModel(&m_frequentLocationsModel);
 	m_appServices.SetHistoryModel(&m_historyModel);
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);
@@ -344,11 +345,6 @@ Runtime *App::GetRuntime()
 ClipboardWatcher *App::GetClipboardWatcher()
 {
 	return &m_clipboardWatcher;
-}
-
-FeatureList *App::GetFeatureList()
-{
-	return &m_featureList;
 }
 
 DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()

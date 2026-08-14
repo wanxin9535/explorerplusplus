@@ -216,7 +216,7 @@ void Explorerplusplus::OpenFolderItem(PCIDLIST_ABSOLUTE pidlItem,
 
 void Explorerplusplus::OpenDirectoryInNewWindow(PCIDLIST_ABSOLUTE pidlDirectory)
 {
-	if (m_app->GetFeatureList()->IsEnabled(Feature::MultipleWindowsPerSession))
+	if (m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::MultipleWindowsPerSession))
 	{
 		CreateNewWindow({ { .pidl = pidlDirectory } });
 	}
