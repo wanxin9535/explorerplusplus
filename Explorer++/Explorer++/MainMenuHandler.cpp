@@ -70,8 +70,8 @@ void Explorerplusplus::OnShowOptions()
 		[this]
 		{
 			return OptionsDialog::Create(m_app->GetResourceLoader(), m_hwnd,
-				m_app->GetAppServices()->GetAppController(), m_config, m_app->GetDarkModeManager(),
-				m_app->GetThemeManager(), this);
+				m_app->GetAppServices()->GetAppController(), m_config,
+				m_app->GetAppServices()->GetDarkModeManager(), m_app->GetThemeManager(), this);
 		});
 }
 

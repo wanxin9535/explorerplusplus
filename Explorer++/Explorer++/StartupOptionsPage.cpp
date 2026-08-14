@@ -59,7 +59,7 @@ void StartupOptionsPage::InitializeControls()
 	// item and editing it. When the settings are saved, empty entries like this will be ignored.
 	AddStartupFolder(static_cast<int>(m_config->startupFolders.size()), L"");
 
-	m_connections.push_back(m_darkModeManager->darkModeStatusChanged.AddObserver(
+	m_connections.push_back(m_darkModeManager->AddDarkModeStatusChangedObserver(
 		std::bind(&StartupOptionsPage::OnDarkModeStatusChanged, this)));
 }
 

@@ -14,6 +14,7 @@
 #include "CommandLine.h"
 #include "Config.h"
 #include "DarkModeColorProvider.h"
+#include "DarkModeManagerFake.h"
 #include "DriveModel.h"
 #include "DriveWatcherFake.h"
 #include "FrequentLocationsModel.h"
@@ -60,6 +61,7 @@ protected:
 	Config m_config;
 	AcceleratorManager m_acceleratorManager;
 	ModelessDialogList m_modelessDialogList;
+	DarkModeManagerFake m_darkModeManager;
 	DarkModeColorProvider m_darkModeColorProvider;
 	BookmarkTree m_bookmarkTree;
 	CachedIcons m_cachedIcons;

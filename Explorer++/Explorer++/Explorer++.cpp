@@ -220,7 +220,7 @@ void Explorerplusplus::CreateFolderControls()
 	m_treeViewHolder = HolderWindow::Create(m_hwnd,
 		m_app->GetResourceLoader()->LoadString(IDS_FOLDERS_WINDOW_TEXT), holderStyle,
 		m_app->GetResourceLoader()->LoadString(IDS_HIDE_FOLDERS_PANE), m_app->GetConfig(),
-		m_app->GetResourceLoader(), m_app->GetDarkModeManager(),
+		m_app->GetResourceLoader(), m_app->GetAppServices()->GetDarkModeManager(),
 		m_app->GetAppServices()->GetDarkModeColorProvider());
 	m_treeViewHolder->SetCloseButtonClickedCallback(
 		[this]() { m_config->showFolders = !m_config->showFolders.get(); });

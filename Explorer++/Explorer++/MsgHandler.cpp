@@ -487,7 +487,7 @@ std::optional<LRESULT> Explorerplusplus::OnCtlColorStatic(HWND hwnd, HDC hdc)
 
 	if (hwnd == m_tabBacking->GetHWND())
 	{
-		if (!m_app->GetDarkModeManager()->IsDarkModeEnabled())
+		if (!m_app->GetAppServices()->GetDarkModeManager()->IsDarkModeEnabled())
 		{
 			return std::nullopt;
 		}

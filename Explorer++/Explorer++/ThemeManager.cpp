@@ -26,7 +26,7 @@ ThemeManager::ThemeManager(DarkModeManager *darkModeManager,
 	m_darkModeManager(darkModeManager),
 	m_darkModeColorProvider(darkModeColorProvider)
 {
-	m_connections.push_back(darkModeManager->darkModeStatusChanged.AddObserver(
+	m_connections.push_back(darkModeManager->AddDarkModeStatusChangedObserver(
 		std::bind(&ThemeManager::OnDarkModeStatusChanged, this)));
 }
 
@@ -813,7 +813,7 @@ HBRUSH ThemeManager::GetMenuBarBackgroundBrush(bool enableDarkMode)
 	{
 		int systemColorIndex;
 
-		if (DarkModeManager::IsHighContrast())
+		if (IsHighContrastEnabled())
 		{
 			systemColorIndex = COLOR_BTNFACE;
 		}

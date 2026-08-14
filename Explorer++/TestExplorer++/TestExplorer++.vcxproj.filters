@@ -580,6 +580,9 @@
     <ClCompile Include="AppControllerFake.cpp">
       <Filter>App</Filter>
     </ClCompile>
+    <ClCompile Include="DarkModeManagerFake.cpp">
+      <Filter>Dark Mode Support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Bookmarks">
@@ -764,6 +767,9 @@
     </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{c1402477-54e5-41bb-8210-94b7fdef4293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dark Mode Support">
+      <UniqueIdentifier>{ade3c027-284b-4310-9aea-c84fc0a190fa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -959,6 +965,9 @@
     </ClInclude>
     <ClInclude Include="AppControllerFake.h">
       <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="DarkModeManagerFake.h">
+      <Filter>Dark Mode Support</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,7 @@ void BrowserTestBase::SetUpAppServices()
 	m_appServices.SetCommandLineSettings(&m_commandLineSettings);
 	m_appServices.SetConfig(&m_config);
 	m_appServices.SetDarkModeColorProvider(&m_darkModeColorProvider);
+	m_appServices.SetDarkModeManager(&m_darkModeManager);
 	m_appServices.SetDriveModel(&m_driveModel);
 	m_appServices.SetFrequentLocationsModel(&m_frequentLocationsModel);
 	m_appServices.SetHistoryModel(&m_historyModel);

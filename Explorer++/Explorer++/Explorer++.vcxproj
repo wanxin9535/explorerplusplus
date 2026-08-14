@@ -1210,6 +1210,7 @@
     <ClCompile Include="ConfigRegistryStorage.cpp" />
     <ClCompile Include="ConfigXmlStorage.cpp" />
     <ClCompile Include="DarkModeColorProvider.cpp" />
+    <ClCompile Include="DarkModeManager.cpp" />
     <ClCompile Include="DialogHelper.cpp" />
     <ClCompile Include="DirectoryWatcherFactoryImpl.cpp" />
     <ClCompile Include="FileOperations.cpp" />
@@ -1363,7 +1364,7 @@
     <ClCompile Include="ToolbarView.cpp" />
     <ClCompile Include="Bookmarks\BookmarkIconManager.cpp" />
     <ClCompile Include="Bookmarks\UI\BookmarkMenuController.cpp" />
-    <ClCompile Include="DarkModeManager.cpp" />
+    <ClCompile Include="DarkModeManagerImpl.cpp" />
     <ClCompile Include="FolderView.cpp" />
     <ClCompile Include="Plugins\AcceleratorParser.cpp" />
     <ClCompile Include="AcceleratorUpdater.cpp" />
@@ -1560,6 +1561,7 @@
     <ClInclude Include="ConfigRegistryStorage.h" />
     <ClInclude Include="ConfigXmlStorage.h" />
     <ClInclude Include="DarkModeColorProvider.h" />
+    <ClInclude Include="DarkModeManager.h" />
     <ClInclude Include="DialogHelper.h" />
     <ClInclude Include="DirectoryWatcher.h" />
     <ClInclude Include="DirectoryWatcherFactory.h" />
@@ -1750,7 +1752,7 @@
     <ClInclude Include="ToolbarView.h" />
     <ClInclude Include="Bookmarks\BookmarkIconManager.h" />
     <ClInclude Include="Bookmarks\UI\BookmarkMenuController.h" />
-    <ClInclude Include="DarkModeManager.h" />
+    <ClInclude Include="DarkModeManagerImpl.h" />
     <ClInclude Include="FolderView.h" />
     <ClInclude Include="Plugins\AcceleratorParser.h" />
     <ClInclude Include="AcceleratorUpdater.h" />

@@ -105,6 +105,21 @@ void AppServices::SetDarkModeColorProvider(DarkModeColorProvider *darkModeColorP
 	Set(darkModeColorProvider);
 }
 
+DarkModeManager *AppServices::GetDarkModeManager()
+{
+	return Get<DarkModeManager>();
+}
+
+const DarkModeManager *AppServices::GetDarkModeManager() const
+{
+	return Get<DarkModeManager>();
+}
+
+void AppServices::SetDarkModeManager(DarkModeManager *darkModeManager)
+{
+	Set(darkModeManager);
+}
+
 DriveModel *AppServices::GetDriveModel()
 {
 	return Get<DriveModel>();

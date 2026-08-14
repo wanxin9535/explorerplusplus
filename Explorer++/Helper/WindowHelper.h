@@ -16,6 +16,7 @@ int GetRectWidth(const RECT *rc);
 bool BringWindowToForeground(HWND wnd);
 bool IsRectVisible(const RECT *rect);
 void RecalcWindowCursor(HWND window);
+bool IsHighContrastEnabled();
 
 // This is only used in tests.
 bool operator==(const RECT &first, const RECT &second);

@@ -11,6 +11,7 @@ class BrowserList;
 class ColorRuleModel;
 struct Config;
 class DarkModeColorProvider;
+class DarkModeManager;
 class DriveModel;
 class FrequentLocationsModel;
 class HistoryModel;
@@ -82,6 +83,10 @@ public:
 	const DarkModeColorProvider *GetDarkModeColorProvider() const;
 	void SetDarkModeColorProvider(DarkModeColorProvider *darkModeColorProvider);
 
+	DarkModeManager *GetDarkModeManager();
+	const DarkModeManager *GetDarkModeManager() const;
+	void SetDarkModeManager(DarkModeManager *darkModeManager);
+
 	DriveModel *GetDriveModel();
 	const DriveModel *GetDriveModel() const;
 	void SetDriveModel(DriveModel *driveModel);
@@ -139,9 +144,9 @@ private:
 	void Set(T *service);
 
 	std::tuple<AppController *, Applications::ApplicationModel *, BrowserList *, ColorRuleModel *,
-		const CommandLine::Settings *, Config *, DarkModeColorProvider *, DriveModel *,
-		FrequentLocationsModel *, HistoryModel *, ModelessDialogList *, NavigationEvents *,
-		PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *,
-		TabRestorer *>
+		const CommandLine::Settings *, Config *, DarkModeColorProvider *, DarkModeManager *,
+		DriveModel *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
+		NavigationEvents *, PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *,
+		TabList *, TabRestorer *>
 		m_services;
 };

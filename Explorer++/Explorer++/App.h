@@ -14,7 +14,7 @@
 #include "CommandLine.h"
 #include "Config.h"
 #include "DarkModeColorProvider.h"
-#include "DarkModeManager.h"
+#include "DarkModeManagerImpl.h"
 #include "DirectoryWatcherFactoryImpl.h"
 #include "DriveModel.h"
 #include "DriveWatcherImpl.h"
@@ -72,7 +72,6 @@ public:
 	BookmarkTree *GetBookmarkTree();
 	HINSTANCE GetResourceInstance() const;
 	ResourceLoader *GetResourceLoader() const;
-	DarkModeManager *GetDarkModeManager();
 	ThemeManager *GetThemeManager();
 
 	void SessionEnding();
@@ -115,7 +114,7 @@ private:
 	Config m_config;
 	ShellWatcherManager m_shellWatcherManager;
 	DirectoryWatcherFactoryImpl m_directoryWatcherFactory;
-	DarkModeManager m_darkModeManager;
+	DarkModeManagerImpl m_darkModeManager;
 	DarkModeColorProvider m_darkModeColorProvider;
 	ThemeManager m_themeManager;
 	std::shared_ptr<CachedIcons> m_cachedIcons;

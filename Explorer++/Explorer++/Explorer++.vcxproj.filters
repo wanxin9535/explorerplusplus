@@ -379,7 +379,7 @@
     <ClCompile Include="Bookmarks\UI\Views\BookmarksToolbarView.cpp">
       <Filter>Bookmarks\UI\Views</Filter>
     </ClCompile>
-    <ClCompile Include="DarkModeManager.cpp">
+    <ClCompile Include="DarkModeManagerImpl.cpp">
       <Filter>Dark Mode Support</Filter>
     </ClCompile>
     <ClCompile Include="CrashHandlerHelper.cpp">
@@ -919,6 +919,9 @@
     <ClCompile Include="BrowserView.cpp">
       <Filter>Browser\UI\Views</Filter>
     </ClCompile>
+    <ClCompile Include="DarkModeManager.cpp">
+      <Filter>Dark Mode Support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bookmarks\BookmarkHelper.h">
@@ -1302,7 +1305,7 @@
     <ClInclude Include="Bookmarks\UI\Views\BookmarksToolbarView.h">
       <Filter>Bookmarks\UI\Views</Filter>
     </ClInclude>
-    <ClInclude Include="DarkModeManager.h">
+    <ClInclude Include="DarkModeManagerImpl.h">
       <Filter>Dark Mode Support</Filter>
     </ClInclude>
     <ClInclude Include="CrashHandlerHelper.h">
@@ -1979,6 +1982,9 @@
     </ClInclude>
     <ClInclude Include="AppController.h">
       <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="DarkModeManager.h">
+      <Filter>Dark Mode Support</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

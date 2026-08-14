@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "WindowHelper.h"
+#include <wil/common.h>
 
 /* Centers one window (hChild) with respect to
 another (hParent), as per the Windows UX
@@ -173,6 +174,21 @@ void RecalcWindowCursor(HWND window)
 	auto code = static_cast<UINT>(SendMessage(target, WM_NCHITTEST, 0, MAKELPARAM(pt.x, pt.y)));
 	SendMessage(target, WM_SETCURSOR, reinterpret_cast<WPARAM>(target),
 		MAKELPARAM(code, WM_MOUSEMOVE));
+}
+
+bool IsHighContrastEnabled()
+{
+	HIGHCONTRAST highContrast = {};
+	highContrast.cbSize = sizeof(highContrast);
+	BOOL res = SystemParametersInfo(SPI_GETHIGHCONTRAST, sizeof(highContrast), &highContrast, 0);
+
+	if (!res)
+	{
+		DCHECK(false);
+		return false;
+	}
+
+	return WI_IsFlagSet(highContrast.dwFlags, HCF_HIGHCONTRASTON);
 }
 
 bool operator==(const RECT &first, const RECT &second)
