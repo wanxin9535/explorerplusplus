@@ -20,6 +20,36 @@ void AppServices::SetAppController(AppController *appController)
 	Set(appController);
 }
 
+Applications::ApplicationModel *AppServices::GetApplicationModel()
+{
+	return Get<Applications::ApplicationModel>();
+}
+
+const Applications::ApplicationModel *AppServices::GetApplicationModel() const
+{
+	return Get<Applications::ApplicationModel>();
+}
+
+void AppServices::SetApplicationModel(Applications::ApplicationModel *applicationModel)
+{
+	Set(applicationModel);
+}
+
+BrowserList *AppServices::GetBrowserList()
+{
+	return Get<BrowserList>();
+}
+
+const BrowserList *AppServices::GetBrowserList() const
+{
+	return Get<BrowserList>();
+}
+
+void AppServices::SetBrowserList(BrowserList *browserList)
+{
+	Set(browserList);
+}
+
 ColorRuleModel *AppServices::GetColorRuleModel()
 {
 	return Get<ColorRuleModel>();
@@ -35,6 +65,16 @@ void AppServices::SetColorRuleModel(ColorRuleModel *colorRuleModel)
 	Set(colorRuleModel);
 }
 
+const CommandLine::Settings *AppServices::GetCommandLineSettings() const
+{
+	return Get<const CommandLine::Settings>();
+}
+
+void AppServices::SetCommandLineSettings(const CommandLine::Settings *commandLineSettings)
+{
+	Set(commandLineSettings);
+}
+
 Config *AppServices::GetConfig()
 {
 	return Get<Config>();
@@ -48,6 +88,66 @@ const Config *AppServices::GetConfig() const
 void AppServices::SetConfig(Config *config)
 {
 	Set(config);
+}
+
+DarkModeColorProvider *AppServices::GetDarkModeColorProvider()
+{
+	return Get<DarkModeColorProvider>();
+}
+
+const DarkModeColorProvider *AppServices::GetDarkModeColorProvider() const
+{
+	return Get<DarkModeColorProvider>();
+}
+
+void AppServices::SetDarkModeColorProvider(DarkModeColorProvider *darkModeColorProvider)
+{
+	Set(darkModeColorProvider);
+}
+
+DriveModel *AppServices::GetDriveModel()
+{
+	return Get<DriveModel>();
+}
+
+const DriveModel *AppServices::GetDriveModel() const
+{
+	return Get<DriveModel>();
+}
+
+void AppServices::SetDriveModel(DriveModel *driveModel)
+{
+	Set(driveModel);
+}
+
+FrequentLocationsModel *AppServices::GetFrequentLocationsModel()
+{
+	return Get<FrequentLocationsModel>();
+}
+
+const FrequentLocationsModel *AppServices::GetFrequentLocationsModel() const
+{
+	return Get<FrequentLocationsModel>();
+}
+
+void AppServices::SetFrequentLocationsModel(FrequentLocationsModel *frequentLocationsModel)
+{
+	Set(frequentLocationsModel);
+}
+
+HistoryModel *AppServices::GetHistoryModel()
+{
+	return Get<HistoryModel>();
+}
+
+const HistoryModel *AppServices::GetHistoryModel() const
+{
+	return Get<HistoryModel>();
+}
+
+void AppServices::SetHistoryModel(HistoryModel *historyModel)
+{
+	Set(historyModel);
 }
 
 ModelessDialogList *AppServices::GetModelessDialogList()

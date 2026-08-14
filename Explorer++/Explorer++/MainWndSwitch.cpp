@@ -883,13 +883,14 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 
 	case MainToolbarButton::Bookmarks:
 	case IDM_BOOKMARKS_MANAGEBOOKMARKS:
-		CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"ManageBookmarksDialog",
+		CreateOrSwitchToModelessDialog(m_app->GetAppServices()->GetModelessDialogList(),
+			L"ManageBookmarksDialog",
 			[this, hwnd]
 			{
 				return ManageBookmarksDialog::Create(m_app->GetResourceLoader(),
 					m_app->GetResourceInstance(), hwnd, m_app->GetBookmarkTree(),
-					m_app->GetBrowserList(), m_config, m_app->GetAcceleratorManager(),
-					&m_iconFetcher, m_app->GetPlatformContext());
+					m_app->GetAppServices()->GetBrowserList(), m_config,
+					m_app->GetAcceleratorManager(), &m_iconFetcher, m_app->GetPlatformContext());
 			});
 		break;
 

@@ -103,22 +103,22 @@ ShellTreeView::ShellTreeView(HWND hParent, App *app, BrowserWindow *browser,
 	m_connections.push_back(
 		m_config->showFolders.addObserver(std::bind(&ShellTreeView::UpdateSelection, this)));
 
-	m_connections.push_back(m_app->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
 	// When manually selecting an item in the treeview, a navigation will be initiated. It's
 	// possible that navigation may fail, in which case, the selection will be reset by this
 	// observer.
-	m_connections.push_back(m_app->GetNavigationEvents()->AddFailedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddFailedObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetNavigationEvents()->AddCancelledObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCancelledObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetTabEvents()->AddSelectedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddSelectedObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this), TabEventScope::ForBrowser(*m_browser)));
 
 	m_connections.push_back(m_app->GetClipboardWatcher()->updateSignal.AddObserver(

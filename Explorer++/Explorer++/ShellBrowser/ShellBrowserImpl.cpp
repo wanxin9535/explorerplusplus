@@ -46,8 +46,8 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
 		&preservedShellBrowser.folderColumns)
 {
 	m_navigationController = std::make_unique<ShellNavigationController>(this, browser,
-		&m_navigationManager, m_app->GetNavigationEvents(), preservedShellBrowser.history,
-		preservedShellBrowser.currentEntry);
+		&m_navigationManager, m_app->GetAppServices()->GetNavigationEvents(),
+		preservedShellBrowser.history, preservedShellBrowser.currentEntry);
 
 	ChangeToInitialFolder();
 }
@@ -58,7 +58,7 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
 	ShellBrowserImpl(owner, app, browser, fileActionHandler, folderSettings, initialColumns)
 {
 	m_navigationController = std::make_unique<ShellNavigationController>(this, browser,
-		&m_navigationManager, m_app->GetNavigationEvents(), initialPidl);
+		&m_navigationManager, m_app->GetAppServices()->GetNavigationEvents(), initialPidl);
 
 	ChangeToInitialFolder();
 }
@@ -72,7 +72,7 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
 	m_app(app),
 	m_browser(browser),
 	m_shellEnumerator(std::make_shared<ShellEnumeratorImpl>(owner)),
-	m_navigationManager(this, app->GetNavigationEvents(), m_shellEnumerator,
+	m_navigationManager(this, app->GetAppServices()->GetNavigationEvents(), m_shellEnumerator,
 		app->GetFeatureList()->IsEnabled(Feature::BackgroundThreadEnumeration)
 			? app->GetRuntime()->GetComStaExecutor()
 			: app->GetRuntime()->GetInlineExecutor(),
@@ -107,14 +107,14 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
 	InitializeListView();
 	m_iconFetcher = std::make_unique<IconFetcherImpl>(m_listView, m_cachedIcons);
 
-	m_connections.push_back(m_app->GetNavigationEvents()->AddStartedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddStartedObserver(
 		std::bind_front(&ShellBrowserImpl::OnNavigationStarted, this),
 		NavigationEventScope::ForShellBrowser(*this)));
-	m_connections.push_back(m_app->GetNavigationEvents()->AddWillCommitObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddWillCommitObserver(
 		std::bind_front(&ShellBrowserImpl::OnNavigationWillCommit, this),
 		NavigationEventScope::ForShellBrowser(*this), boost::signals2::at_front,
 		SlotGroup::HighPriority));
-	m_connections.push_back(m_app->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
 		std::bind_front(&ShellBrowserImpl::OnNavigationComitted, this),
 		NavigationEventScope::ForShellBrowser(*this), boost::signals2::at_front,
 		SlotGroup::HighPriority));
@@ -218,16 +218,17 @@ void ShellBrowserImpl::InitializeListView()
 	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(GetParent(m_listView),
 		std::bind_front(&ShellBrowserImpl::ListViewParentProc, this)));
 
-	m_connections.push_back(m_app->GetColorRuleModel()->AddItemAddedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetColorRuleModel()->AddItemAddedObserver(
 		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
-	m_connections.push_back(m_app->GetColorRuleModel()->AddItemUpdatedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetColorRuleModel()->AddItemUpdatedObserver(
 		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
-	m_connections.push_back(m_app->GetColorRuleModel()->AddItemMovedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetColorRuleModel()->AddItemMovedObserver(
 		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
-	m_connections.push_back(m_app->GetColorRuleModel()->AddItemRemovedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetColorRuleModel()->AddItemRemovedObserver(
 		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
-	m_connections.push_back(m_app->GetColorRuleModel()->AddAllItemsRemovedObserver(
-		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
+	m_connections.push_back(
+		m_app->GetAppServices()->GetColorRuleModel()->AddAllItemsRemovedObserver(
+			std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
 
 	if (m_folderSettings.showInGroups)
 	{

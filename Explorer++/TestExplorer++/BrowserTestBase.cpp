@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
+#include "DriveEnumeratorFake.h"
 #include "PidlTestHelper.h"
 #include "ShellBrowser/ShellBrowser.h"
 #include "ShellBrowser/ShellNavigationController.h"
@@ -14,7 +15,11 @@ BrowserTestBase::BrowserTestBase() :
 	m_cachedIcons(10),
 	m_resourceLoader(GetModuleHandle(nullptr), IconSet::Color, nullptr, nullptr),
 	m_tabList(&m_tabEvents),
-	m_tabRestorer(&m_tabEvents, &m_browserList)
+	m_historyTracker(&m_historyModel, &m_navigationEvents),
+	m_frequentLocationsModel(m_platformContext.GetSystemClock()),
+	m_frequentLocationsTracker(&m_frequentLocationsModel, &m_navigationEvents),
+	m_tabRestorer(&m_tabEvents, &m_browserList),
+	m_driveModel(std::make_unique<DriveEnumeratorFake>(), &m_driveWatcher)
 {
 	SetUpAppServices();
 }
@@ -22,8 +27,15 @@ BrowserTestBase::BrowserTestBase() :
 void BrowserTestBase::SetUpAppServices()
 {
 	m_appServices.SetAppController(&m_appController);
+	m_appServices.SetApplicationModel(&m_applicationModel);
+	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetColorRuleModel(&m_colorRuleModel);
+	m_appServices.SetCommandLineSettings(&m_commandLineSettings);
 	m_appServices.SetConfig(&m_config);
+	m_appServices.SetDarkModeColorProvider(&m_darkModeColorProvider);
+	m_appServices.SetDriveModel(&m_driveModel);
+	m_appServices.SetFrequentLocationsModel(&m_frequentLocationsModel);
+	m_appServices.SetHistoryModel(&m_historyModel);
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);
 	m_appServices.SetNavigationEvents(&m_navigationEvents);
 	m_appServices.SetPlatformContext(&m_platformContext);

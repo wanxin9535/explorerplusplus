@@ -122,7 +122,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 		break;
 	}
 
-	m_app->GetShellBrowserEvents()->NotifyItemsChanged(this);
+	m_app->GetAppServices()->GetShellBrowserEvents()->NotifyItemsChanged(this);
 }
 
 void ShellBrowserImpl::OnItemAdded(PCIDLIST_ABSOLUTE simplePidl)
@@ -459,7 +459,8 @@ concurrencpp::null_result ShellBrowserImpl::OnDirectoryPropertiesChanged(
 	// this function being triggered, but only if the item is virtual. In that case, the parsing
 	// path isn't going to change.
 	weakSelf->m_directoryState.pidlDirectory = updatedPidl;
-	weakSelf->m_app->GetShellBrowserEvents()->NotifyDirectoryPropertiesChanged(weakSelf.Get());
+	weakSelf->m_app->GetAppServices()->GetShellBrowserEvents()->NotifyDirectoryPropertiesChanged(
+		weakSelf.Get());
 }
 
 concurrencpp::null_result ShellBrowserImpl::RefreshDirectoryAfterUpdate(

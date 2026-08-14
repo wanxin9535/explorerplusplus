@@ -7,10 +7,19 @@
 #include "AcceleratorManager.h"
 #include "AppControllerFake.h"
 #include "AppServices.h"
+#include "ApplicationModel.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
 #include "ColorRuleModel.h"
+#include "CommandLine.h"
 #include "Config.h"
+#include "DarkModeColorProvider.h"
+#include "DriveModel.h"
+#include "DriveWatcherFake.h"
+#include "FrequentLocationsModel.h"
+#include "FrequentLocationsTracker.h"
+#include "HistoryModel.h"
+#include "HistoryTracker.h"
 #include "MainRebarStorage.h"
 #include "ModelessDialogList.h"
 #include "PlatformContextFake.h"
@@ -43,6 +52,7 @@ protected:
 
 	static void NavigateTab(Tab *tab, const std::wstring &path, PidlAbsolute *outputPidl = nullptr);
 
+	const CommandLine::Settings m_commandLineSettings;
 	AppServices m_appServices;
 	AppControllerFake m_appController;
 	PlatformContextFake m_platformContext;
@@ -50,19 +60,26 @@ protected:
 	Config m_config;
 	AcceleratorManager m_acceleratorManager;
 	ModelessDialogList m_modelessDialogList;
+	DarkModeColorProvider m_darkModeColorProvider;
 	BookmarkTree m_bookmarkTree;
 	CachedIcons m_cachedIcons;
 	Win32ResourceLoader m_resourceLoader;
 	ColorRuleModel m_colorRuleModel;
+	Applications::ApplicationModel m_applicationModel;
 
 	TabEvents m_tabEvents;
 	ShellBrowserEvents m_shellBrowserEvents;
 	NavigationEvents m_navigationEvents;
 	TabList m_tabList;
-
+	HistoryModel m_historyModel;
+	HistoryTracker m_historyTracker;
+	FrequentLocationsModel m_frequentLocationsModel;
+	FrequentLocationsTracker m_frequentLocationsTracker;
 	BrowserList m_browserList;
-
 	TabRestorer m_tabRestorer;
+
+	DriveWatcherFake m_driveWatcher;
+	DriveModel m_driveModel;
 
 private:
 	void SetUpAppServices();

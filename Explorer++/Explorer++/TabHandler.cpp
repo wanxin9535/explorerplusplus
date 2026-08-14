@@ -16,51 +16,53 @@
 
 void Explorerplusplus::InitializeTabs()
 {
-	m_tabBacking = TabBacking::Create(m_hwnd, this, this, m_app->GetResourceLoader(),
-		m_config, m_app->GetTabEvents());
+	m_tabBacking = TabBacking::Create(m_hwnd, this, this, m_app->GetResourceLoader(), m_config,
+		m_app->GetAppServices()->GetTabEvents());
 
 	auto *mainTabView =
 		MainTabView::Create(m_tabBacking->GetHWND(), m_config, m_app->GetResourceLoader());
 	m_connections.push_back(mainTabView->sizeUpdatedSignal.AddObserver([this] { UpdateLayout(); }));
 
-	auto *tabContainer =
-		TabContainer::Create(mainTabView, this, &m_shellBrowserFactory, m_app->GetTabEvents(),
-			m_app->GetShellBrowserEvents(), m_app->GetNavigationEvents(), m_app->GetTabRestorer(),
-			m_app->GetCachedIcons(), m_app->GetBookmarkTree(), m_app->GetAcceleratorManager(),
-			m_config, m_app->GetResourceLoader(), m_app->GetPlatformContext());
+	auto *tabContainer = TabContainer::Create(mainTabView, this, &m_shellBrowserFactory,
+		m_app->GetAppServices()->GetTabEvents(), m_app->GetAppServices()->GetShellBrowserEvents(),
+		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetAppServices()->GetTabRestorer(),
+		m_app->GetCachedIcons(), m_app->GetBookmarkTree(), m_app->GetAcceleratorManager(), m_config,
+		m_app->GetResourceLoader(), m_app->GetPlatformContext());
 	m_browserPane = std::make_unique<BrowserPane>(tabContainer);
 
 	m_connections.push_back(m_config->alwaysShowTabBar.addObserver(
 		std::bind(&Explorerplusplus::MaybeUpdateTabBarVisibility, this)));
-	m_connections.push_back(m_app->GetTabEvents()->AddCreatedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddCreatedObserver(
 		std::bind(&Explorerplusplus::MaybeUpdateTabBarVisibility, this),
 		TabEventScope::ForBrowser(*this)));
-	m_connections.push_back(m_app->GetTabEvents()->AddRemovedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddRemovedObserver(
 		std::bind(&Explorerplusplus::MaybeUpdateTabBarVisibility, this),
 		TabEventScope::ForBrowser(*this)));
 
-	m_connections.push_back(m_app->GetTabEvents()->AddCreatedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddCreatedObserver(
 		std::bind_front(&Explorerplusplus::OnTabCreated, this), TabEventScope::ForBrowser(*this),
 		boost::signals2::at_front));
-	m_connections.push_back(m_app->GetTabEvents()->AddSelectedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddSelectedObserver(
 		std::bind_front(&Explorerplusplus::OnTabSelected, this), TabEventScope::ForBrowser(*this),
 		boost::signals2::at_front));
-	m_connections.push_back(m_app->GetTabEvents()->AddPreRemovalObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddPreRemovalObserver(
 		std::bind_front(&Explorerplusplus::OnTabPreRemoval, this), TabEventScope::ForBrowser(*this),
 		boost::signals2::at_back));
-	m_connections.push_back(m_app->GetTabEvents()->AddRemovedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddRemovedObserver(
 		std::bind_front(&Explorerplusplus::OnTabRemoved, this), TabEventScope::ForBrowser(*this)));
 
-	m_connections.push_back(m_app->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
 		std::bind_front(&Explorerplusplus::OnNavigationCommitted, this),
 		NavigationEventScope::ForActiveShellBrowser(*this), boost::signals2::at_front));
 
-	m_connections.push_back(m_app->GetShellBrowserEvents()->AddItemsChangedObserver(
-		std::bind_front(&Explorerplusplus::OnDirectoryContentsChanged, this),
-		ShellBrowserEventScope::ForActiveShellBrowser(*this), boost::signals2::at_front));
-	m_connections.push_back(m_app->GetShellBrowserEvents()->AddSelectionChangedObserver(
-		std::bind_front(&Explorerplusplus::OnTabListViewSelectionChanged, this),
-		ShellBrowserEventScope::ForBrowser(*this), boost::signals2::at_front));
+	m_connections.push_back(
+		m_app->GetAppServices()->GetShellBrowserEvents()->AddItemsChangedObserver(
+			std::bind_front(&Explorerplusplus::OnDirectoryContentsChanged, this),
+			ShellBrowserEventScope::ForActiveShellBrowser(*this), boost::signals2::at_front));
+	m_connections.push_back(
+		m_app->GetAppServices()->GetShellBrowserEvents()->AddSelectionChangedObserver(
+			std::bind_front(&Explorerplusplus::OnTabListViewSelectionChanged, this),
+			ShellBrowserEventScope::ForBrowser(*this), boost::signals2::at_front));
 
 	auto updateLayoutObserverMethod = [this](BOOL newValue)
 	{
@@ -198,7 +200,8 @@ void Explorerplusplus::CreateCommandLineTabs()
 	auto currentDirectory = GetCurrentDirectoryWrapper();
 	CHECK(currentDirectory);
 
-	for (const auto &fileToSelect : m_app->GetCommandLineSettings()->filesToSelect)
+	for (const auto &fileToSelect :
+		m_app->GetAppServices()->GetCommandLineSettings()->filesToSelect)
 	{
 		auto absolutePath = TransformUserEnteredPathToAbsolutePathAndNormalize(fileToSelect,
 			currentDirectory.value(), EnvVarsExpansion::DontExpand);
@@ -236,7 +239,7 @@ void Explorerplusplus::CreateCommandLineTabs()
 		}
 	}
 
-	for (const auto &directory : m_app->GetCommandLineSettings()->directories)
+	for (const auto &directory : m_app->GetAppServices()->GetCommandLineSettings()->directories)
 	{
 		// Windows Explorer doesn't expand environment variables passed in on the command line. The
 		// command-line interpreter that's being used can expand variables - for example, running:
@@ -345,8 +348,7 @@ void Explorerplusplus::OnTabListViewSelectionChanged(const ShellBrowser *shellBr
 
 	if (GetActivePane()->GetTabContainer()->IsTabSelected(*tab))
 	{
-		SetTimer(m_hwnd, LISTVIEW_ITEM_CHANGED_TIMER_ID, LISTVIEW_ITEM_CHANGED_TIMEOUT,
-			nullptr);
+		SetTimer(m_hwnd, LISTVIEW_ITEM_CHANGED_TIMER_ID, LISTVIEW_ITEM_CHANGED_TIMEOUT, nullptr);
 	}
 }
 

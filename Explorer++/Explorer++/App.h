@@ -58,7 +58,6 @@ public:
 
 	int Run();
 
-	const CommandLine::Settings *GetCommandLineSettings() const;
 	AppServices *GetAppServices();
 	PlatformContext *GetPlatformContext();
 	Runtime *GetRuntime();
@@ -69,24 +68,12 @@ public:
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
 	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();
-	BrowserList *GetBrowserList();
 	BrowserWindowFactory *GetBrowserWindowFactory();
-	ModelessDialogList *GetModelessDialogList();
 	BookmarkTree *GetBookmarkTree();
-	ColorRuleModel *GetColorRuleModel() const;
-	Applications::ApplicationModel *GetApplicationModel();
 	HINSTANCE GetResourceInstance() const;
 	ResourceLoader *GetResourceLoader() const;
-	TabEvents *GetTabEvents();
-	ShellBrowserEvents *GetShellBrowserEvents();
-	NavigationEvents *GetNavigationEvents();
-	TabRestorer *GetTabRestorer();
 	DarkModeManager *GetDarkModeManager();
-	DarkModeColorProvider *GetDarkModeColorProvider();
 	ThemeManager *GetThemeManager();
-	HistoryModel *GetHistoryModel();
-	FrequentLocationsModel *GetFrequentLocationsModel();
-	DriveModel *GetDriveModel();
 
 	void SessionEnding();
 

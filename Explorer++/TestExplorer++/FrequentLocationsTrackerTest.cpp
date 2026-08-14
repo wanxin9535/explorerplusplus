@@ -3,10 +3,8 @@
 // See LICENSE in the top level directory
 
 #include "pch.h"
-#include "FrequentLocationsTracker.h"
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
-#include "FrequentLocationsModel.h"
 #include <gtest/gtest.h>
 
 using namespace std::chrono_literals;
@@ -14,15 +12,6 @@ using namespace testing;
 
 class FrequentLocationsTrackerTest : public BrowserTestBase
 {
-protected:
-	FrequentLocationsTrackerTest() :
-		m_frequentLocationsModel(m_platformContext.GetSystemClock()),
-		m_frequentLocationsTracker(&m_frequentLocationsModel, &m_navigationEvents)
-	{
-	}
-
-	FrequentLocationsModel m_frequentLocationsModel;
-	FrequentLocationsTracker m_frequentLocationsTracker;
 };
 
 TEST_F(FrequentLocationsTrackerTest, CheckNavigationsAdded)

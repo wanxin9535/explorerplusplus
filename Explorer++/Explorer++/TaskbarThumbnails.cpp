@@ -117,21 +117,22 @@ void TaskbarThumbnails::OnTaskbarButtonCreated()
 // enabled and the functionality is available.
 void TaskbarThumbnails::SetUpObservers()
 {
-	m_connections.push_back(m_app->GetTabEvents()->AddCreatedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddCreatedObserver(
 		std::bind_front(&TaskbarThumbnails::CreateTabProxy, this),
 		TabEventScope::ForBrowser(*m_browser)));
-	m_connections.push_back(m_app->GetTabEvents()->AddSelectedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddSelectedObserver(
 		std::bind_front(&TaskbarThumbnails::OnTabSelectionChanged, this),
 		TabEventScope::ForBrowser(*m_browser)));
-	m_connections.push_back(m_app->GetTabEvents()->AddRemovedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddRemovedObserver(
 		std::bind_front(&TaskbarThumbnails::RemoveTabProxy, this),
 		TabEventScope::ForBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetShellBrowserEvents()->AddDirectoryPropertiesChangedObserver(
-		std::bind_front(&TaskbarThumbnails::OnDirectoryPropertiesChanged, this),
-		ShellBrowserEventScope::ForBrowser(*m_browser)));
+	m_connections.push_back(
+		m_app->GetAppServices()->GetShellBrowserEvents()->AddDirectoryPropertiesChangedObserver(
+			std::bind_front(&TaskbarThumbnails::OnDirectoryPropertiesChanged, this),
+			ShellBrowserEventScope::ForBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
 		std::bind_front(&TaskbarThumbnails::OnNavigationCommitted, this),
 		NavigationEventScope::ForBrowser(*m_browser)));
 }

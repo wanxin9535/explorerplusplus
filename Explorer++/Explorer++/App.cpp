@@ -266,8 +266,15 @@ void App::SetUpLanguageResourceInstance()
 void App::SetUpAppServices()
 {
 	m_appServices.SetAppController(this);
+	m_appServices.SetApplicationModel(&m_applicationModel);
+	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetColorRuleModel(m_colorRuleModel.get());
+	m_appServices.SetCommandLineSettings(m_commandLineSettings);
 	m_appServices.SetConfig(&m_config);
+	m_appServices.SetDarkModeColorProvider(&m_darkModeColorProvider);
+	m_appServices.SetDriveModel(&m_driveModel);
+	m_appServices.SetFrequentLocationsModel(&m_frequentLocationsModel);
+	m_appServices.SetHistoryModel(&m_historyModel);
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);
 	m_appServices.SetNavigationEvents(&m_navigationEvents);
 	m_appServices.SetPlatformContext(&m_platformContext);
@@ -304,11 +311,6 @@ bool App::MaybeTranslateAccelerator(MSG *msg)
 	}
 
 	return false;
-}
-
-const CommandLine::Settings *App::GetCommandLineSettings() const
-{
-	return m_commandLineSettings;
 }
 
 SaveLocation App::GetSaveLocation() const
@@ -371,34 +373,14 @@ std::shared_ptr<AsyncIconFetcher> App::GetIconFetcher()
 	return m_iconFetcher;
 }
 
-BrowserList *App::GetBrowserList()
-{
-	return &m_browserList;
-}
-
 BrowserWindowFactory *App::GetBrowserWindowFactory()
 {
 	return &m_browserWindowFactory;
 }
 
-ModelessDialogList *App::GetModelessDialogList()
-{
-	return &m_modelessDialogList;
-}
-
 BookmarkTree *App::GetBookmarkTree()
 {
 	return &m_bookmarkTree;
-}
-
-ColorRuleModel *App::GetColorRuleModel() const
-{
-	return m_colorRuleModel.get();
-}
-
-Applications::ApplicationModel *App::GetApplicationModel()
-{
-	return &m_applicationModel;
 }
 
 HINSTANCE App::GetResourceInstance() const
@@ -411,54 +393,14 @@ ResourceLoader *App::GetResourceLoader() const
 	return m_resourceLoader.get();
 }
 
-TabEvents *App::GetTabEvents()
-{
-	return &m_tabEvents;
-}
-
-ShellBrowserEvents *App::GetShellBrowserEvents()
-{
-	return &m_shellBrowserEvents;
-}
-
-NavigationEvents *App::GetNavigationEvents()
-{
-	return &m_navigationEvents;
-}
-
-TabRestorer *App::GetTabRestorer()
-{
-	return &m_tabRestorer;
-}
-
 DarkModeManager *App::GetDarkModeManager()
 {
 	return &m_darkModeManager;
 }
 
-DarkModeColorProvider *App::GetDarkModeColorProvider()
-{
-	return &m_darkModeColorProvider;
-}
-
 ThemeManager *App::GetThemeManager()
 {
 	return &m_themeManager;
-}
-
-HistoryModel *App::GetHistoryModel()
-{
-	return &m_historyModel;
-}
-
-FrequentLocationsModel *App::GetFrequentLocationsModel()
-{
-	return &m_frequentLocationsModel;
-}
-
-DriveModel *App::GetDriveModel()
-{
-	return &m_driveModel;
 }
 
 void App::OnWillRemoveBrowser()

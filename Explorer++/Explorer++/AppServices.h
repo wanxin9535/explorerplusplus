@@ -7,8 +7,13 @@
 #include <tuple>
 
 class AppController;
+class BrowserList;
 class ColorRuleModel;
 struct Config;
+class DarkModeColorProvider;
+class DriveModel;
+class FrequentLocationsModel;
+class HistoryModel;
 class ModelessDialogList;
 class NavigationEvents;
 class PlatformContext;
@@ -17,6 +22,20 @@ class ShellBrowserEvents;
 class TabEvents;
 class TabList;
 class TabRestorer;
+
+namespace Applications
+{
+
+class ApplicationModel;
+
+}
+
+namespace CommandLine
+{
+
+struct Settings;
+
+}
 
 // Provides access to various application services. A "service" here refers to an object instance
 // that will be available for the lifetime of the application.
@@ -40,13 +59,40 @@ public:
 	const AppController *GetAppController() const;
 	void SetAppController(AppController *appController);
 
+	Applications::ApplicationModel *GetApplicationModel();
+	const Applications::ApplicationModel *GetApplicationModel() const;
+	void SetApplicationModel(Applications::ApplicationModel *applicationModel);
+
+	BrowserList *GetBrowserList();
+	const BrowserList *GetBrowserList() const;
+	void SetBrowserList(BrowserList *browserList);
+
 	ColorRuleModel *GetColorRuleModel();
 	const ColorRuleModel *GetColorRuleModel() const;
 	void SetColorRuleModel(ColorRuleModel *colorRuleModel);
 
+	const CommandLine::Settings *GetCommandLineSettings() const;
+	void SetCommandLineSettings(const CommandLine::Settings *commandLineSettings);
+
 	Config *GetConfig();
 	const Config *GetConfig() const;
 	void SetConfig(Config *config);
+
+	DarkModeColorProvider *GetDarkModeColorProvider();
+	const DarkModeColorProvider *GetDarkModeColorProvider() const;
+	void SetDarkModeColorProvider(DarkModeColorProvider *darkModeColorProvider);
+
+	DriveModel *GetDriveModel();
+	const DriveModel *GetDriveModel() const;
+	void SetDriveModel(DriveModel *driveModel);
+
+	FrequentLocationsModel *GetFrequentLocationsModel();
+	const FrequentLocationsModel *GetFrequentLocationsModel() const;
+	void SetFrequentLocationsModel(FrequentLocationsModel *frequentLocationsModel);
+
+	HistoryModel *GetHistoryModel();
+	const HistoryModel *GetHistoryModel() const;
+	void SetHistoryModel(HistoryModel *historyModel);
 
 	ModelessDialogList *GetModelessDialogList();
 	const ModelessDialogList *GetModelessDialogList() const;
@@ -92,8 +138,10 @@ private:
 	template <class T>
 	void Set(T *service);
 
-	std::tuple<AppController *, ColorRuleModel *, Config *, ModelessDialogList *,
-		NavigationEvents *, PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *,
-		TabList *, TabRestorer *>
+	std::tuple<AppController *, Applications::ApplicationModel *, BrowserList *, ColorRuleModel *,
+		const CommandLine::Settings *, Config *, DarkModeColorProvider *, DriveModel *,
+		FrequentLocationsModel *, HistoryModel *, ModelessDialogList *, NavigationEvents *,
+		PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *,
+		TabRestorer *>
 		m_services;
 };

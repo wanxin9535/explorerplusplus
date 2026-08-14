@@ -755,7 +755,7 @@ ShellBrowserImpl *Explorerplusplus::GetActiveShellBrowserImpl() const
 
 TabEvents *Explorerplusplus::GetTabEvents()
 {
-	return m_app->GetTabEvents();
+	return m_app->GetAppServices()->GetTabEvents();
 }
 
 TabContainer *Explorerplusplus::GetTabContainer() const
@@ -783,7 +783,7 @@ bool Explorerplusplus::OnActivate(int activationState, bool minimized)
 	// as the active browser.
 	if (IsWindowVisible(m_hwnd) && activationState != WA_INACTIVE && !minimized)
 	{
-		m_app->GetBrowserList()->SetLastActive(this);
+		m_app->GetAppServices()->GetBrowserList()->SetLastActive(this);
 	}
 
 	if (activationState == WA_INACTIVE)

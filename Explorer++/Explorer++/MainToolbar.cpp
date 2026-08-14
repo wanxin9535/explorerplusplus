@@ -135,10 +135,10 @@ void MainToolbar::Initialize(HWND parent,
 	m_connections.push_back(m_browser->AddLifecycleStateChangedObserver(
 		std::bind_front(&MainToolbar::OnBrowserLifecycleStateChanged, this)));
 
-	m_connections.push_back(m_app->GetTabEvents()->AddSelectedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddSelectedObserver(
 		std::bind_front(&MainToolbar::OnTabSelected, this), TabEventScope::ForBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
 		std::bind_front(&MainToolbar::OnNavigationCommitted, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 

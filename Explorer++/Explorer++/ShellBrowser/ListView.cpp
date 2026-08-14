@@ -826,7 +826,7 @@ void ShellBrowserImpl::OnListViewItemChanged(const NMLISTVIEW *changeData)
 
 	UpdateFileSelectionInfo(static_cast<int>(changeData->lParam), currentlySelected);
 
-	m_app->GetShellBrowserEvents()->NotifySelectionChanged(this);
+	m_app->GetAppServices()->GetShellBrowserEvents()->NotifySelectionChanged(this);
 }
 
 void ShellBrowserImpl::UpdateFileSelectionInfo(int internalIndex, BOOL selected)
@@ -1548,7 +1548,7 @@ LRESULT ShellBrowserImpl::OnListViewCustomDraw(NMLVCUSTOMDRAW *listViewCustomDra
 		const auto &itemInfo =
 			GetItemByIndex(static_cast<int>(listViewCustomDraw->nmcd.dwItemSpec));
 
-		for (const auto &colorRule : m_app->GetColorRuleModel()->GetItems())
+		for (const auto &colorRule : m_app->GetAppServices()->GetColorRuleModel()->GetItems())
 		{
 			bool matchedFileName = false;
 			bool matchedAttributes = false;

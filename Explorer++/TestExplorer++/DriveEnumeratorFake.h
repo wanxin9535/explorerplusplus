@@ -9,7 +9,7 @@
 class DriveEnumeratorFake : public DriveEnumerator
 {
 public:
-	DriveEnumeratorFake(const std::set<std::wstring> &drives);
+	DriveEnumeratorFake(const std::set<std::wstring> &drives = {});
 
 	outcome::std_result<std::set<std::wstring>> GetDrives() override;
 

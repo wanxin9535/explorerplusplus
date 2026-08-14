@@ -89,7 +89,7 @@ Explorerplusplus::Explorerplusplus(App *app, const WindowStorageData *storageDat
 	ShowWindow(m_hwnd, ShowStateToNativeShowState(showState));
 	UpdateWindow(m_hwnd);
 
-	m_app->GetBrowserList()->AddBrowser(this);
+	m_app->GetAppServices()->GetBrowserList()->AddBrowser(this);
 }
 
 Explorerplusplus::~Explorerplusplus() = default;
@@ -161,14 +161,16 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 		m_app->GetResourceLoader(), &m_iconFetcher, m_app->GetBookmarkTree(),
 		BookmarkMenuBuilder::MenuIdRange{ MENU_BOOKMARK_START_ID, MENU_BOOKMARK_END_ID });
 
-	m_view = BrowserView::Create(m_hwnd, this, m_config, m_app->GetTabEvents(),
-		m_app->GetShellBrowserEvents(), m_app->GetNavigationEvents(), m_app->GetResourceLoader());
+	m_view = BrowserView::Create(m_hwnd, this, m_config, m_app->GetAppServices()->GetTabEvents(),
+		m_app->GetAppServices()->GetShellBrowserEvents(),
+		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetResourceLoader());
 
 	InitializeMainMenu();
 
 	auto *statusBarView = StatusBarView::Create(m_hwnd, m_config);
-	m_statusBar = StatusBar::Create(statusBarView, this, m_config, m_app->GetTabEvents(),
-		m_app->GetShellBrowserEvents(), m_app->GetNavigationEvents(), m_app->GetResourceLoader());
+	m_statusBar = StatusBar::Create(statusBarView, this, m_config,
+		m_app->GetAppServices()->GetTabEvents(), m_app->GetAppServices()->GetShellBrowserEvents(),
+		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetResourceLoader());
 
 	CreateMainRebarAndChildren(storageData);
 	InitializeDisplayWindow();
@@ -194,8 +196,7 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 
 	InitializePlugins();
 
-	m_themeWindowTracker =
-		std::make_unique<ThemeWindowTracker>(m_hwnd, m_app->GetThemeManager());
+	m_themeWindowTracker = std::make_unique<ThemeWindowTracker>(m_hwnd, m_app->GetThemeManager());
 
 	SetLifecycleState(LifecycleState::Main);
 }
@@ -219,7 +220,8 @@ void Explorerplusplus::CreateFolderControls()
 	m_treeViewHolder = HolderWindow::Create(m_hwnd,
 		m_app->GetResourceLoader()->LoadString(IDS_FOLDERS_WINDOW_TEXT), holderStyle,
 		m_app->GetResourceLoader()->LoadString(IDS_HIDE_FOLDERS_PANE), m_app->GetConfig(),
-		m_app->GetResourceLoader(), m_app->GetDarkModeManager(), m_app->GetDarkModeColorProvider());
+		m_app->GetResourceLoader(), m_app->GetDarkModeManager(),
+		m_app->GetAppServices()->GetDarkModeColorProvider());
 	m_treeViewHolder->SetCloseButtonClickedCallback(
 		[this]() { m_config->showFolders = !m_config->showFolders.get(); });
 	m_treeViewHolder->SetResizedCallback(
@@ -337,7 +339,7 @@ void Explorerplusplus::BeginShutdown()
 
 	SetLifecycleState(LifecycleState::WillClose);
 
-	m_app->GetBrowserList()->WillRemoveBrowser(this);
+	m_app->GetAppServices()->GetBrowserList()->WillRemoveBrowser(this);
 
 	// Past this point, the remaining tabs will be closed, which can cause other UI updates. There's
 	// no need for that to be shown, however, since the window will be destroyed shortly afterwards.
@@ -348,7 +350,7 @@ void Explorerplusplus::FinishShutdown()
 {
 	SetLifecycleState(LifecycleState::Closing);
 
-	m_app->GetBrowserList()->RemoveBrowser(this);
+	m_app->GetAppServices()->GetBrowserList()->RemoveBrowser(this);
 
 	DestroyWindow(m_hwnd);
 }

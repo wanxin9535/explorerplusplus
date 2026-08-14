@@ -44,26 +44,29 @@ void Explorerplusplus::OnDestroyFiles()
 
 void Explorerplusplus::OnSearch()
 {
-	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"SearchDialog",
+	CreateOrSwitchToModelessDialog(m_app->GetAppServices()->GetModelessDialogList(),
+		L"SearchDialog",
 		[this]
 		{
 			Tab &selectedTab = GetActivePane()->GetTabContainer()->GetSelectedTab();
 			std::wstring currentDirectory = selectedTab.GetShellBrowserImpl()->GetDirectoryPath();
 
 			return SearchDialog::Create(m_app->GetResourceLoader(), m_hwnd, currentDirectory,
-				m_app->GetBrowserList());
+				m_app->GetAppServices()->GetBrowserList());
 		});
 }
 
 void Explorerplusplus::OnRunScript()
 {
-	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"ScriptingDialog", [this]
+	CreateOrSwitchToModelessDialog(m_app->GetAppServices()->GetModelessDialogList(),
+		L"ScriptingDialog", [this]
 		{ return ScriptingDialog::Create(m_app->GetResourceLoader(), m_hwnd, this, m_config); });
 }
 
 void Explorerplusplus::OnShowOptions()
 {
-	CreateOrSwitchToModelessDialog(m_app->GetModelessDialogList(), L"OptionsDialog",
+	CreateOrSwitchToModelessDialog(m_app->GetAppServices()->GetModelessDialogList(),
+		L"OptionsDialog",
 		[this]
 		{
 			return OptionsDialog::Create(m_app->GetResourceLoader(), m_hwnd,
