@@ -4,25 +4,27 @@
 
 #include "stdafx.h"
 #include "ToolbarContextMenu.h"
-#include "App.h"
+#include "AppServices.h"
 #include "ApplicationEditorDialog.h"
 #include "Bookmarks/BookmarkClipboard.h"
 #include "Bookmarks/BookmarkHelper.h"
+#include "Bookmarks/BookmarkTree.h"
 #include "BrowserCommandController.h"
 #include "BrowserWindow.h"
 #include "Config.h"
 #include "MainResource.h"
 #include "MenuView.h"
+#include "PlatformContext.h"
 #include "ResourceLoader.h"
 #include "../Helper/ClipboardStore.h"
 
-ToolbarContextMenu::ToolbarContextMenu(MenuView *menuView, Source source, App *app,
-	BrowserWindow *browser) :
-	MenuBase(menuView, app->GetAppServices()->GetAcceleratorManager()),
-	m_app(app),
-	m_browser(browser)
+ToolbarContextMenu::ToolbarContextMenu(MenuView *menuView, Source source, BrowserWindow *browser,
+	AppServices *appServices) :
+	MenuBase(menuView, appServices->GetAcceleratorManager()),
+	m_browser(browser),
+	m_appServices(appServices)
 {
-	BuildMenu(source, app->GetResourceLoader());
+	BuildMenu(source, appServices->GetResourceLoader());
 
 	m_connections.push_back(m_menuView->AddItemSelectedObserver(
 		std::bind(&ToolbarContextMenu::OnMenuItemSelected, this, std::placeholders::_1)));
@@ -51,18 +53,15 @@ void ToolbarContextMenu::BuildMenu(Source source, const ResourceLoader *resource
 
 	m_menuView->AppendSeparator();
 
-	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_ADDRESS_BAR,
-		m_app->GetConfig()->showAddressBar.get());
-	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_MAIN_TOOLBAR,
-		m_app->GetConfig()->showMainToolbar.get());
+	const auto *config = m_appServices->GetConfig();
+	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_ADDRESS_BAR, config->showAddressBar.get());
+	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_MAIN_TOOLBAR, config->showMainToolbar.get());
 	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_BOOKMARKS_TOOLBAR,
-		m_app->GetConfig()->showBookmarksToolbar.get());
-	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_DRIVES_TOOLBAR,
-		m_app->GetConfig()->showDrivesToolbar.get());
+		config->showBookmarksToolbar.get());
+	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_DRIVES_TOOLBAR, config->showDrivesToolbar.get());
 	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_APPLICATION_TOOLBAR,
-		m_app->GetConfig()->showApplicationToolbar.get());
-	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_LOCK_TOOLBARS,
-		m_app->GetConfig()->lockToolbars.get());
+		config->showApplicationToolbar.get());
+	m_menuView->CheckItem(IDM_TOOLBAR_CONTEXT_MENU_LOCK_TOOLBARS, config->lockToolbars.get());
 
 	if (source == Source::MainToolbar)
 	{
@@ -82,7 +81,7 @@ void ToolbarContextMenu::BuildMenu(Source source, const ResourceLoader *resource
 			resourceLoader->LoadString(IDS_TOOLBAR_CONTEXT_MENU_PASTE_BOOKMARK), {},
 			resourceLoader->LoadString(IDS_TOOLBAR_CONTEXT_MENU_PASTE_BOOKMARK_HELP_TEXT));
 
-		if (!m_app->GetPlatformContext()->GetClipboardStore()->IsDataAvailable(
+		if (!m_appServices->GetPlatformContext()->GetClipboardStore()->IsDataAvailable(
 				BookmarkClipboard::GetClipboardFormat()))
 		{
 			m_menuView->EnableItem(IDM_TOOLBAR_CONTEXT_MENU_PASTE_BOOKMARK, false);
@@ -156,18 +155,17 @@ void ToolbarContextMenu::OnMenuItemSelected(UINT menuItemId)
 
 void ToolbarContextMenu::OnNewBookmarkItem(BookmarkItem::Type type)
 {
-	auto *bookmarkTree = m_app->GetAppServices()->GetBookmarkTree();
+	auto *bookmarkTree = m_appServices->GetBookmarkTree();
 	BookmarkHelper::AddBookmarkItem(bookmarkTree, type, bookmarkTree->GetBookmarksToolbarFolder(),
-		std::nullopt, m_browser->GetHWND(), m_browser,
-		m_app->GetAppServices()->GetAcceleratorManager(), m_app->GetResourceLoader(),
-		m_app->GetPlatformContext());
+		std::nullopt, m_browser->GetHWND(), m_browser, m_appServices->GetAcceleratorManager(),
+		m_appServices->GetResourceLoader(), m_appServices->GetPlatformContext());
 }
 
 void ToolbarContextMenu::OnPasteBookmark()
 {
-	auto *bookmarkTree = m_app->GetAppServices()->GetBookmarkTree();
+	auto *bookmarkTree = m_appServices->GetBookmarkTree();
 	auto *bookmarksToolbarFolder = bookmarkTree->GetBookmarksToolbarFolder();
-	BookmarkHelper::PasteBookmarkItems(m_app->GetPlatformContext()->GetClipboardStore(),
+	BookmarkHelper::PasteBookmarkItems(m_appServices->GetPlatformContext()->GetClipboardStore(),
 		bookmarkTree, bookmarksToolbarFolder, bookmarksToolbarFolder->GetChildren().size());
 }
 
@@ -176,7 +174,7 @@ void ToolbarContextMenu::OnNewApplication()
 	using namespace Applications;
 
 	auto *editorDialog = ApplicationEditorDialog::Create(m_browser->GetHWND(),
-		m_app->GetResourceLoader(), m_app->GetAppServices()->GetApplicationModel(),
+		m_appServices->GetResourceLoader(), m_appServices->GetApplicationModel(),
 		ApplicationEditorDialog::EditDetails::AddNewApplication(
 			std::make_unique<Applications::Application>(L"", L"")));
 	editorDialog->ShowModalDialog();

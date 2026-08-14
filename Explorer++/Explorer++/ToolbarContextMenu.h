@@ -9,7 +9,7 @@
 #include <boost/signals2.hpp>
 #include <vector>
 
-class App;
+class AppServices;
 class BrowserWindow;
 class ResourceLoader;
 
@@ -25,7 +25,8 @@ public:
 		ApplicationToolbar
 	};
 
-	ToolbarContextMenu(MenuView *menuView, Source source, App *app, BrowserWindow *browser);
+	ToolbarContextMenu(MenuView *menuView, Source source, BrowserWindow *browser,
+		AppServices *appServices);
 
 private:
 	void BuildMenu(Source source, const ResourceLoader *resourceLoader);
@@ -35,8 +36,8 @@ private:
 	void OnPasteBookmark();
 	void OnNewApplication();
 
-	App *const m_app;
 	BrowserWindow *const m_browser;
+	AppServices *const m_appServices;
 
 	std::vector<boost::signals2::scoped_connection> m_connections;
 };
