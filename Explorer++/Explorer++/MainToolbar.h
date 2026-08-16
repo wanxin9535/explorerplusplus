@@ -17,7 +17,7 @@
 #include <optional>
 #include <unordered_map>
 
-class App;
+class AppServices;
 class NavigationRequest;
 class ResourceLoader;
 class ShellBrowser;
@@ -26,10 +26,10 @@ class ShellIconLoader;
 class MainToolbar
 {
 public:
-	static MainToolbar *Create(HWND parent, App *app, BrowserWindow *browser,
-		CoreInterface *coreInterface, const ResourceLoader *resourceLoader,
-		ShellIconLoader *shellIconLoader,
-		const std::optional<MainToolbarStorage::MainToolbarButtons> &initialButtons);
+	static MainToolbar *Create(HWND parent,
+		const std::optional<MainToolbarStorage::MainToolbarButtons> &initialButtons,
+		BrowserWindow *browser, AppServices *appServices, CoreInterface *coreInterface,
+		ShellIconLoader *shellIconLoader);
 
 	HWND GetHWND() const;
 
@@ -44,9 +44,10 @@ public:
 	SignalWrapper<MainToolbar, void()> sizeUpdatedSignal;
 
 private:
-	MainToolbar(HWND parent, App *app, BrowserWindow *browser, CoreInterface *coreInterface,
-		const ResourceLoader *resourceLoader, ShellIconLoader *shellIconLoader,
-		const std::optional<MainToolbarStorage::MainToolbarButtons> &initialButtons);
+	MainToolbar(HWND parent,
+		const std::optional<MainToolbarStorage::MainToolbarButtons> &initialButtons,
+		BrowserWindow *browser, AppServices *appServices, CoreInterface *coreInterface,
+		ShellIconLoader *shellIconLoader);
 	~MainToolbar() = default;
 
 	static HWND CreateMainToolbar(HWND parent);
@@ -98,11 +99,12 @@ private:
 	void OnFontOrDpiUpdated();
 
 	const HWND m_hwnd;
-	App *const m_app;
 	BrowserWindow *const m_browser;
+	AppServices *const m_appServices;
 	CoreInterface *const m_coreInterface;
-	const ResourceLoader *const m_resourceLoader;
 	ShellIconLoader *const m_shellIconLoader;
+	const Config *const m_config;
+	const ResourceLoader *const m_resourceLoader;
 
 	wil::unique_himagelist m_imageListSmall;
 	wil::unique_himagelist m_imageListLarge;
