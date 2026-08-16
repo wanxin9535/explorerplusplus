@@ -189,8 +189,8 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 	size initially. */
 	UpdateLayout();
 
-	m_taskbarThumbnails =
-		std::make_unique<TaskbarThumbnails>(m_app, this, GetActivePane()->GetTabContainer());
+	m_taskbarThumbnails = std::make_unique<TaskbarThumbnails>(this,
+		GetActivePane()->GetTabContainer(), m_app->GetAppServices());
 
 	CreateInitialTabs(storageData);
 

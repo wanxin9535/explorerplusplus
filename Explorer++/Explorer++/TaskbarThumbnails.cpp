@@ -9,14 +9,18 @@
 
 #include "stdafx.h"
 #include "TaskbarThumbnails.h"
-#include "App.h"
+#include "AppServices.h"
 #include "BrowserWindow.h"
 #include "CommandLine.h"
 #include "Config.h"
 #include "MainResource.h"
 #include "ResourceHelper.h"
+#include "ResourceLoader.h"
+#include "ShellBrowser/NavigationEvents.h"
+#include "ShellBrowser/ShellBrowserEvents.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "TabContainer.h"
+#include "TabEvents.h"
 #include "../Helper/ProcessHelper.h"
 #include "../Helper/ShellHelper.h"
 #include "../Helper/WindowHelper.h"
@@ -25,18 +29,21 @@
 
 namespace
 {
+
 struct TabProxy
 {
 	TaskbarThumbnails *taskbarThumbnails;
 	int iTabId;
 };
+
 }
 
-TaskbarThumbnails::TaskbarThumbnails(App *app, BrowserWindow *browser, TabContainer *tabContainer) :
-	m_app(app),
+TaskbarThumbnails::TaskbarThumbnails(BrowserWindow *browser, TabContainer *tabContainer,
+	AppServices *appServices) :
 	m_browser(browser),
 	m_tabContainer(tabContainer),
-	m_enabled(app->GetAppServices()->GetConfig()->showTaskbarThumbnails)
+	m_appServices(appServices),
+	m_enabled(appServices->GetConfig()->showTaskbarThumbnails)
 {
 	Initialize();
 }
@@ -117,22 +124,22 @@ void TaskbarThumbnails::OnTaskbarButtonCreated()
 // enabled and the functionality is available.
 void TaskbarThumbnails::SetUpObservers()
 {
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddCreatedObserver(
+	m_connections.push_back(m_appServices->GetTabEvents()->AddCreatedObserver(
 		std::bind_front(&TaskbarThumbnails::CreateTabProxy, this),
 		TabEventScope::ForBrowser(*m_browser)));
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddSelectedObserver(
+	m_connections.push_back(m_appServices->GetTabEvents()->AddSelectedObserver(
 		std::bind_front(&TaskbarThumbnails::OnTabSelectionChanged, this),
 		TabEventScope::ForBrowser(*m_browser)));
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddRemovedObserver(
+	m_connections.push_back(m_appServices->GetTabEvents()->AddRemovedObserver(
 		std::bind_front(&TaskbarThumbnails::RemoveTabProxy, this),
 		TabEventScope::ForBrowser(*m_browser)));
 
 	m_connections.push_back(
-		m_app->GetAppServices()->GetShellBrowserEvents()->AddDirectoryPropertiesChangedObserver(
+		m_appServices->GetShellBrowserEvents()->AddDirectoryPropertiesChangedObserver(
 			std::bind_front(&TaskbarThumbnails::OnDirectoryPropertiesChanged, this),
 			ShellBrowserEventScope::ForBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(m_appServices->GetNavigationEvents()->AddCommittedObserver(
 		std::bind_front(&TaskbarThumbnails::OnNavigationCommitted, this),
 		NavigationEventScope::ForBrowser(*m_browser)));
 }
@@ -142,7 +149,7 @@ void TaskbarThumbnails::SetupJumplistTasks()
 	TCHAR szCurrentProcess[MAX_PATH];
 	GetProcessImageName(GetCurrentProcessId(), szCurrentProcess, std::size(szCurrentProcess));
 
-	std::wstring name = ResourceHelper::LoadString(m_app->GetResourceInstance(), IDS_TASKS_NEWTAB);
+	std::wstring name = m_appServices->GetResourceLoader()->LoadString(IDS_TASKS_NEWTAB);
 
 	/* New tab task. */
 	JumpListTaskInformation jlti;
