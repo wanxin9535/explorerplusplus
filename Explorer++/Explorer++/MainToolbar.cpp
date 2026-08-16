@@ -23,45 +23,70 @@
 #include "../Helper/ImageHelper.h"
 #include <fmt/format.h>
 #include <fmt/xchar.h>
+#include <algorithm>
+
+namespace
+{
 
 const int TOOLBAR_IMAGE_SIZE_SMALL = 16;
 const int TOOLBAR_IMAGE_SIZE_LARGE = 24;
 
-struct ToolbarButtonHash
+struct ButtonIconMapping
 {
-	template <typename T>
-	std::size_t operator()(T t) const
-	{
-		return t._to_integral();
-	}
+	MainToolbarButton button;
+	Icon icon;
 };
 
-const std::unordered_map<MainToolbarButton, Icon, ToolbarButtonHash>
-	TOOLBAR_BUTTON_ICON_MAPPINGS = {
-		{ MainToolbarButton::Back, Icon::Back },
-		{ MainToolbarButton::Forward, Icon::Forward },
-		{ MainToolbarButton::Up, Icon::Up },
-		{ MainToolbarButton::Folders, Icon::FolderTree },
-		{ MainToolbarButton::CopyTo, Icon::CopyTo },
-		{ MainToolbarButton::MoveTo, Icon::MoveTo },
-		{ MainToolbarButton::NewFolder, Icon::NewFolder },
-		{ MainToolbarButton::Copy, Icon::Copy },
-		{ MainToolbarButton::Cut, Icon::Cut },
-		{ MainToolbarButton::Paste, Icon::Paste },
-		{ MainToolbarButton::Delete, Icon::Delete },
-		{ MainToolbarButton::Views, Icon::Views },
-		{ MainToolbarButton::Search, Icon::Search },
-		{ MainToolbarButton::Properties, Icon::Properties },
-		{ MainToolbarButton::Refresh, Icon::Refresh },
-		{ MainToolbarButton::AddBookmark, Icon::AddBookmark },
-		{ MainToolbarButton::NewTab, Icon::NewTab },
-		{ MainToolbarButton::OpenCommandPrompt, Icon::CommandLine },
-		{ MainToolbarButton::Bookmarks, Icon::Bookmarks },
-		{ MainToolbarButton::DeletePermanently, Icon::DeletePermanently },
-		{ MainToolbarButton::SplitFile, Icon::SplitFiles },
-		{ MainToolbarButton::MergeFiles, Icon::MergeFiles },
-		{ MainToolbarButton::CloseTab, Icon::CloseTab },
-	};
+constexpr auto BUTTON_ICON_MAPPINGS = std::to_array<ButtonIconMapping>({
+	{ MainToolbarButton::Back, Icon::Back },
+	{ MainToolbarButton::Forward, Icon::Forward },
+	{ MainToolbarButton::Up, Icon::Up },
+	{ MainToolbarButton::Folders, Icon::FolderTree },
+	{ MainToolbarButton::CopyTo, Icon::CopyTo },
+	{ MainToolbarButton::MoveTo, Icon::MoveTo },
+	{ MainToolbarButton::NewFolder, Icon::NewFolder },
+	{ MainToolbarButton::Copy, Icon::Copy },
+	{ MainToolbarButton::Cut, Icon::Cut },
+	{ MainToolbarButton::Paste, Icon::Paste },
+	{ MainToolbarButton::Delete, Icon::Delete },
+	{ MainToolbarButton::Views, Icon::Views },
+	{ MainToolbarButton::Search, Icon::Search },
+	{ MainToolbarButton::Properties, Icon::Properties },
+	{ MainToolbarButton::Refresh, Icon::Refresh },
+	{ MainToolbarButton::AddBookmark, Icon::AddBookmark },
+	{ MainToolbarButton::NewTab, Icon::NewTab },
+	{ MainToolbarButton::OpenCommandPrompt, Icon::CommandLine },
+	{ MainToolbarButton::Bookmarks, Icon::Bookmarks },
+	{ MainToolbarButton::DeletePermanently, Icon::DeletePermanently },
+	{ MainToolbarButton::SplitFile, Icon::SplitFiles },
+	{ MainToolbarButton::MergeFiles, Icon::MergeFiles },
+	{ MainToolbarButton::CloseTab, Icon::CloseTab },
+});
+
+// There should be an icon for each button. Note that the MainToolbarButton enum contains one
+// additional item - for the separator.
+static_assert(BUTTON_ICON_MAPPINGS.size() == (MainToolbarButton::_size() - 1));
+
+constexpr bool VerifyButtonIconMappings(std::span<const ButtonIconMapping> mappings)
+{
+	// Each button should appear once.
+	for (const auto &mapping : mappings)
+	{
+		auto numMatches = std::ranges::count_if(mappings, [&mapping](const auto &currentMapping)
+			{ return currentMapping.button == mapping.button; });
+
+		if (numMatches > 1)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+static_assert(VerifyButtonIconMappings(BUTTON_ICON_MAPPINGS));
+
+}
 
 MainToolbar *MainToolbar::Create(HWND parent, App *app, BrowserWindow *browser,
 	CoreInterface *coreInterface, const ResourceLoader *resourceLoader,
@@ -101,11 +126,6 @@ HWND MainToolbar::CreateMainToolbar(HWND parent)
 void MainToolbar::Initialize(HWND parent,
 	const std::optional<MainToolbarStorage::MainToolbarButtons> &initialButtons)
 {
-	// Ideally, this constraint would be checked at compile-time, but the size
-	// of TOOLBAR_BUTTON_ICON_MAPPINGS isn't known at compile-time. Note that
-	// the MainToolbarButton enum contains one additional item - for the separator.
-	assert(TOOLBAR_BUTTON_ICON_MAPPINGS.size() == (MainToolbarButton::_size() - 1));
-
 	SendMessage(m_hwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
 
 	UINT dpi = DpiCompatibility::GetInstance().GetDpiForWindow(m_hwnd);
@@ -183,10 +203,10 @@ std::unordered_map<int, int> MainToolbar::SetUpToolbarImageList(HIMAGELIST image
 {
 	std::unordered_map<int, int> imageListMappings;
 
-	for (const auto &mapping : TOOLBAR_BUTTON_ICON_MAPPINGS)
+	for (const auto &mapping : BUTTON_ICON_MAPPINGS)
 	{
 		wil::unique_hbitmap bitmap =
-			m_resourceLoader->LoadBitmapFromPNGForDpi(mapping.second, iconSize, iconSize, dpi);
+			m_resourceLoader->LoadBitmapFromPNGForDpi(mapping.icon, iconSize, iconSize, dpi);
 
 		int imagePosition = ImageList_Add(imageList, bitmap.get(), nullptr);
 
@@ -195,7 +215,7 @@ std::unordered_map<int, int> MainToolbar::SetUpToolbarImageList(HIMAGELIST image
 			continue;
 		}
 
-		imageListMappings.insert({ mapping.first, imagePosition });
+		imageListMappings.insert({ mapping.button, imagePosition });
 	}
 
 	return imageListMappings;
