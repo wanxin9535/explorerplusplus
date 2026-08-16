@@ -25,6 +25,7 @@
 #include "HistoryTracker.h"
 #include "MainRebarStorage.h"
 #include "ModelessDialogList.h"
+#include "NoOpClipboardWatcher.h"
 #include "PlatformContextFake.h"
 #include "ShellBrowser/NavigationEvents.h"
 #include "ShellBrowser/ShellBrowserEvents.h"
@@ -59,6 +60,7 @@ protected:
 	AppServices m_appServices;
 	AppControllerFake m_appController;
 	PlatformContextFake m_platformContext;
+	NoOpClipboardWatcher m_clipboardWatcher;
 
 	FeatureList m_featureList;
 	Config m_config;

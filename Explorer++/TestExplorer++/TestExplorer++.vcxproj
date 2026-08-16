@@ -273,7 +273,7 @@
     <ClCompile Include="SimulatedClipboardStore.cpp" />
     <ClCompile Include="SimulatedClipboardStoreTest.cpp" />
     <ClCompile Include="ClipboardTest.cpp" />
-    <ClCompile Include="ClipboardWatcherTest.cpp" />
+    <ClCompile Include="ClipboardWatcherImplTest.cpp" />
     <ClCompile Include="ColorRuleRegistryStorageTest.cpp" />
     <ClCompile Include="ColorRulesStorageTestHelper.cpp" />
     <ClCompile Include="ColorRuleTest.cpp" />
@@ -465,6 +465,7 @@
     <ClInclude Include="BrowserWindowFactoryFake.h" />
     <ClInclude Include="BrowserWindowFake.h" />
     <ClInclude Include="BrowserWindowMock.h" />
+    <ClInclude Include="NoOpClipboardWatcher.h" />
     <ClInclude Include="CopiedBookmark.h" />
     <ClInclude Include="DarkModeManagerFake.h" />
     <ClInclude Include="SimulatedFileSystemWatcherFactory.h" />

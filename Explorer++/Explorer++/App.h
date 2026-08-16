@@ -35,7 +35,7 @@
 #include "TabList.h"
 #include "TabRestorer.h"
 #include "ThemeManager.h"
-#include "../Helper/ClipboardWatcher.h"
+#include "../Helper/ClipboardWatcherImpl.h"
 #include "../Helper/UniqueResources.h"
 #include <boost/core/noncopyable.hpp>
 #include <wil/resource.h>
@@ -60,7 +60,6 @@ public:
 
 	AppServices *GetAppServices();
 	Runtime *GetRuntime();
-	ClipboardWatcher *GetClipboardWatcher();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
 	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();
@@ -100,7 +99,7 @@ private:
 	PlatformContextImpl m_platformContext;
 	Runtime m_runtime;
 	EventWindow m_eventWindow;
-	ClipboardWatcher m_clipboardWatcher;
+	ClipboardWatcherImpl m_clipboardWatcher;
 	FeatureList m_featureList;
 	AcceleratorManager m_acceleratorManager;
 	Config m_config;

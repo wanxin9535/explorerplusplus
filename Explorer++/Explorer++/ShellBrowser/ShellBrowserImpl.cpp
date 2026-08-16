@@ -120,8 +120,9 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
 		NavigationEventScope::ForShellBrowser(*this), boost::signals2::at_front,
 		SlotGroup::HighPriority));
 
-	m_connections.push_back(m_app->GetClipboardWatcher()->updateSignal.AddObserver(
-		std::bind_front(&ShellBrowserImpl::OnClipboardUpdate, this)));
+	m_connections.push_back(
+		m_app->GetAppServices()->GetClipboardWatcher()->AddClipboardUpdatedObserver(
+			std::bind_front(&ShellBrowserImpl::OnClipboardUpdate, this)));
 
 	m_performingDrag = false;
 	m_nCurrentColumns = 0;

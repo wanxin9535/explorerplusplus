@@ -271,6 +271,7 @@ void App::SetUpAppServices()
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);
+	m_appServices.SetClipboardWatcher(&m_clipboardWatcher);
 	m_appServices.SetColorRuleModel(m_colorRuleModel.get());
 	m_appServices.SetCommandLineSettings(m_commandLineSettings);
 	m_appServices.SetConfig(&m_config);
@@ -336,11 +337,6 @@ AppServices *App::GetAppServices()
 Runtime *App::GetRuntime()
 {
 	return &m_runtime;
-}
-
-ClipboardWatcher *App::GetClipboardWatcher()
-{
-	return &m_clipboardWatcher;
 }
 
 DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()

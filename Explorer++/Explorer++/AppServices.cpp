@@ -95,6 +95,21 @@ void AppServices::SetBrowserWindowFactory(BrowserWindowFactory *browserWindowFac
 	Set(browserWindowFactory);
 }
 
+ClipboardWatcher *AppServices::GetClipboardWatcher()
+{
+	return Get<ClipboardWatcher>();
+}
+
+const ClipboardWatcher *AppServices::GetClipboardWatcher() const
+{
+	return Get<ClipboardWatcher>();
+}
+
+void AppServices::SetClipboardWatcher(ClipboardWatcher *clipboardWatcher)
+{
+	Set(clipboardWatcher);
+}
+
 ColorRuleModel *AppServices::GetColorRuleModel()
 {
 	return Get<ColorRuleModel>();

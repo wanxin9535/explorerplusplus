@@ -780,6 +780,7 @@
     <ClCompile Include="Clipboard.cpp" />
     <ClCompile Include="ClipboardHelper.cpp" />
     <ClCompile Include="ClipboardWatcher.cpp" />
+    <ClCompile Include="ClipboardWatcherImpl.cpp" />
     <ClCompile Include="ComboBox.cpp" />
     <ClCompile Include="ComboBoxHelper.cpp" />
     <ClCompile Include="Console.cpp" />
@@ -887,6 +888,7 @@
     <ClInclude Include="Clipboard.h" />
     <ClInclude Include="ClipboardHelper.h" />
     <ClInclude Include="ClipboardWatcher.h" />
+    <ClInclude Include="ClipboardWatcherImpl.h" />
     <ClInclude Include="ComboBox.h" />
     <ClInclude Include="ComboBoxHelper.h" />
     <ClInclude Include="Console.h" />

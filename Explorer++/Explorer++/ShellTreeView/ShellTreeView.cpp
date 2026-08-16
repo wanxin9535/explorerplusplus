@@ -121,8 +121,9 @@ ShellTreeView::ShellTreeView(HWND hParent, App *app, BrowserWindow *browser,
 	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddSelectedObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this), TabEventScope::ForBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetClipboardWatcher()->updateSignal.AddObserver(
-		std::bind_front(&ShellTreeView::OnClipboardUpdate, this)));
+	m_connections.push_back(
+		m_app->GetAppServices()->GetClipboardWatcher()->AddClipboardUpdatedObserver(
+			std::bind_front(&ShellTreeView::OnClipboardUpdate, this)));
 
 	m_connections.push_back(m_cutCopiedItemManager.cutItemChangedSignal.AddObserver(
 		std::bind_front(&ShellTreeView::OnCutItemChanged, this)));

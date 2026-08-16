@@ -382,7 +382,7 @@
     <ClCompile Include="ColumnHelperTest.cpp">
       <Filter>ShellBrowser</Filter>
     </ClCompile>
-    <ClCompile Include="ClipboardWatcherTest.cpp">
+    <ClCompile Include="ClipboardWatcherImplTest.cpp">
       <Filter>Helper\Data Exchange\Clipboard</Filter>
     </ClCompile>
     <ClCompile Include="BookmarkTreeViewContextMenuTest.cpp">
@@ -974,6 +974,9 @@
     </ClInclude>
     <ClInclude Include="BrowserWindowFactoryFake.h">
       <Filter>Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="NoOpClipboardWatcher.h">
+      <Filter>Helper\Data Exchange\Clipboard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

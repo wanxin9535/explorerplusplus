@@ -163,7 +163,7 @@
     <ClCompile Include="ScopedRedrawDisabler.cpp">
       <Filter>Control Support</Filter>
     </ClCompile>
-    <ClCompile Include="ClipboardWatcher.cpp">
+    <ClCompile Include="ClipboardWatcherImpl.cpp">
       <Filter>Data Exchange\Clipboard</Filter>
     </ClCompile>
     <ClCompile Include="MessageWindowHelper.cpp">
@@ -207,6 +207,9 @@
     </ClCompile>
     <ClCompile Include="PidlHelper.cpp">
       <Filter>Shell</Filter>
+    </ClCompile>
+    <ClCompile Include="ClipboardWatcher.cpp">
+      <Filter>Data Exchange\Clipboard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -414,7 +417,7 @@
     <ClInclude Include="MenuHelpTextHost.h">
       <Filter>Control Support</Filter>
     </ClInclude>
-    <ClInclude Include="ClipboardWatcher.h">
+    <ClInclude Include="ClipboardWatcherImpl.h">
       <Filter>Data Exchange\Clipboard</Filter>
     </ClInclude>
     <ClInclude Include="MessageWindowHelper.h">
@@ -485,6 +488,9 @@
     </ClInclude>
     <ClInclude Include="PidlHelper.h">
       <Filter>Shell</Filter>
+    </ClInclude>
+    <ClInclude Include="ClipboardWatcher.h">
+      <Filter>Data Exchange\Clipboard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

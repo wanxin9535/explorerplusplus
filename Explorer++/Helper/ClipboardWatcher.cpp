@@ -4,32 +4,14 @@
 
 #include "stdafx.h"
 #include "ClipboardWatcher.h"
-#include "MessageWindowHelper.h"
-#include "WindowSubclass.h"
 
-ClipboardWatcher::ClipboardWatcher() :
-	m_hwnd(MessageWindowHelper::CreateMessageOnlyWindow()),
-	m_windowSubclass(std::make_unique<WindowSubclass>(m_hwnd.get(),
-		std::bind_front(&ClipboardWatcher::Subclass, this)))
+boost::signals2::connection ClipboardWatcher::AddClipboardUpdatedObserver(
+	const ClipboardUpdatedSignal::slot_type &observer)
 {
-	auto res = AddClipboardFormatListener(m_hwnd.get());
-	DCHECK(res);
+	return m_clipboardUpdatedSignal.connect(observer);
 }
 
-ClipboardWatcher::~ClipboardWatcher()
+void ClipboardWatcher::NotifyClipboardUpdated()
 {
-	auto res = RemoveClipboardFormatListener(m_hwnd.get());
-	DCHECK(res);
-}
-
-LRESULT ClipboardWatcher::Subclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-	case WM_CLIPBOARDUPDATE:
-		updateSignal.m_signal();
-		return 0;
-	}
-
-	return DefSubclassProc(hwnd, msg, wParam, lParam);
+	m_clipboardUpdatedSignal();
 }

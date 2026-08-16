@@ -11,6 +11,7 @@ class AppController;
 class BookmarkTree;
 class BrowserList;
 class BrowserWindowFactory;
+class ClipboardWatcher;
 class ColorRuleModel;
 struct Config;
 class DarkModeColorProvider;
@@ -83,6 +84,10 @@ public:
 	BrowserWindowFactory *GetBrowserWindowFactory();
 	const BrowserWindowFactory *GetBrowserWindowFactory() const;
 	void SetBrowserWindowFactory(BrowserWindowFactory *browserWindowFactory);
+
+	ClipboardWatcher *GetClipboardWatcher();
+	const ClipboardWatcher *GetClipboardWatcher() const;
+	void SetClipboardWatcher(ClipboardWatcher *clipboardWatcher);
 
 	ColorRuleModel *GetColorRuleModel();
 	const ColorRuleModel *GetColorRuleModel() const;
@@ -164,7 +169,7 @@ private:
 	void Set(T *service);
 
 	std::tuple<AcceleratorManager *, AppController *, Applications::ApplicationModel *,
-		BookmarkTree *, BrowserList *, BrowserWindowFactory *, ColorRuleModel *,
+		BookmarkTree *, BrowserList *, BrowserWindowFactory *, ClipboardWatcher *, ColorRuleModel *,
 		const CommandLine::Settings *, Config *, DarkModeColorProvider *, DarkModeManager *,
 		DriveModel *, FeatureList *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
 		NavigationEvents *, PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *,

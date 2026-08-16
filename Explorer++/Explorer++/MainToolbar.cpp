@@ -149,8 +149,9 @@ void MainToolbar::Initialize(HWND parent,
 	m_connections.push_back(m_app->GetAppServices()->GetConfig()->showFolders.addObserver(
 		std::bind_front(&MainToolbar::OnShowFoldersUpdated, this)));
 
-	m_connections.push_back(m_app->GetClipboardWatcher()->updateSignal.AddObserver(
-		std::bind_front(&MainToolbar::OnClipboardUpdate, this)));
+	m_connections.push_back(
+		m_app->GetAppServices()->GetClipboardWatcher()->AddClipboardUpdatedObserver(
+			std::bind_front(&MainToolbar::OnClipboardUpdate, this)));
 
 	m_fontSetter.fontUpdatedSignal.AddObserver(
 		std::bind_front(&MainToolbar::OnFontOrDpiUpdated, this));

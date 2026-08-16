@@ -4,26 +4,21 @@
 
 #pragma once
 
-#include "SignalWrapper.h"
-#include <wil/resource.h>
-#include <memory>
+#include <boost/signals2.hpp>
 
-class WindowSubclass;
-
-// Allows clients to observe clipboard updates, without having to manually listen for
-// WM_CLIPBOARDUPDATE.
 class ClipboardWatcher
 {
 public:
-	ClipboardWatcher();
-	~ClipboardWatcher();
+	using ClipboardUpdatedSignal = boost::signals2::signal<void()>;
 
-	// Signals
-	SignalWrapper<ClipboardWatcher, void()> updateSignal;
+	virtual ~ClipboardWatcher() = default;
+
+	boost::signals2::connection AddClipboardUpdatedObserver(
+		const ClipboardUpdatedSignal::slot_type &observer);
+
+protected:
+	void NotifyClipboardUpdated();
 
 private:
-	LRESULT Subclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-	const wil::unique_hwnd m_hwnd;
-	const std::unique_ptr<WindowSubclass> m_windowSubclass;
+	ClipboardUpdatedSignal m_clipboardUpdatedSignal;
 };

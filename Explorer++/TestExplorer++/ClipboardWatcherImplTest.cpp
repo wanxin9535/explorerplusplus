@@ -3,7 +3,7 @@
 // See LICENSE in the top level directory
 
 #include "pch.h"
-#include "../Helper/ClipboardWatcher.h"
+#include "../Helper/ClipboardWatcherImpl.h"
 #include "ExecutorWrapper.h"
 #include "MessageLoop.h"
 #include "UIThreadExecutor.h"
@@ -15,12 +15,12 @@
 using namespace std::chrono_literals;
 using namespace testing;
 
-class ClipboardWatcherTest : public Test
+class ClipboardWatcherImplTest : public Test
 {
 protected:
-	ClipboardWatcherTest() : m_uiThreadExecutor(std::make_shared<UIThreadExecutor>())
+	ClipboardWatcherImplTest() : m_uiThreadExecutor(std::make_shared<UIThreadExecutor>())
 	{
-		m_clipboardWatcher.updateSignal.AddObserver(
+		m_clipboardWatcher.AddClipboardUpdatedObserver(
 			[this]
 			{
 				m_callback.Call();
@@ -39,10 +39,10 @@ protected:
 	MessageLoop m_messageLoop;
 	ExecutorWrapper<UIThreadExecutor> m_uiThreadExecutor;
 	MockFunction<void()> m_callback;
-	ClipboardWatcher m_clipboardWatcher;
+	ClipboardWatcherImpl m_clipboardWatcher;
 };
 
-TEST_F(ClipboardWatcherTest, UpdateOnWrite)
+TEST_F(ClipboardWatcherImplTest, UpdateOnWrite)
 {
 	EXPECT_CALL(m_callback, Call());
 
@@ -54,7 +54,7 @@ TEST_F(ClipboardWatcherTest, UpdateOnWrite)
 	WaitForUpdate();
 }
 
-TEST_F(ClipboardWatcherTest, UpdateOnClear)
+TEST_F(ClipboardWatcherImplTest, UpdateOnClear)
 {
 	EXPECT_CALL(m_callback, Call());
 
