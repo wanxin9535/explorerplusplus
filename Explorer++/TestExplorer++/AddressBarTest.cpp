@@ -14,7 +14,6 @@
 #include "ShellBrowser/ShellBrowser.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "Tab.h"
-#include "../Helper/CachedIcons.h"
 #include <gtest/gtest.h>
 #include <memory>
 
@@ -25,18 +24,16 @@ class AddressBarTest : public BrowserTestBase
 protected:
 	AddressBarTest() :
 		m_runtime(BuildRuntimeForTest()),
-		m_cachedIcons(std::make_shared<CachedIcons>(10)),
-		m_iconFetcher(std::make_shared<AsyncIconFetcher>(&m_runtime, m_cachedIcons)),
+		m_iconFetcher(&m_runtime, &m_cachedIcons),
 		m_browser(AddBrowser()),
 		m_addressBarView(AddressBarView::Create(m_browser->GetHWND(), &m_config)),
 		m_addressBar(AddressBar::Create(m_addressBarView, m_browser, &m_tabEvents,
-			&m_shellBrowserEvents, &m_navigationEvents, &m_runtime, m_iconFetcher))
+			&m_shellBrowserEvents, &m_navigationEvents, &m_runtime, &m_iconFetcher))
 	{
 	}
 
 	Runtime m_runtime;
-	std::shared_ptr<CachedIcons> m_cachedIcons;
-	std::shared_ptr<AsyncIconFetcher> m_iconFetcher;
+	AsyncIconFetcher m_iconFetcher;
 
 	BrowserWindowFake *const m_browser;
 	AddressBarView *const m_addressBarView;

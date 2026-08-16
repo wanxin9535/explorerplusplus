@@ -21,7 +21,7 @@
 
 AddressBar *AddressBar::Create(AddressBarView *view, BrowserWindow *browser, TabEvents *tabEvents,
 	ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
-	const Runtime *runtime, std::shared_ptr<AsyncIconFetcher> iconFetcher)
+	const Runtime *runtime, AsyncIconFetcher *iconFetcher)
 {
 	return new AddressBar(view, browser, tabEvents, shellBrowserEvents, navigationEvents, runtime,
 		iconFetcher);
@@ -29,7 +29,7 @@ AddressBar *AddressBar::Create(AddressBarView *view, BrowserWindow *browser, Tab
 
 AddressBar::AddressBar(AddressBarView *view, BrowserWindow *browser, TabEvents *tabEvents,
 	ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
-	const Runtime *runtime, std::shared_ptr<AsyncIconFetcher> iconFetcher) :
+	const Runtime *runtime, AsyncIconFetcher *iconFetcher) :
 	m_view(view),
 	m_browser(browser),
 	m_runtime(runtime),

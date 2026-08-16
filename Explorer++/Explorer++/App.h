@@ -8,6 +8,7 @@
 #include "AppController.h"
 #include "AppServices.h"
 #include "ApplicationModel.h"
+#include "AsyncIconFetcher.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
 #include "BrowserWindowFactoryImpl.h"
@@ -35,6 +36,7 @@
 #include "TabList.h"
 #include "TabRestorer.h"
 #include "ThemeManager.h"
+#include "../Helper/CachedIcons.h"
 #include "../Helper/ClipboardWatcherImpl.h"
 #include "../Helper/UniqueResources.h"
 #include <boost/core/noncopyable.hpp>
@@ -42,8 +44,6 @@
 #include <memory>
 #include <vector>
 
-class AsyncIconFetcher;
-class CachedIcons;
 class ColorRuleModel;
 class ResourceLoader;
 struct WindowStorageData;
@@ -61,7 +61,7 @@ public:
 	AppServices *GetAppServices();
 	Runtime *GetRuntime();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
-	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();
+	AsyncIconFetcher *GetIconFetcher();
 	HINSTANCE GetResourceInstance() const;
 	ThemeManager *GetThemeManager();
 
@@ -107,8 +107,8 @@ private:
 	DarkModeManagerImpl m_darkModeManager;
 	DarkModeColorProvider m_darkModeColorProvider;
 	ThemeManager m_themeManager;
-	std::shared_ptr<CachedIcons> m_cachedIcons;
-	std::shared_ptr<AsyncIconFetcher> m_iconFetcher;
+	CachedIcons m_cachedIcons;
+	AsyncIconFetcher m_iconFetcher;
 	BrowserList m_browserList;
 	BrowserWindowFactoryImpl m_browserWindowFactory;
 	ModelessDialogList m_modelessDialogList;

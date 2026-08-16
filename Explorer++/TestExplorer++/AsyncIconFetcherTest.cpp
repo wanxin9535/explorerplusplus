@@ -19,8 +19,8 @@ class AsyncIconFetcherTest : public Test
 protected:
 	AsyncIconFetcherTest() :
 		m_runtime(BuildRuntimeForTest()),
-		m_cachedIcons(std::make_shared<CachedIcons>(10)),
-		m_iconFetcher(&m_runtime, m_cachedIcons)
+		m_cachedIcons(10),
+		m_iconFetcher(&m_runtime, &m_cachedIcons)
 	{
 	}
 
@@ -48,7 +48,7 @@ protected:
 	}
 
 	Runtime m_runtime;
-	std::shared_ptr<CachedIcons> m_cachedIcons;
+	CachedIcons m_cachedIcons;
 	AsyncIconFetcher m_iconFetcher;
 };
 
@@ -63,7 +63,7 @@ TEST_F(AsyncIconFetcherTest, GetIconIndexAsync)
 	ASSERT_NE(iconInfo, std::nullopt);
 
 	// Once an icon has been found, the cache should be updated.
-	auto cachedIconIndex = m_cachedIcons->MaybeGetIconIndex(path);
+	auto cachedIconIndex = m_cachedIcons.MaybeGetIconIndex(path);
 	EXPECT_EQ(cachedIconIndex, iconInfo->iconIndex);
 }
 
@@ -80,6 +80,6 @@ TEST_F(AsyncIconFetcherTest, GetIconIndexAsyncStop)
 	EXPECT_EQ(iconInfo, std::nullopt);
 
 	// Since the request was stopped before it completed, the cache shouldn't have been updated.
-	auto cachedIconIndex = m_cachedIcons->MaybeGetIconIndex(path);
+	auto cachedIconIndex = m_cachedIcons.MaybeGetIconIndex(path);
 	EXPECT_EQ(cachedIconIndex, std::nullopt);
 }

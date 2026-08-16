@@ -9,8 +9,7 @@
 #include "../Helper/Pidl.h"
 #include "../Helper/ShellHelper.h"
 
-AsyncIconFetcher::AsyncIconFetcher(const Runtime *runtime,
-	std::shared_ptr<CachedIcons> cachedIcons) :
+AsyncIconFetcher::AsyncIconFetcher(const Runtime *runtime, CachedIcons *cachedIcons) :
 	m_runtime(runtime),
 	m_cachedIcons(cachedIcons)
 {
@@ -21,7 +20,15 @@ AsyncIconFetcher::AsyncIconFetcher(const Runtime *runtime,
 concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIconIndexAsync(
 	PCIDLIST_ABSOLUTE pidl, std::stop_token stopToken)
 {
-	co_await ResumeOnComStaThread(m_runtime);
+	return GetIconIndexAsyncImpl(m_weakPtrFactory.GetWeakPtr(), pidl, stopToken);
+}
+
+concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIconIndexAsyncImpl(
+	WeakPtr<AsyncIconFetcher> weakSelf, PidlAbsolute pidl, std::stop_token stopToken)
+{
+	auto *runtime = weakSelf->m_runtime;
+
+	co_await ResumeOnComStaThread(runtime);
 
 	if (stopToken.stop_requested())
 	{
@@ -29,7 +36,7 @@ concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIco
 	}
 
 	PidlAbsolute updatedPidl;
-	HRESULT hr = UpdatePidl(pidl, updatedPidl);
+	HRESULT hr = UpdatePidl(pidl.Raw(), updatedPidl);
 
 	PCIDLIST_ABSOLUTE finalPidl;
 
@@ -39,7 +46,7 @@ concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIco
 	}
 	else
 	{
-		finalPidl = pidl;
+		finalPidl = pidl.Raw();
 	}
 
 	SHFILEINFO shfi;
@@ -53,7 +60,12 @@ concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIco
 
 	DestroyIcon(shfi.hIcon);
 
-	co_await ResumeOnUiThread(m_runtime);
+	co_await ResumeOnUiThread(runtime);
+
+	if (stopToken.stop_requested() || !weakSelf)
+	{
+		co_return std::nullopt;
+	}
 
 	std::wstring itemPath;
 	hr = GetDisplayName(finalPidl, SHGDN_FORPARSING, itemPath);
@@ -62,7 +74,7 @@ concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIco
 
 	if (SUCCEEDED(hr))
 	{
-		m_cachedIcons->AddOrUpdateIcon(itemPath, iconInfo.iconIndex);
+		weakSelf->m_cachedIcons->AddOrUpdateIcon(itemPath, iconInfo.iconIndex);
 	}
 
 	co_return iconInfo;

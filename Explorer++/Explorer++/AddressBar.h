@@ -32,7 +32,7 @@ class AddressBar : private AddressBarViewDelegate, public BrowserCommandTarget
 public:
 	static AddressBar *Create(AddressBarView *view, BrowserWindow *browser, TabEvents *tabEvents,
 		ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
-		const Runtime *runtime, std::shared_ptr<AsyncIconFetcher> iconFetcher);
+		const Runtime *runtime, AsyncIconFetcher *iconFetcher);
 
 	AddressBarView *GetView() const;
 
@@ -52,7 +52,7 @@ private:
 
 	AddressBar(AddressBarView *view, BrowserWindow *browser, TabEvents *tabEvents,
 		ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
-		const Runtime *runtime, std::shared_ptr<AsyncIconFetcher> iconFetcher);
+		const Runtime *runtime, AsyncIconFetcher *iconFetcher);
 	~AddressBar() = default;
 
 	void Initialize(TabEvents *tabEvents, ShellBrowserEvents *shellBrowserEvents,
@@ -77,7 +77,7 @@ private:
 	AddressBarView *const m_view;
 	BrowserWindow *const m_browser;
 	const Runtime *const m_runtime;
-	std::shared_ptr<AsyncIconFetcher> m_iconFetcher;
+	AsyncIconFetcher *const m_iconFetcher;
 	ScopedBrowserCommandTarget m_commandTarget;
 	std::vector<boost::signals2::scoped_connection> m_connections;
 	std::unique_ptr<ScopedStopSource> m_scopedStopSource;

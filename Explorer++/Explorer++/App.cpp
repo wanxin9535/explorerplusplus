@@ -45,8 +45,8 @@ App::App(const CommandLine::Settings *commandLineSettings) :
 	m_directoryWatcherFactory(&m_config, &m_shellWatcherManager, m_runtime.GetUiThreadExecutor()),
 	m_darkModeManager(&m_eventWindow, &m_config),
 	m_themeManager(&m_darkModeManager, &m_darkModeColorProvider),
-	m_cachedIcons(std::make_shared<CachedIcons>(MAX_CACHED_ICONS)),
-	m_iconFetcher(std::make_shared<AsyncIconFetcher>(&m_runtime, m_cachedIcons)),
+	m_cachedIcons(MAX_CACHED_ICONS),
+	m_iconFetcher(&m_runtime, &m_cachedIcons),
 	m_browserWindowFactory(this),
 	m_colorRuleModel(ColorRuleModelFactory::Create()),
 	m_resourceInstance(GetModuleHandle(nullptr)),
@@ -271,7 +271,7 @@ void App::SetUpAppServices()
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);
-	m_appServices.SetCachedIcons(m_cachedIcons.get());
+	m_appServices.SetCachedIcons(&m_cachedIcons);
 	m_appServices.SetClipboardWatcher(&m_clipboardWatcher);
 	m_appServices.SetColorRuleModel(m_colorRuleModel.get());
 	m_appServices.SetCommandLineSettings(m_commandLineSettings);
@@ -345,9 +345,9 @@ DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()
 	return &m_directoryWatcherFactory;
 }
 
-std::shared_ptr<AsyncIconFetcher> App::GetIconFetcher()
+AsyncIconFetcher *App::GetIconFetcher()
 {
-	return m_iconFetcher;
+	return &m_iconFetcher;
 }
 
 HINSTANCE App::GetResourceInstance() const
