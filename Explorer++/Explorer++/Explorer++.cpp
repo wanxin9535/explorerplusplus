@@ -54,7 +54,7 @@ Explorerplusplus::Explorerplusplus(App *app, const WindowStorageData *storageDat
 		ACCELERATOR_PLUGIN_START_ID, ACCELERATOR_PLUGIN_END_ID),
 	m_shellBrowserFactory(app, this, &m_fileActionHandler),
 	m_config(app->GetAppServices()->GetConfig()),
-	m_iconFetcher(m_hwnd, m_app->GetCachedIcons()),
+	m_iconFetcher(m_hwnd, m_app->GetAppServices()->GetCachedIcons()),
 	m_shellIconLoader(&m_iconFetcher),
 	m_applicationExecutor(this)
 {

@@ -61,7 +61,6 @@ public:
 	AppServices *GetAppServices();
 	Runtime *GetRuntime();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
-	CachedIcons *GetCachedIcons();
 	std::shared_ptr<AsyncIconFetcher> GetIconFetcher();
 	HINSTANCE GetResourceInstance() const;
 	ThemeManager *GetThemeManager();

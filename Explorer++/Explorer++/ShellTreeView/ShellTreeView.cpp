@@ -67,7 +67,7 @@ ShellTreeView::ShellTreeView(HWND hParent, App *app, BrowserWindow *browser,
 	m_subfoldersThreadPool(1, std::bind(CoInitializeEx, nullptr, COINIT_APARTMENTTHREADED),
 		CoUninitialize),
 	m_subfoldersResultIDCounter(0),
-	m_cachedIcons(app->GetCachedIcons()),
+	m_cachedIcons(app->GetAppServices()->GetCachedIcons()),
 	m_dropExpandItem(nullptr)
 {
 	TreeView_SetExtendedStyle(m_hTreeView, TVS_EX_DOUBLEBUFFER, TVS_EX_DOUBLEBUFFER);

@@ -271,6 +271,7 @@ void App::SetUpAppServices()
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);
+	m_appServices.SetCachedIcons(m_cachedIcons.get());
 	m_appServices.SetClipboardWatcher(&m_clipboardWatcher);
 	m_appServices.SetColorRuleModel(m_colorRuleModel.get());
 	m_appServices.SetCommandLineSettings(m_commandLineSettings);
@@ -342,11 +343,6 @@ Runtime *App::GetRuntime()
 DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()
 {
 	return &m_directoryWatcherFactory;
-}
-
-CachedIcons *App::GetCachedIcons()
-{
-	return m_cachedIcons.get();
 }
 
 std::shared_ptr<AsyncIconFetcher> App::GetIconFetcher()

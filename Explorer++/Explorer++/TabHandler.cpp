@@ -27,7 +27,7 @@ void Explorerplusplus::InitializeTabs()
 	auto *tabContainer = TabContainer::Create(mainTabView, this, &m_shellBrowserFactory,
 		m_app->GetAppServices()->GetTabEvents(), m_app->GetAppServices()->GetShellBrowserEvents(),
 		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetAppServices()->GetTabRestorer(),
-		m_app->GetCachedIcons(), m_app->GetAppServices()->GetBookmarkTree(),
+		m_app->GetAppServices()->GetCachedIcons(), m_app->GetAppServices()->GetBookmarkTree(),
 		m_app->GetAppServices()->GetAcceleratorManager(), m_config,
 		m_app->GetAppServices()->GetResourceLoader(),
 		m_app->GetAppServices()->GetPlatformContext());

@@ -34,6 +34,7 @@ void BrowserTestBase::SetUpAppServices()
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);
+	m_appServices.SetCachedIcons(&m_cachedIcons);
 	m_appServices.SetClipboardWatcher(&m_clipboardWatcher);
 	m_appServices.SetColorRuleModel(&m_colorRuleModel);
 	m_appServices.SetCommandLineSettings(&m_commandLineSettings);

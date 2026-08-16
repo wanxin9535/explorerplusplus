@@ -11,6 +11,7 @@ class AppController;
 class BookmarkTree;
 class BrowserList;
 class BrowserWindowFactory;
+class CachedIcons;
 class ClipboardWatcher;
 class ColorRuleModel;
 struct Config;
@@ -84,6 +85,10 @@ public:
 	BrowserWindowFactory *GetBrowserWindowFactory();
 	const BrowserWindowFactory *GetBrowserWindowFactory() const;
 	void SetBrowserWindowFactory(BrowserWindowFactory *browserWindowFactory);
+
+	CachedIcons *GetCachedIcons();
+	const CachedIcons *GetCachedIcons() const;
+	void SetCachedIcons(CachedIcons *cachedIcons);
 
 	ClipboardWatcher *GetClipboardWatcher();
 	const ClipboardWatcher *GetClipboardWatcher() const;
@@ -169,10 +174,10 @@ private:
 	void Set(T *service);
 
 	std::tuple<AcceleratorManager *, AppController *, Applications::ApplicationModel *,
-		BookmarkTree *, BrowserList *, BrowserWindowFactory *, ClipboardWatcher *, ColorRuleModel *,
-		const CommandLine::Settings *, Config *, DarkModeColorProvider *, DarkModeManager *,
-		DriveModel *, FeatureList *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
-		NavigationEvents *, PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *,
-		TabList *, TabRestorer *>
+		BookmarkTree *, BrowserList *, BrowserWindowFactory *, CachedIcons *, ClipboardWatcher *,
+		ColorRuleModel *, const CommandLine::Settings *, Config *, DarkModeColorProvider *,
+		DarkModeManager *, DriveModel *, FeatureList *, FrequentLocationsModel *, HistoryModel *,
+		ModelessDialogList *, NavigationEvents *, PlatformContext *, ResourceLoader *,
+		ShellBrowserEvents *, TabEvents *, TabList *, TabRestorer *>
 		m_services;
 };

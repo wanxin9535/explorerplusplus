@@ -95,6 +95,21 @@ void AppServices::SetBrowserWindowFactory(BrowserWindowFactory *browserWindowFac
 	Set(browserWindowFactory);
 }
 
+CachedIcons *AppServices::GetCachedIcons()
+{
+	return Get<CachedIcons>();
+}
+
+const CachedIcons *AppServices::GetCachedIcons() const
+{
+	return Get<CachedIcons>();
+}
+
+void AppServices::SetCachedIcons(CachedIcons *cachedIcons)
+{
+	Set(cachedIcons);
+}
+
 ClipboardWatcher *AppServices::GetClipboardWatcher()
 {
 	return Get<ClipboardWatcher>();
