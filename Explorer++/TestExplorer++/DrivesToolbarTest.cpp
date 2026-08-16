@@ -6,9 +6,6 @@
 #include "DrivesToolbar.h"
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
-#include "DriveEnumeratorFake.h"
-#include "DriveModel.h"
-#include "DriveWatcherFake.h"
 #include "DrivesToolbarView.h"
 #include "PidlTestHelper.h"
 #include "ShellBrowser/ShellBrowser.h"
@@ -21,14 +18,15 @@ class DrivesToolbarTest : public BrowserTestBase
 {
 protected:
 	DrivesToolbarTest() :
-		m_driveModel(std::make_unique<DriveEnumeratorFake>(
-						 std::set<std::wstring>{ L"C:\\", L"F:\\", L"H:\\" }),
-			&m_driveWatcher),
 		m_browser(AddBrowser()),
-		m_drivesToolbarView(DrivesToolbarView::Create(m_browser->GetHWND(), &m_config)),
-		m_drivesToolbar(
-			DrivesToolbar::Create(m_drivesToolbarView, &m_driveModel, m_browser, nullptr))
+		m_drivesToolbarView(DrivesToolbarView::Create(m_browser->GetHWND(), &m_config))
 	{
+		m_driveWatcher.AddDrive(L"C:\\");
+		m_driveWatcher.AddDrive(L"F:\\");
+		m_driveWatcher.AddDrive(L"H:\\");
+
+		m_drivesToolbar =
+			DrivesToolbar::Create(m_drivesToolbarView, &m_driveModel, m_browser, nullptr);
 	}
 
 	void VerifyToolbarButtons()
@@ -44,12 +42,9 @@ protected:
 		}
 	}
 
-	DriveWatcherFake m_driveWatcher;
-	DriveModel m_driveModel;
-
 	BrowserWindowFake *const m_browser;
 	DrivesToolbarView *const m_drivesToolbarView;
-	DrivesToolbar *const m_drivesToolbar;
+	DrivesToolbar *m_drivesToolbar = nullptr;
 };
 
 TEST_F(DrivesToolbarTest, InitialDrives)

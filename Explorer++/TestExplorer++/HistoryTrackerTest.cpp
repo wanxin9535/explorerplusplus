@@ -6,20 +6,12 @@
 #include "HistoryTracker.h"
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
-#include "HistoryModel.h"
 #include <gtest/gtest.h>
 
 using namespace testing;
 
 class HistoryTrackerTest : public BrowserTestBase
 {
-protected:
-	HistoryTrackerTest() : m_historyTracker(&m_historyModel, &m_navigationEvents)
-	{
-	}
-
-	HistoryModel m_historyModel;
-	HistoryTracker m_historyTracker;
 };
 
 TEST_F(HistoryTrackerTest, CheckNavigationsAdded)

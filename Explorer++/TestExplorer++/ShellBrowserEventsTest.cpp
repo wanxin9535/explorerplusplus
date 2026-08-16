@@ -26,8 +26,6 @@ protected:
 	{
 	}
 
-	ShellBrowserEvents m_shellBrowserEvents;
-
 	BrowserWindowFake *const m_browser1;
 	Tab *const m_tab1;
 	Tab *const m_tab2;

@@ -15,7 +15,6 @@ class TabListTest : public BrowserTestBase
 {
 protected:
 	TabListTest() :
-		m_tabList(&m_tabEvents),
 		m_browser1(AddBrowser()),
 		m_tab1(m_browser1->AddTab(L"c:\\")),
 		m_tab2(m_browser1->AddTab(L"c:\\")),
@@ -23,8 +22,6 @@ protected:
 		m_tab3(m_browser2->AddTab(L"c:\\"))
 	{
 	}
-
-	TabList m_tabList;
 
 	BrowserWindowFake *const m_browser1;
 	Tab *const m_tab1;

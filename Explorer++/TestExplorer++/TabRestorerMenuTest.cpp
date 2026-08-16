@@ -9,7 +9,6 @@
 #include "MenuViewFake.h"
 #include "MenuViewFakeTestHelper.h"
 #include "ShellIconLoaderFake.h"
-#include "TabRestorer.h"
 #include <gtest/gtest.h>
 
 using namespace testing;
@@ -17,11 +16,6 @@ using namespace testing;
 class TabRestorerMenuTest : public BrowserTestBase
 {
 protected:
-	TabRestorerMenuTest() : m_tabRestorer(&m_tabEvents, &m_browserList)
-	{
-	}
-
-	TabRestorer m_tabRestorer;
 	ShellIconLoaderFake m_shellIconLoader;
 
 	MenuViewFake m_menuView;

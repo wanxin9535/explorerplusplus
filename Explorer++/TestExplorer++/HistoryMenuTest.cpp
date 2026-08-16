@@ -6,8 +6,6 @@
 #include "HistoryMenu.h"
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
-#include "HistoryModel.h"
-#include "HistoryTracker.h"
 #include "MenuViewFake.h"
 #include "MenuViewFakeTestHelper.h"
 #include "ShellIconLoaderFake.h"
@@ -17,14 +15,11 @@ class HistoryMenuTest : public BrowserTestBase
 {
 protected:
 	HistoryMenuTest() :
-		m_historyTracker(&m_historyModel, &m_navigationEvents),
 		m_browser(AddBrowser()),
 		m_menu(&m_menuView, &m_acceleratorManager, &m_historyModel, m_browser, &m_shellIconLoader)
 	{
 	}
 
-	HistoryModel m_historyModel;
-	HistoryTracker m_historyTracker;
 	ShellIconLoaderFake m_shellIconLoader;
 
 	BrowserWindowFake *const m_browser;

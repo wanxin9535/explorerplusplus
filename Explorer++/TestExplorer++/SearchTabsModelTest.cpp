@@ -10,7 +10,6 @@
 #include "PidlTestHelper.h"
 #include "ShellBrowser/ShellBrowser.h"
 #include "ShellBrowser/ShellNavigationController.h"
-#include "TabList.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -20,12 +19,10 @@ class SearchTabsModelTest : public BrowserTestBase
 {
 protected:
 	SearchTabsModelTest() :
-		m_tabList(&m_tabEvents),
 		m_model(&m_tabList, &m_tabEvents, &m_shellBrowserEvents, &m_navigationEvents)
 	{
 	}
 
-	TabList m_tabList;
 	SearchTabsModel m_model;
 };
 

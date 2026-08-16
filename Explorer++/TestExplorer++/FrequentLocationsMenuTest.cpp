@@ -6,8 +6,6 @@
 #include "FrequentLocationsMenu.h"
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
-#include "FrequentLocationsModel.h"
-#include "FrequentLocationsTracker.h"
 #include "MenuViewFake.h"
 #include "MenuViewFakeTestHelper.h"
 #include "PidlTestHelper.h"
@@ -18,16 +16,12 @@ class FrequentLocationsMenuTest : public BrowserTestBase
 {
 protected:
 	FrequentLocationsMenuTest() :
-		m_frequentLocationsModel(m_platformContext.GetSystemClock()),
-		m_frequentLocationsTracker(&m_frequentLocationsModel, &m_navigationEvents),
 		m_browser(AddBrowser()),
 		m_menu(&m_menuView, &m_acceleratorManager, &m_frequentLocationsModel, m_browser,
 			&m_shellIconLoader)
 	{
 	}
 
-	FrequentLocationsModel m_frequentLocationsModel;
-	FrequentLocationsTracker m_frequentLocationsTracker;
 	ShellIconLoaderFake m_shellIconLoader;
 
 	BrowserWindowFake *const m_browser;

@@ -15,12 +15,6 @@ using namespace testing;
 
 class TabRestorerTest : public BrowserTestBase
 {
-protected:
-	TabRestorerTest() : m_tabRestorer(&m_tabEvents, &m_browserList)
-	{
-	}
-
-	TabRestorer m_tabRestorer;
 };
 
 TEST_F(TabRestorerTest, InitialState)
