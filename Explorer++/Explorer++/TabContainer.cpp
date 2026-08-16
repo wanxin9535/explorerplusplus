@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "TabContainer.h"
+#include "AppServices.h"
 #include "Bookmarks/BookmarkHelper.h"
 #include "BrowserWindow.h"
 #include "Config.h"
@@ -180,39 +181,22 @@ private:
 }
 
 TabContainer *TabContainer::Create(MainTabView *view, BrowserWindow *browser,
-	ShellBrowserFactory *shellBrowserFactory, TabEvents *tabEvents,
-	ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
-	TabRestorer *tabRestorer, CachedIcons *cachedIcons, BookmarkTree *bookmarkTree,
-	const AcceleratorManager *acceleratorManager, const Config *config,
-	const ResourceLoader *resourceLoader, PlatformContext *platformContext)
+	ShellBrowserFactory *shellBrowserFactory, AppServices *appServices)
 {
-	return new TabContainer(view, browser, shellBrowserFactory, tabEvents, shellBrowserEvents,
-		navigationEvents, tabRestorer, cachedIcons, bookmarkTree, acceleratorManager, config,
-		resourceLoader, platformContext);
+	return new TabContainer(view, browser, shellBrowserFactory, appServices);
 }
 
 TabContainer::TabContainer(MainTabView *view, BrowserWindow *browser,
-	ShellBrowserFactory *shellBrowserFactory, TabEvents *tabEvents,
-	ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
-	TabRestorer *tabRestorer, CachedIcons *cachedIcons, BookmarkTree *bookmarkTree,
-	const AcceleratorManager *acceleratorManager, const Config *config,
-	const ResourceLoader *resourceLoader, PlatformContext *platformContext) :
+	ShellBrowserFactory *shellBrowserFactory, AppServices *appServices) :
 	ShellDropTargetWindow(view->GetHWND()),
 	m_view(view),
 	m_browser(browser),
 	m_shellBrowserFactory(shellBrowserFactory),
-	m_tabEvents(tabEvents),
-	m_shellBrowserEvents(shellBrowserEvents),
-	m_navigationEvents(navigationEvents),
-	m_tabRestorer(tabRestorer),
+	m_appServices(appServices),
+	m_tabEvents(appServices->GetTabEvents()),
 	m_timerManager(m_hwnd),
-	m_iconFetcher(m_hwnd, cachedIcons),
-	m_cachedIcons(cachedIcons),
-	m_bookmarkTree(bookmarkTree),
-	m_acceleratorManager(acceleratorManager),
-	m_config(config),
-	m_resourceLoader(resourceLoader),
-	m_platformContext(platformContext),
+	m_iconFetcher(m_hwnd, appServices->GetCachedIcons()),
+	m_config(appServices->GetConfig()),
 	m_iPreviousTabSelectionId(-1)
 {
 	Initialize(GetParent(m_view->GetHWND()));
@@ -252,7 +236,8 @@ void TabContainer::OnTabRightClicked(Tab *tab, const MouseEvent &event)
 	CHECK(res);
 
 	PopupMenuView popupMenu(m_browser);
-	TabContextMenu menu(&popupMenu, m_acceleratorManager, tab, this, m_tabEvents, m_resourceLoader);
+	TabContextMenu menu(&popupMenu, m_appServices->GetAcceleratorManager(), tab, this, m_tabEvents,
+		m_appServices->GetResourceLoader());
 	popupMenu.Show(m_hwnd, ptScreen);
 }
 
@@ -282,8 +267,9 @@ void TabContainer::ShowBackgroundContextMenu(const POINT &ptClient)
 	ClientToScreen(m_hwnd, &ptScreen);
 
 	PopupMenuView popupMenu(m_browser);
-	TabContainerBackgroundContextMenu menu(&popupMenu, m_acceleratorManager, this, m_tabRestorer,
-		m_bookmarkTree, m_browser, m_resourceLoader, m_platformContext);
+	TabContainerBackgroundContextMenu menu(&popupMenu, m_appServices->GetAcceleratorManager(), this,
+		m_appServices->GetTabRestorer(), m_appServices->GetBookmarkTree(), m_browser,
+		m_appServices->GetResourceLoader(), m_appServices->GetPlatformContext());
 	popupMenu.Show(m_hwnd, ptScreen);
 }
 
@@ -429,8 +415,9 @@ Tab &TabContainer::SetUpNewTab(Tab &tab, NavigateParams &navigateParams,
 		}
 	}
 
-	auto tabItem = std::make_unique<MainTabViewItem>(&tab, m_tabEvents, m_shellBrowserEvents,
-		m_navigationEvents, &m_iconFetcher, m_cachedIcons, m_view->GetImageListManager());
+	auto tabItem = std::make_unique<MainTabViewItem>(&tab, m_tabEvents,
+		m_appServices->GetShellBrowserEvents(), m_appServices->GetNavigationEvents(),
+		&m_iconFetcher, m_appServices->GetCachedIcons(), m_view->GetImageListManager());
 	tabItem->SetDoubleClickedCallback(
 		std::bind_front(&TabContainer::OnTabDoubleClicked, this, &tab));
 	tabItem->SetMiddleClickedCallback(

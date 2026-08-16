@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "BrowserWindowFake.h"
+#include "AppServices.h"
 #include "Config.h"
 #include "MainRebarStorage.h"
 #include "MainTabView.h"
@@ -15,17 +16,15 @@
 #include "TabStorage.h"
 #include "WindowStorage.h"
 
-BrowserWindowFake::BrowserWindowFake(const Config *config, TabEvents *tabEvents,
-	ShellBrowserEvents *shellBrowserEvents, NavigationEvents *navigationEvents,
-	CachedIcons *cachedIcons, BookmarkTree *bookmarkTree,
-	const AcceleratorManager *acceleratorManager, const ResourceLoader *resourceLoader,
-	PlatformContext *platformContext, const WindowStorageData &storageData) :
-	m_config(config),
+BrowserWindowFake::BrowserWindowFake(const WindowStorageData &storageData,
+	AppServices *appServices) :
+	m_config(appServices->GetConfig()),
 	m_window(CreateBrowserWindow()),
-	m_shellBrowserFactory(this, navigationEvents),
-	m_tabContainer(TabContainer::Create(MainTabView::Create(m_window.get(), config, resourceLoader),
-		this, &m_shellBrowserFactory, tabEvents, shellBrowserEvents, navigationEvents, nullptr,
-		cachedIcons, bookmarkTree, acceleratorManager, config, resourceLoader, platformContext))
+	m_shellBrowserFactory(this, appServices->GetNavigationEvents()),
+	m_tabContainer(
+		TabContainer::Create(MainTabView::Create(m_window.get(), appServices->GetConfig(),
+								 appServices->GetResourceLoader()),
+			this, &m_shellBrowserFactory, appServices))
 {
 	WINDOWPLACEMENT placement = {};
 	placement.length = sizeof(placement);
