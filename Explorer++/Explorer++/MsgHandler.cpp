@@ -698,7 +698,7 @@ void Explorerplusplus::OnCloneWindow()
 void Explorerplusplus::OnDisplayWindowRClick(POINT *ptClient)
 {
 	wil::unique_hmenu parentMenu(
-		LoadMenu(m_app->GetResourceInstance(), MAKEINTRESOURCE(IDR_DISPLAYWINDOW_RCLICK)));
+		LoadMenu(m_resourceInstance, MAKEINTRESOURCE(IDR_DISPLAYWINDOW_RCLICK)));
 
 	if (!parentMenu)
 	{

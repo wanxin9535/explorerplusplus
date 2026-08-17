@@ -11,10 +11,11 @@ class App;
 class BrowserWindowFactoryImpl : public BrowserWindowFactory
 {
 public:
-	BrowserWindowFactoryImpl(App *app);
+	BrowserWindowFactoryImpl(App *app, HINSTANCE resourceInstance);
 
 	BrowserWindow *CreateBrowserWindow(const WindowStorageData *storageData) override;
 
 private:
 	App *const m_app;
+	const HINSTANCE m_resourceInstance;
 };

@@ -38,13 +38,16 @@
 #include <fmt/format.h>
 #include <fmt/xchar.h>
 
-Explorerplusplus *Explorerplusplus::Create(App *app, const WindowStorageData *storageData)
+Explorerplusplus *Explorerplusplus::Create(App *app, HINSTANCE resourceInstance,
+	const WindowStorageData *storageData)
 {
-	return new Explorerplusplus(app, storageData);
+	return new Explorerplusplus(app, resourceInstance, storageData);
 }
 
-Explorerplusplus::Explorerplusplus(App *app, const WindowStorageData *storageData) :
+Explorerplusplus::Explorerplusplus(App *app, HINSTANCE resourceInstance,
+	const WindowStorageData *storageData) :
 	m_app(app),
+	m_resourceInstance(resourceInstance),
 	m_hwnd(CreateMainWindow(storageData)),
 	m_commandController(this, app->GetAppServices()),
 	m_tabBarBackgroundBrush(CreateSolidBrush(TAB_BAR_DARK_MODE_BACKGROUND_COLOR)),
@@ -52,7 +55,7 @@ Explorerplusplus::Explorerplusplus(App *app, const WindowStorageData *storageDat
 	m_acceleratorUpdater(app->GetAppServices()->GetAcceleratorManager()),
 	m_pluginCommandManager(app->GetAppServices()->GetAcceleratorManager(),
 		ACCELERATOR_PLUGIN_START_ID, ACCELERATOR_PLUGIN_END_ID),
-	m_shellBrowserFactory(app, this, &m_fileActionHandler),
+	m_shellBrowserFactory(app, resourceInstance, this, &m_fileActionHandler),
 	m_config(app->GetAppServices()->GetConfig()),
 	m_iconFetcher(m_hwnd, m_app->GetAppServices()->GetCachedIcons()),
 	m_shellIconLoader(&m_iconFetcher),

@@ -7,9 +7,10 @@
 #include "ShellBrowserImpl.h"
 #include "BrowserWindow.h"
 
-ShellBrowserFactoryImpl::ShellBrowserFactoryImpl(App *app, BrowserWindow *browser,
-	FileActionHandler *fileActionHandler) :
+ShellBrowserFactoryImpl::ShellBrowserFactoryImpl(App *app, HINSTANCE resourceInstance,
+	BrowserWindow *browser, FileActionHandler *fileActionHandler) :
 	m_app(app),
+	m_resourceInstance(resourceInstance),
 	m_browser(browser),
 	m_fileActionHandler(fileActionHandler)
 {
@@ -18,13 +19,13 @@ ShellBrowserFactoryImpl::ShellBrowserFactoryImpl(App *app, BrowserWindow *browse
 std::unique_ptr<ShellBrowser> ShellBrowserFactoryImpl::Create(const PidlAbsolute &initialPidl,
 	const FolderSettings &folderSettings, const FolderColumns *initialColumns)
 {
-	return std::make_unique<ShellBrowserImpl>(m_browser->GetHWND(), m_app, m_browser,
-		m_fileActionHandler, initialPidl, folderSettings, initialColumns);
+	return std::make_unique<ShellBrowserImpl>(m_browser->GetHWND(), m_app, m_resourceInstance,
+		m_browser, m_fileActionHandler, initialPidl, folderSettings, initialColumns);
 }
 
 std::unique_ptr<ShellBrowser> ShellBrowserFactoryImpl::CreateFromPreserved(
 	const PreservedShellBrowser &preservedShellBrowser)
 {
-	return std::make_unique<ShellBrowserImpl>(m_browser->GetHWND(), m_app, m_browser,
-		m_fileActionHandler, preservedShellBrowser);
+	return std::make_unique<ShellBrowserImpl>(m_browser->GetHWND(), m_app, m_resourceInstance,
+		m_browser, m_fileActionHandler, preservedShellBrowser);
 }

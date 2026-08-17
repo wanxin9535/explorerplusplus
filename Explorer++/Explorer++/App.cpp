@@ -46,9 +46,7 @@ App::App(const CommandLine::Settings *commandLineSettings) :
 	m_themeManager(&m_darkModeManager, &m_darkModeColorProvider),
 	m_cachedIcons(MAX_CACHED_ICONS),
 	m_iconFetcher(&m_runtime, &m_cachedIcons),
-	m_browserWindowFactory(this),
 	m_colorRuleModel(ColorRuleModelFactory::Create()),
-	m_resourceInstance(GetModuleHandle(nullptr)),
 	m_processManager(&m_browserList),
 	m_tabList(&m_tabEvents),
 	m_tabRestorer(&m_tabEvents, &m_browserList),
@@ -143,7 +141,7 @@ void App::SetUpSession()
 	SetUpAppServices();
 
 	SessionRestorer sessionRestorer(&m_config, &m_featureList, &m_browserList,
-		&m_browserWindowFactory);
+		m_browserWindowFactory.get());
 	sessionRestorer.Restore(windows);
 }
 
@@ -251,15 +249,16 @@ void App::SetUpLanguageResourceInstance()
 	}
 
 	m_config.language = languageInfo.language;
-	m_resourceInstance = languageInfo.resourceInstance;
+	auto resourceInstance = languageInfo.resourceInstance;
 
 	if (LanguageHelper::IsLanguageRTL(m_config.language))
 	{
 		SetProcessDefaultLayout(LAYOUT_RTL);
 	}
 
-	m_resourceLoader = std::make_unique<Win32ResourceLoader>(m_resourceInstance, m_config.iconSet,
+	m_resourceLoader = std::make_unique<Win32ResourceLoader>(resourceInstance, m_config.iconSet,
 		&m_darkModeManager, &m_themeManager);
+	m_browserWindowFactory = std::make_unique<BrowserWindowFactoryImpl>(this, resourceInstance);
 }
 
 void App::SetUpAppServices()
@@ -270,7 +269,7 @@ void App::SetUpAppServices()
 	m_appServices.SetAsyncIconFetcher(&m_iconFetcher);
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
-	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);
+	m_appServices.SetBrowserWindowFactory(m_browserWindowFactory.get());
 	m_appServices.SetCachedIcons(&m_cachedIcons);
 	m_appServices.SetClipboardWatcher(&m_clipboardWatcher);
 	m_appServices.SetColorRuleModel(m_colorRuleModel.get());
@@ -339,11 +338,6 @@ AppServices *App::GetAppServices()
 DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()
 {
 	return &m_directoryWatcherFactory;
-}
-
-HINSTANCE App::GetResourceInstance() const
-{
-	return m_resourceInstance;
 }
 
 ThemeManager *App::GetThemeManager()

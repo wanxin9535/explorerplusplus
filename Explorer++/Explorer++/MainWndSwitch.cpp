@@ -31,6 +31,7 @@
 #include "MainToolbarButtons.h"
 #include "MenuRanges.h"
 #include "ModelessDialogHelper.h"
+#include "ResourceLoader.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "ShellBrowser/SortModes.h"
 #include "ShellBrowser/ViewModes.h"
@@ -112,7 +113,6 @@ LRESULT Explorerplusplus::WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LP
 	{
 		DWFolderSizeCompletion *pDWFolderSizeCompletion = nullptr;
 		TCHAR szSizeString[64];
-		TCHAR szTotalSize[64];
 		BOOL bValid = FALSE;
 
 		pDWFolderSizeCompletion = (DWFolderSizeCompletion *) wParam;
@@ -146,11 +146,10 @@ LRESULT Explorerplusplus::WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LP
 			auto folderSizeText =
 				FormatSizeString(pDWFolderSizeCompletion->liFolderSize.QuadPart, displayFormat);
 
-			LoadString(m_app->GetResourceInstance(), IDS_GENERAL_TOTALSIZE, szTotalSize,
-				std::size(szTotalSize));
-
-			StringCchPrintf(szSizeString, std::size(szSizeString), _T("%s: %s"), szTotalSize,
-				folderSizeText.c_str());
+			auto totalSizeText =
+				m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GENERAL_TOTALSIZE);
+			StringCchPrintf(szSizeString, std::size(szSizeString), _T("%s: %s"),
+				totalSizeText.c_str(), folderSizeText.c_str());
 
 			/* TODO: The line index should be stored in some other (variable) way. */
 			DisplayWindow_SetLine(m_displayWindow->GetHWND(), FOLDER_SIZE_LINE_INDEX, szSizeString);
@@ -892,7 +891,7 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 			[this, hwnd]
 			{
 				return ManageBookmarksDialog::Create(m_app->GetAppServices()->GetResourceLoader(),
-					m_app->GetResourceInstance(), hwnd, m_app->GetAppServices()->GetBookmarkTree(),
+					m_resourceInstance, hwnd, m_app->GetAppServices()->GetBookmarkTree(),
 					m_app->GetAppServices()->GetBrowserList(), m_config,
 					m_app->GetAppServices()->GetAcceleratorManager(), &m_iconFetcher,
 					m_app->GetAppServices()->GetPlatformContext());

@@ -67,9 +67,9 @@ class ShellBrowserImpl :
 	private boost::noncopyable
 {
 public:
-	ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
+	ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance, BrowserWindow *browser,
 		FileActionHandler *fileActionHandler, const PreservedShellBrowser &preservedShellBrowser);
-	ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
+	ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance, BrowserWindow *browser,
 		FileActionHandler *fileActionHandler, const PidlAbsolute &initialPidl,
 		const FolderSettings &folderSettings, const FolderColumns *initialColumns);
 	~ShellBrowserImpl();
@@ -358,7 +358,7 @@ private:
 	static const UINT WM_APP_THUMBNAIL_RESULT_READY = WM_APP + 151;
 	static const UINT WM_APP_INFO_TIP_READY = WM_APP + 152;
 
-	ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
+	ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance, BrowserWindow *browser,
 		FileActionHandler *fileActionHandler, const FolderSettings &folderSettings,
 		const FolderColumns *initialColumns);
 

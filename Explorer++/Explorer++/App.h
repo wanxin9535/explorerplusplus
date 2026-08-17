@@ -60,7 +60,6 @@ public:
 
 	AppServices *GetAppServices();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
-	HINSTANCE GetResourceInstance() const;
 	ThemeManager *GetThemeManager();
 
 private:
@@ -108,12 +107,11 @@ private:
 	CachedIcons m_cachedIcons;
 	AsyncIconFetcherImpl m_iconFetcher;
 	BrowserList m_browserList;
-	BrowserWindowFactoryImpl m_browserWindowFactory;
+	std::unique_ptr<BrowserWindowFactoryImpl> m_browserWindowFactory;
 	ModelessDialogList m_modelessDialogList;
 	BookmarkTree m_bookmarkTree;
 	std::unique_ptr<ColorRuleModel> m_colorRuleModel;
 	Applications::ApplicationModel m_applicationModel;
-	HINSTANCE m_resourceInstance;
 	std::unique_ptr<ResourceLoader> m_resourceLoader;
 	ProcessManager m_processManager;
 	TabEvents m_tabEvents;

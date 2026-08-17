@@ -80,7 +80,8 @@ class Explorerplusplus : public BrowserWindow, public CoreInterface, public Plug
 public:
 	static constexpr wchar_t WINDOW_CLASS_NAME[] = L"Explorer++";
 
-	static Explorerplusplus *Create(App *app, const WindowStorageData *storageData = nullptr);
+	static Explorerplusplus *Create(App *app, HINSTANCE resourceInstance,
+		const WindowStorageData *storageData = nullptr);
 
 	// BrowserWindow
 	HWND GetHWND() const override;
@@ -170,7 +171,7 @@ private:
 		std::unique_ptr<MenuBase> menu;
 	};
 
-	Explorerplusplus(App *app, const WindowStorageData *storageData);
+	Explorerplusplus(App *app, HINSTANCE resourceInstance, const WindowStorageData *storageData);
 	~Explorerplusplus();
 
 	static HWND CreateMainWindow(const WindowStorageData *storageData);
@@ -349,6 +350,7 @@ private:
 	void FinishShutdown();
 
 	App *const m_app;
+	const HINSTANCE m_resourceInstance;
 	HWND m_hwnd;
 
 	BrowserCommandController m_commandController;
