@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 // clang-format off
-#include "ThemeManager.h"
+#include "ThemeManagerImpl.h"
 // clang-format on
 #include "Explorer++.h"
 #include "DarkModeColorProvider.h"
@@ -21,16 +21,16 @@
 #include <wil/resource.h>
 #include <vssym32.h>
 
-ThemeManager::ThemeManager(DarkModeManager *darkModeManager,
+ThemeManagerImpl::ThemeManagerImpl(DarkModeManager *darkModeManager,
 	const DarkModeColorProvider *darkModeColorProvider) :
 	m_darkModeManager(darkModeManager),
 	m_darkModeColorProvider(darkModeColorProvider)
 {
 	m_connections.push_back(darkModeManager->AddDarkModeStatusChangedObserver(
-		std::bind(&ThemeManager::OnDarkModeStatusChanged, this)));
+		std::bind(&ThemeManagerImpl::OnDarkModeStatusChanged, this)));
 }
 
-void ThemeManager::OnDarkModeStatusChanged()
+void ThemeManagerImpl::OnDarkModeStatusChanged()
 {
 	m_windowSubclasses.clear();
 
@@ -40,7 +40,7 @@ void ThemeManager::OnDarkModeStatusChanged()
 	}
 }
 
-void ThemeManager::TrackTopLevelWindow(HWND hwnd)
+void ThemeManagerImpl::TrackTopLevelWindow(HWND hwnd)
 {
 	ApplyThemeToWindowAndChildren(hwnd);
 
@@ -48,20 +48,20 @@ void ThemeManager::TrackTopLevelWindow(HWND hwnd)
 	DCHECK(didInsert);
 }
 
-void ThemeManager::UntrackTopLevelWindow(HWND hwnd)
+void ThemeManagerImpl::UntrackTopLevelWindow(HWND hwnd)
 {
 	auto numErased = m_trackedTopLevelWindows.erase(hwnd);
 	DCHECK_EQ(numErased, 1u);
 }
 
-void ThemeManager::ApplyThemeToWindowAndChildren(HWND hwnd)
+void ThemeManagerImpl::ApplyThemeToWindowAndChildren(HWND hwnd)
 {
 	ApplyThemeToWindow(hwnd);
 	EnumChildWindows(
 		hwnd,
 		[](HWND childWindow, LPARAM lParam)
 		{
-			auto themeManager = reinterpret_cast<ThemeManager *>(lParam);
+			auto themeManager = reinterpret_cast<ThemeManagerImpl *>(lParam);
 			return themeManager->ProcessChildWindow(childWindow);
 		},
 		reinterpret_cast<LPARAM>(this));
@@ -77,7 +77,7 @@ void ThemeManager::ApplyThemeToWindowAndChildren(HWND hwnd)
 		GetCurrentThreadId(),
 		[](HWND threadWindow, LPARAM lParam)
 		{
-			auto themeManager = reinterpret_cast<ThemeManager *>(lParam);
+			auto themeManager = reinterpret_cast<ThemeManagerImpl *>(lParam);
 			return themeManager->ProcessThreadWindow(threadWindow);
 		},
 		reinterpret_cast<LPARAM>(this));
@@ -85,13 +85,13 @@ void ThemeManager::ApplyThemeToWindowAndChildren(HWND hwnd)
 	RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_ERASE | RDW_FRAME);
 }
 
-BOOL ThemeManager::ProcessChildWindow(HWND hwnd)
+BOOL ThemeManagerImpl::ProcessChildWindow(HWND hwnd)
 {
 	ApplyThemeToWindow(hwnd);
 	return TRUE;
 }
 
-BOOL ThemeManager::ProcessThreadWindow(HWND hwnd)
+BOOL ThemeManagerImpl::ProcessThreadWindow(HWND hwnd)
 {
 	WCHAR className[256];
 	auto res = GetClassName(hwnd, className, std::size(className));
@@ -112,7 +112,7 @@ BOOL ThemeManager::ProcessThreadWindow(HWND hwnd)
 	return TRUE;
 }
 
-void ThemeManager::ApplyThemeToWindow(HWND hwnd)
+void ThemeManagerImpl::ApplyThemeToWindow(HWND hwnd)
 {
 	bool enableDarkMode = m_darkModeManager->IsDarkModeEnabled();
 	m_darkModeManager->AllowDarkModeForWindow(hwnd, enableDarkMode);
@@ -198,7 +198,7 @@ void ThemeManager::ApplyThemeToWindow(HWND hwnd)
 	}
 }
 
-void ThemeManager::ApplyThemeToMainWindow(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToMainWindow(HWND hwnd, bool enableDarkMode)
 {
 	// There's no need to owner-draw the menu bar if dark mode isn't supported (in practice, this
 	// means that the menu bar will only be owner-drawn on Windows 10 and 11). Additionally,
@@ -220,7 +220,7 @@ void ThemeManager::ApplyThemeToMainWindow(HWND hwnd, bool enableDarkMode)
 	DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &dark, sizeof(dark));
 
 	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hwnd,
-		std::bind_front(&ThemeManager::MainWindowSubclass, this)));
+		std::bind_front(&ThemeManagerImpl::MainWindowSubclass, this)));
 
 	auto mainMenu = GetMenu(hwnd);
 	int numItems = GetMenuItemCount(mainMenu);
@@ -261,7 +261,7 @@ void ThemeManager::ApplyThemeToMainWindow(HWND hwnd, bool enableDarkMode)
 	CHECK(res);
 }
 
-void ThemeManager::ApplyThemeToDialog(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToDialog(HWND hwnd, bool enableDarkMode)
 {
 	BOOL dark = enableDarkMode;
 	DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &dark, sizeof(dark));
@@ -269,20 +269,20 @@ void ThemeManager::ApplyThemeToDialog(HWND hwnd, bool enableDarkMode)
 	if (enableDarkMode)
 	{
 		m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hwnd,
-			std::bind_front(&ThemeManager::DialogSubclass, this)));
+			std::bind_front(&ThemeManagerImpl::DialogSubclass, this)));
 	}
 }
 
-void ThemeManager::ApplyThemeToTabControl(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToTabControl(HWND hwnd, bool enableDarkMode)
 {
 	if (enableDarkMode)
 	{
 		m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hwnd,
-			std::bind_front(&ThemeManager::TabControlSubclass, this)));
+			std::bind_front(&ThemeManagerImpl::TabControlSubclass, this)));
 	}
 }
 
-void ThemeManager::ApplyThemeToListView(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToListView(HWND hwnd, bool enableDarkMode)
 {
 	DWORD extendedStyle = ListView_GetExtendedListViewStyle(hwnd);
 
@@ -323,16 +323,16 @@ void ThemeManager::ApplyThemeToListView(HWND hwnd, bool enableDarkMode)
 	if (enableDarkMode)
 	{
 		m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hwnd,
-			std::bind_front(&ThemeManager::ListViewSubclass, this)));
+			std::bind_front(&ThemeManagerImpl::ListViewSubclass, this)));
 	}
 }
 
-void ThemeManager::ApplyThemeToHeader(HWND hwnd)
+void ThemeManagerImpl::ApplyThemeToHeader(HWND hwnd)
 {
 	SetWindowTheme(hwnd, L"ItemsView", nullptr);
 }
 
-void ThemeManager::ApplyThemeToTreeView(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToTreeView(HWND hwnd, bool enableDarkMode)
 {
 	// When in dark mode, this theme sets the following colors correctly:
 	//
@@ -365,7 +365,7 @@ void ThemeManager::ApplyThemeToTreeView(HWND hwnd, bool enableDarkMode)
 	TreeView_SetInsertMarkColor(hwnd, insertMarkColor);
 }
 
-void ThemeManager::ApplyThemeToRichEdit(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToRichEdit(HWND hwnd, bool enableDarkMode)
 {
 	COLORREF backgroundColor;
 	COLORREF textColor;
@@ -391,16 +391,16 @@ void ThemeManager::ApplyThemeToRichEdit(HWND hwnd, bool enableDarkMode)
 	SendMessage(hwnd, EM_SETCHARFORMAT, SCF_ALL, reinterpret_cast<LPARAM>(&charFormat));
 }
 
-void ThemeManager::ApplyThemeToRebar(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToRebar(HWND hwnd, bool enableDarkMode)
 {
 	if (enableDarkMode)
 	{
 		m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hwnd,
-			std::bind_front(&ThemeManager::RebarSubclass, this)));
+			std::bind_front(&ThemeManagerImpl::RebarSubclass, this)));
 	}
 }
 
-void ThemeManager::ApplyThemeToToolbar(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToToolbar(HWND hwnd, bool enableDarkMode)
 {
 	// Without this, the DarkMode::Toolbar theme may be applied in dark mode. That theme is
 	// problematic (e.g. it results in dropdown buttons being drawn incorrectly, see #519). This
@@ -443,20 +443,20 @@ void ThemeManager::ApplyThemeToToolbar(HWND hwnd, bool enableDarkMode)
 		// That shouldn't be too much of an issue, since there's only a limited number of toolbars,
 		// so the number of extraneous subclasses won't be very high.
 		m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(parent,
-			std::bind_front(&ThemeManager::ToolbarParentSubclass, this)));
+			std::bind_front(&ThemeManagerImpl::ToolbarParentSubclass, this)));
 	}
 }
 
-void ThemeManager::ApplyThemeToComboBoxEx(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToComboBoxEx(HWND hwnd, bool enableDarkMode)
 {
 	if (enableDarkMode)
 	{
 		m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hwnd,
-			std::bind_front(&ThemeManager::ComboBoxExSubclass, this)));
+			std::bind_front(&ThemeManagerImpl::ComboBoxExSubclass, this)));
 	}
 }
 
-void ThemeManager::ApplyThemeToComboBox(HWND hwnd)
+void ThemeManagerImpl::ApplyThemeToComboBox(HWND hwnd)
 {
 	HWND parent = GetParent(hwnd);
 	CHECK(parent);
@@ -474,7 +474,7 @@ void ThemeManager::ApplyThemeToComboBox(HWND hwnd)
 	}
 }
 
-void ThemeManager::ApplyThemeToEditControl(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToEditControl(HWND hwnd, bool enableDarkMode)
 {
 	HWND parent = GetParent(hwnd);
 	CHECK(parent);
@@ -498,7 +498,7 @@ void ThemeManager::ApplyThemeToEditControl(HWND hwnd, bool enableDarkMode)
 	}
 }
 
-void ThemeManager::ApplyThemeToButton(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToButton(HWND hwnd, bool enableDarkMode)
 {
 	SetWindowTheme(hwnd, L"Explorer", nullptr);
 
@@ -509,17 +509,17 @@ void ThemeManager::ApplyThemeToButton(HWND hwnd, bool enableDarkMode)
 		if (enableDarkMode)
 		{
 			m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hwnd,
-				std::bind_front(&ThemeManager::GroupBoxSubclass, this)));
+				std::bind_front(&ThemeManagerImpl::GroupBoxSubclass, this)));
 		}
 	}
 }
 
-void ThemeManager::ApplyThemeToTooltips(HWND hwnd)
+void ThemeManagerImpl::ApplyThemeToTooltips(HWND hwnd)
 {
 	SetWindowTheme(hwnd, L"Explorer", nullptr);
 }
 
-void ThemeManager::ApplyThemeToStatusBar(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToStatusBar(HWND hwnd, bool enableDarkMode)
 {
 	if (enableDarkMode)
 	{
@@ -533,7 +533,7 @@ void ThemeManager::ApplyThemeToStatusBar(HWND hwnd, bool enableDarkMode)
 	}
 }
 
-void ThemeManager::ApplyThemeToScrollBar(HWND hwnd, bool enableDarkMode)
+void ThemeManagerImpl::ApplyThemeToScrollBar(HWND hwnd, bool enableDarkMode)
 {
 	auto style = GetWindowLongPtr(hwnd, GWL_STYLE);
 
@@ -542,19 +542,19 @@ void ThemeManager::ApplyThemeToScrollBar(HWND hwnd, bool enableDarkMode)
 		if (enableDarkMode)
 		{
 			m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hwnd,
-				std::bind_front(&ThemeManager::ScrollBarSubclass, this)));
+				std::bind_front(&ThemeManagerImpl::ScrollBarSubclass, this)));
 		}
 	}
 }
 
-void ThemeManager::ApplyThemeToUpDownControl(HWND hwnd)
+void ThemeManagerImpl::ApplyThemeToUpDownControl(HWND hwnd)
 {
 	// Note that this style is only implemented in Windows 11. That means the control will appear in
 	// its normal light style on Windows 10 when dark mode is enabled.
 	SetWindowTheme(hwnd, L"Explorer", nullptr);
 }
 
-LRESULT ThemeManager::MainWindowSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::MainWindowSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	static wil::unique_htheme theme(OpenThemeData(hwnd, L"Menu"));
 	static constexpr DWORD drawFlagsBase = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
@@ -803,7 +803,7 @@ LRESULT ThemeManager::MainWindowSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPA
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-HBRUSH ThemeManager::GetMenuBarBackgroundBrush(bool enableDarkMode)
+HBRUSH ThemeManagerImpl::GetMenuBarBackgroundBrush(bool enableDarkMode)
 {
 	if (enableDarkMode)
 	{
@@ -826,7 +826,7 @@ HBRUSH ThemeManager::GetMenuBarBackgroundBrush(bool enableDarkMode)
 	}
 }
 
-bool ThemeManager::ShouldAlwaysShowAccessKeys()
+bool ThemeManagerImpl::ShouldAlwaysShowAccessKeys()
 {
 	BOOL alwaysShow;
 	BOOL res = SystemParametersInfo(SPI_GETKEYBOARDCUES, 0, &alwaysShow, 0);
@@ -840,7 +840,7 @@ bool ThemeManager::ShouldAlwaysShowAccessKeys()
 	return alwaysShow;
 }
 
-LRESULT ThemeManager::DialogSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::DialogSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -873,7 +873,7 @@ LRESULT ThemeManager::DialogSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT ThemeManager::ToolbarParentSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::ToolbarParentSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -893,7 +893,7 @@ LRESULT ThemeManager::ToolbarParentSubclass(HWND hwnd, UINT msg, WPARAM wParam, 
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT ThemeManager::OnCustomDraw(NMCUSTOMDRAW *customDraw)
+LRESULT ThemeManagerImpl::OnCustomDraw(NMCUSTOMDRAW *customDraw)
 {
 	WCHAR className[256];
 	auto res = GetClassName(customDraw->hdr.hwndFrom, className, std::size(className));
@@ -916,7 +916,7 @@ LRESULT ThemeManager::OnCustomDraw(NMCUSTOMDRAW *customDraw)
 	return CDRF_DODEFAULT;
 }
 
-LRESULT ThemeManager::OnButtonCustomDraw(NMCUSTOMDRAW *customDraw)
+LRESULT ThemeManagerImpl::OnButtonCustomDraw(NMCUSTOMDRAW *customDraw)
 {
 	switch (customDraw->dwDrawStage)
 	{
@@ -1004,7 +1004,7 @@ LRESULT ThemeManager::OnButtonCustomDraw(NMCUSTOMDRAW *customDraw)
 	return CDRF_DODEFAULT;
 }
 
-LRESULT ThemeManager::OnToolbarCustomDraw(NMTBCUSTOMDRAW *customDraw)
+LRESULT ThemeManagerImpl::OnToolbarCustomDraw(NMTBCUSTOMDRAW *customDraw)
 {
 	switch (customDraw->nmcd.dwDrawStage)
 	{
@@ -1036,7 +1036,7 @@ LRESULT ThemeManager::OnToolbarCustomDraw(NMTBCUSTOMDRAW *customDraw)
 	return CDRF_DODEFAULT;
 }
 
-LRESULT ThemeManager::ComboBoxExSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::ComboBoxExSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -1053,7 +1053,7 @@ LRESULT ThemeManager::ComboBoxExSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPA
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT ThemeManager::TabControlSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::TabControlSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -1120,7 +1120,7 @@ LRESULT ThemeManager::TabControlSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPA
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT ThemeManager::ListViewSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::ListViewSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -1150,7 +1150,7 @@ LRESULT ThemeManager::ListViewSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT ThemeManager::RebarSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::RebarSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -1170,7 +1170,7 @@ LRESULT ThemeManager::RebarSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT ThemeManager::GroupBoxSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::GroupBoxSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -1231,7 +1231,7 @@ LRESULT ThemeManager::GroupBoxSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 	return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT ThemeManager::ScrollBarSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT ThemeManagerImpl::ScrollBarSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{

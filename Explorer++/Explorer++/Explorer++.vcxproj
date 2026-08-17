@@ -1346,7 +1346,7 @@
     <ClCompile Include="TabParentItemsMenu.cpp" />
     <ClCompile Include="TabRegistryStorage.cpp" />
     <ClCompile Include="TabXmlStorage.cpp" />
-    <ClCompile Include="ThemeManager.cpp" />
+    <ClCompile Include="ThemeManagerImpl.cpp" />
     <ClCompile Include="DefaultSettingsOptionsPage.cpp" />
     <ClCompile Include="DriveEnumeratorImpl.cpp" />
     <ClCompile Include="DriveModel.cpp" />
@@ -1692,6 +1692,7 @@
     <ClInclude Include="Storage.h" />
     <ClInclude Include="TabList.h" />
     <ClInclude Include="TestHelper.h" />
+    <ClInclude Include="ThemeManager.h" />
     <ClInclude Include="ToolbarContextMenu.h" />
     <ClInclude Include="TreeView.h" />
     <ClInclude Include="TreeViewAdapter.h" />
@@ -1732,7 +1733,7 @@
     <ClInclude Include="TabRegistryStorage.h" />
     <ClInclude Include="TabStorage.h" />
     <ClInclude Include="TabXmlStorage.h" />
-    <ClInclude Include="ThemeManager.h" />
+    <ClInclude Include="ThemeManagerImpl.h" />
     <ClInclude Include="DefaultSettingsOptionsPage.h" />
     <ClInclude Include="DialogStorageHelper.h" />
     <ClInclude Include="DriveEnumerator.h" />

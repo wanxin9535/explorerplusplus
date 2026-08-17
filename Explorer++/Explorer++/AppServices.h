@@ -31,6 +31,7 @@ class ShellBrowserEvents;
 class TabEvents;
 class TabList;
 class TabRestorer;
+class ThemeManager;
 
 namespace Applications
 {
@@ -171,6 +172,10 @@ public:
 	const TabRestorer *GetTabRestorer() const;
 	void SetTabRestorer(TabRestorer *tabRestorer);
 
+	ThemeManager *GetThemeManager();
+	const ThemeManager *GetThemeManager() const;
+	void SetThemeManager(ThemeManager *themeManager);
+
 	void CheckFullyInitialized() const;
 
 private:
@@ -189,6 +194,6 @@ private:
 		DarkModeColorProvider *, DarkModeManager *, DriveModel *, FeatureList *,
 		FrequentLocationsModel *, HistoryModel *, ModelessDialogList *, NavigationEvents *,
 		PlatformContext *, ResourceLoader *, Runtime *, ShellBrowserEvents *, TabEvents *,
-		TabList *, TabRestorer *>
+		TabList *, TabRestorer *, ThemeManager *>
 		m_services;
 };

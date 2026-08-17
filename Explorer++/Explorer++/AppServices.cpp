@@ -405,6 +405,21 @@ void AppServices::SetTabRestorer(TabRestorer *tabRestorer)
 	Set(tabRestorer);
 }
 
+ThemeManager *AppServices::GetThemeManager()
+{
+	return Get<ThemeManager>();
+}
+
+const ThemeManager *AppServices::GetThemeManager() const
+{
+	return Get<ThemeManager>();
+}
+
+void AppServices::SetThemeManager(ThemeManager *themeManager)
+{
+	Set(themeManager);
+}
+
 void AppServices::CheckFullyInitialized() const
 {
 	std::apply([](const auto *...services) { CHECK((services && ...)); }, m_services);

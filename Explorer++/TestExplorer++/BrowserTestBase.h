@@ -27,6 +27,7 @@
 #include "MainRebarStorage.h"
 #include "ModelessDialogList.h"
 #include "NoOpClipboardWatcher.h"
+#include "NoOpThemeManager.h"
 #include "PlatformContextFake.h"
 #include "Runtime.h"
 #include "ShellBrowser/NavigationEvents.h"
@@ -71,6 +72,7 @@ protected:
 	ModelessDialogList m_modelessDialogList;
 	DarkModeManagerFake m_darkModeManager;
 	DarkModeColorProvider m_darkModeColorProvider;
+	NoOpThemeManager m_themeManager;
 	BookmarkTree m_bookmarkTree;
 	CachedIcons m_cachedIcons;
 	AsyncIconFetcherFake m_iconFetcher;

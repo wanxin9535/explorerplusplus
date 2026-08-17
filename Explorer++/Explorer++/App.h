@@ -35,7 +35,7 @@
 #include "TabEvents.h"
 #include "TabList.h"
 #include "TabRestorer.h"
-#include "ThemeManager.h"
+#include "ThemeManagerImpl.h"
 #include "../Helper/CachedIcons.h"
 #include "../Helper/ClipboardWatcherImpl.h"
 #include "../Helper/UniqueResources.h"
@@ -60,7 +60,6 @@ public:
 
 	AppServices *GetAppServices();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
-	ThemeManager *GetThemeManager();
 
 private:
 	// Represents the maximum number of icons that can be cached. This cache is shared between
@@ -103,7 +102,7 @@ private:
 	DirectoryWatcherFactoryImpl m_directoryWatcherFactory;
 	DarkModeManagerImpl m_darkModeManager;
 	DarkModeColorProvider m_darkModeColorProvider;
-	ThemeManager m_themeManager;
+	ThemeManagerImpl m_themeManager;
 	CachedIcons m_cachedIcons;
 	AsyncIconFetcherImpl m_iconFetcher;
 	BrowserList m_browserList;

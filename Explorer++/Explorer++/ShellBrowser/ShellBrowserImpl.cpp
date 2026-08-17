@@ -215,7 +215,7 @@ void ShellBrowserImpl::InitializeListView()
 	m_connections.push_back(m_config->globalFolderSettings.oneClickActivateHoverTime.addObserver(
 		std::bind_front(&ShellBrowserImpl::OnOneClickActivateHoverTimeUpdated, this)));
 
-	m_app->GetThemeManager()->ApplyThemeToWindowAndChildren(m_listView);
+	m_app->GetAppServices()->GetThemeManager()->ApplyThemeToWindowAndChildren(m_listView);
 
 	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(m_listView,
 		std::bind_front(&ShellBrowserImpl::ListViewProc, this)));

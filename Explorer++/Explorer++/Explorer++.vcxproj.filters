@@ -442,7 +442,7 @@
     <ClCompile Include="Theme.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="ThemeManager.cpp">
+    <ClCompile Include="ThemeManagerImpl.cpp">
       <Filter>Dark Mode Support</Filter>
     </ClCompile>
     <ClCompile Include="ThemeWindowTracker.cpp">
@@ -1374,7 +1374,7 @@
     <ClInclude Include="Theme.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="ThemeManager.h">
+    <ClInclude Include="ThemeManagerImpl.h">
       <Filter>Dark Mode Support</Filter>
     </ClInclude>
     <ClInclude Include="ThemeWindowTracker.h">
@@ -1988,6 +1988,9 @@
     </ClInclude>
     <ClInclude Include="AsyncIconFetcher.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ThemeManager.h">
+      <Filter>Dark Mode Support</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

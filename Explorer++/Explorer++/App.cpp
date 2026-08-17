@@ -290,6 +290,7 @@ void App::SetUpAppServices()
 	m_appServices.SetTabEvents(&m_tabEvents);
 	m_appServices.SetTabList(&m_tabList);
 	m_appServices.SetTabRestorer(&m_tabRestorer);
+	m_appServices.SetThemeManager(&m_themeManager);
 	m_appServices.CheckFullyInitialized();
 }
 
@@ -338,11 +339,6 @@ AppServices *App::GetAppServices()
 DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()
 {
 	return &m_directoryWatcherFactory;
-}
-
-ThemeManager *App::GetThemeManager()
-{
-	return &m_themeManager;
 }
 
 void App::OnWillRemoveBrowser()

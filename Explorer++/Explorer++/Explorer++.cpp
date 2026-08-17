@@ -201,7 +201,8 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 
 	InitializePlugins();
 
-	m_themeWindowTracker = std::make_unique<ThemeWindowTracker>(m_hwnd, m_app->GetThemeManager());
+	m_themeWindowTracker =
+		std::make_unique<ThemeWindowTracker>(m_hwnd, m_app->GetAppServices()->GetThemeManager());
 
 	SetLifecycleState(LifecycleState::Main);
 }

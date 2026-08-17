@@ -245,6 +245,7 @@
     <ClCompile Include="ClangCLLibs.cpp" />
     <ClCompile Include="CopiedBookmark.cpp" />
     <ClCompile Include="DarkModeManagerFake.cpp" />
+    <ClCompile Include="NoOpThemeManager.cpp" />
     <ClCompile Include="PidlHelperTest.cpp" />
     <ClCompile Include="SessionRestorerTest.cpp" />
     <ClCompile Include="ShellEntryCollectionTest.cpp" />
@@ -470,6 +471,7 @@
     <ClInclude Include="NoOpClipboardWatcher.h" />
     <ClInclude Include="CopiedBookmark.h" />
     <ClInclude Include="DarkModeManagerFake.h" />
+    <ClInclude Include="NoOpThemeManager.h" />
     <ClInclude Include="SimulatedFileSystemWatcherFactory.h" />
     <ClInclude Include="SimulatedFileSystemWatcher.h" />
     <ClInclude Include="SimulatedFileSystem.h" />
