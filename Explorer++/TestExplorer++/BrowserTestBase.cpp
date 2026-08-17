@@ -71,6 +71,8 @@ BrowserWindowFake *BrowserTestBase::AddBrowser(const WindowStorageData &storageD
 
 void BrowserTestBase::RemoveBrowser(BrowserWindowFake *browser)
 {
+	browser->NotifyBrowserClosing();
+
 	m_browserList.RemoveBrowser(browser);
 
 	auto itr = std::ranges::find_if(m_browsers,

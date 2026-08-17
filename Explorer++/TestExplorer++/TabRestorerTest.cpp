@@ -76,13 +76,9 @@ TEST_F(TabRestorerTest, RestoreLastTabIntoDifferentBrowser)
 {
 	auto *browser1 = AddBrowser();
 	browser1->AddTab(L"c:\\");
-	browser1->AddTab(L"d:\\");
 
 	auto *browser2 = AddBrowser();
-	browser2->AddTab(L"e:\\");
-
-	EXPECT_TRUE(browser1->GetActiveTabContainer()->CloseTab(
-		browser1->GetActiveTabContainer()->GetTabByIndex(0)));
+	browser2->AddTab(L"d:\\");
 
 	RemoveBrowser(browser1);
 	browser1 = nullptr;

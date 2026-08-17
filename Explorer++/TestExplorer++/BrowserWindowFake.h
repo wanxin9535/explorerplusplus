@@ -43,6 +43,8 @@ public:
 	void TryClose() override;
 	void Close() override;
 
+	void NotifyBrowserClosing();
+
 	using BrowserWindow::SetLifecycleState;
 
 	// MenuHelpTextHost
