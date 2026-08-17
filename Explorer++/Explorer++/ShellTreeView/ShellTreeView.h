@@ -21,9 +21,10 @@
 #include <wil/com.h>
 #include <optional>
 
-class App;
+class AppServices;
 class BrowserWindow;
 class CachedIcons;
+class ClipboardStore;
 struct Config;
 class FileActionHandler;
 class ShellBrowserImpl;
@@ -32,7 +33,7 @@ class ShellTreeNode;
 class ShellTreeView : public ShellDropTargetWindow<HTREEITEM>, public BrowserCommandTarget
 {
 public:
-	static ShellTreeView *Create(HWND hParent, App *app, BrowserWindow *browser,
+	static ShellTreeView *Create(HWND parent, BrowserWindow *browser, AppServices *appServices,
 		FileActionHandler *fileActionHandler);
 
 	/* User functions. */
@@ -109,7 +110,7 @@ private:
 		wil::com_ptr_nothrow<IDataObject> m_clipboardDataObject;
 	};
 
-	ShellTreeView(HWND hParent, App *app, BrowserWindow *browser,
+	ShellTreeView(HWND parent, BrowserWindow *browser, AppServices *appServices,
 		FileActionHandler *fileActionHandler);
 	~ShellTreeView();
 
@@ -213,13 +214,14 @@ private:
 	ShellBrowserImpl *GetSelectedShellBrowser() const;
 
 	HWND m_hTreeView;
-	App *const m_app;
 	BrowserWindow *const m_browser;
+	AppServices *const m_appServices;
 	HTREEITEM m_quickAccessRootItem = nullptr;
 	BOOL m_bShowHidden;
 	std::vector<std::unique_ptr<WindowSubclass>> m_windowSubclasses;
 	std::vector<boost::signals2::scoped_connection> m_connections;
-	const Config *m_config;
+	const Config *const m_config;
+	ClipboardStore *const m_clipboardStore;
 	FileActionHandler *m_fileActionHandler;
 	ScopedBrowserCommandTarget m_commandTarget;
 

@@ -4,7 +4,8 @@
 
 #include "stdafx.h"
 #include "ShellTreeView.h"
-#include "App.h"
+#include "AppServices.h"
+#include "DirectoryWatcherFactory.h"
 #include "FeatureList.h"
 #include "ShellTreeNode.h"
 #include "../Helper/ScopedRedrawDisabler.h"
@@ -14,7 +15,7 @@ void ShellTreeView::StartDirectoryMonitoringForNode(ShellTreeNode *node)
 	// Note that both folders and files are monitored for changes. Although this class displays
 	// folders, certain types of container files (e.g. .7z, .cab, .rar, .zip) act like folders as
 	// well. Those items will be displayed and need to be updated when necessary.
-	node->SetDirectoryWatcher(m_app->GetAppServices()->GetDirectoryWatcherFactory()->MaybeCreate(
+	node->SetDirectoryWatcher(m_appServices->GetDirectoryWatcherFactory()->MaybeCreate(
 		node->GetFullPidl().get(), DirectoryWatcher::Filters::All,
 		std::bind_front(&ShellTreeView::ProcessDirectoryChangeNotification, this),
 		DirectoryWatcher::Behavior::NonRecursive));
@@ -289,7 +290,7 @@ void ShellTreeView::OnDirectoryUpdated(PCIDLIST_ABSOLUTE simplePidl)
 		return;
 	}
 
-	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::AutomaticQuickAccessUpdates))
+	if (!m_appServices->GetFeatureList()->IsEnabled(Feature::AutomaticQuickAccessUpdates))
 	{
 		return;
 	}

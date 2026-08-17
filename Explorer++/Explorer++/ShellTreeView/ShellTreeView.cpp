@@ -16,7 +16,7 @@
 
 #include "stdafx.h"
 #include "ShellTreeView.h"
-#include "App.h"
+#include "AppServices.h"
 #include "BrowserPane.h"
 #include "BrowserWindow.h"
 #include "Config.h"
@@ -25,14 +25,20 @@
 #include "LabelEditHandler.h"
 #include "MainResource.h"
 #include "OpenItemsContextMenuDelegate.h"
+#include "PlatformContext.h"
 #include "ResourceLoader.h"
+#include "Runtime.h"
 #include "ShellBrowser/NavigateParams.h"
+#include "ShellBrowser/NavigationEvents.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "ShellTreeNode.h"
 #include "ShellTreeViewContextMenuDelegate.h"
 #include "TabContainer.h"
+#include "TabEvents.h"
 #include "../Helper/CachedIcons.h"
+#include "../Helper/ClipboardStore.h"
+#include "../Helper/ClipboardWatcher.h"
 #include "../Helper/Controls.h"
 #include "../Helper/DragDropHelper.h"
 #include "../Helper/DriveInfo.h"
@@ -45,36 +51,37 @@
 #include <wil/common.h>
 #include <propkey.h>
 
-ShellTreeView *ShellTreeView::Create(HWND hParent, App *app, BrowserWindow *browser,
+ShellTreeView *ShellTreeView::Create(HWND parent, BrowserWindow *browser, AppServices *appServices,
 	FileActionHandler *fileActionHandler)
 {
-	return new ShellTreeView(hParent, app, browser, fileActionHandler);
+	return new ShellTreeView(parent, browser, appServices, fileActionHandler);
 }
 
-ShellTreeView::ShellTreeView(HWND hParent, App *app, BrowserWindow *browser,
+ShellTreeView::ShellTreeView(HWND parent, BrowserWindow *browser, AppServices *appServices,
 	FileActionHandler *fileActionHandler) :
-	ShellDropTargetWindow(CreateTreeView(hParent)),
+	ShellDropTargetWindow(CreateTreeView(parent)),
 	m_hTreeView(GetHWND()),
-	m_app(app),
 	m_browser(browser),
-	m_config(app->GetAppServices()->GetConfig()),
+	m_appServices(appServices),
+	m_config(appServices->GetConfig()),
+	m_clipboardStore(appServices->GetPlatformContext()->GetClipboardStore()),
 	m_fileActionHandler(fileActionHandler),
 	m_commandTarget(browser->GetCommandTargetManager(), this),
-	m_fontSetter(GetHWND(), app->GetAppServices()->GetConfig()),
+	m_fontSetter(GetHWND(), appServices->GetConfig()),
 	m_iconThreadPool(1, std::bind(CoInitializeEx, nullptr, COINIT_APARTMENTTHREADED),
 		CoUninitialize),
 	m_iconResultIDCounter(0),
 	m_subfoldersThreadPool(1, std::bind(CoInitializeEx, nullptr, COINIT_APARTMENTTHREADED),
 		CoUninitialize),
 	m_subfoldersResultIDCounter(0),
-	m_cachedIcons(app->GetAppServices()->GetCachedIcons()),
+	m_cachedIcons(appServices->GetCachedIcons()),
 	m_dropExpandItem(nullptr)
 {
 	TreeView_SetExtendedStyle(m_hTreeView, TVS_EX_DOUBLEBUFFER, TVS_EX_DOUBLEBUFFER);
 
 	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(m_hTreeView,
 		std::bind_front(&ShellTreeView::TreeViewProc, this)));
-	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(hParent,
+	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(parent,
 		std::bind_front(&ShellTreeView::ParentWndProc, this)));
 
 	FAIL_FAST_IF_FAILED(GetDefaultFolderIconIndex(m_iFolderIcon));
@@ -103,27 +110,26 @@ ShellTreeView::ShellTreeView(HWND hParent, App *app, BrowserWindow *browser,
 	m_connections.push_back(
 		m_config->showFolders.addObserver(std::bind(&ShellTreeView::UpdateSelection, this)));
 
-	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(appServices->GetNavigationEvents()->AddCommittedObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
 	// When manually selecting an item in the treeview, a navigation will be initiated. It's
 	// possible that navigation may fail, in which case, the selection will be reset by this
 	// observer.
-	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddFailedObserver(
+	m_connections.push_back(appServices->GetNavigationEvents()->AddFailedObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCancelledObserver(
+	m_connections.push_back(appServices->GetNavigationEvents()->AddCancelledObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this),
 		NavigationEventScope::ForActiveShellBrowser(*m_browser)));
 
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddSelectedObserver(
+	m_connections.push_back(appServices->GetTabEvents()->AddSelectedObserver(
 		std::bind(&ShellTreeView::UpdateSelection, this), TabEventScope::ForBrowser(*m_browser)));
 
-	m_connections.push_back(
-		m_app->GetAppServices()->GetClipboardWatcher()->AddClipboardUpdatedObserver(
-			std::bind_front(&ShellTreeView::OnClipboardUpdate, this)));
+	m_connections.push_back(appServices->GetClipboardWatcher()->AddClipboardUpdatedObserver(
+		std::bind_front(&ShellTreeView::OnClipboardUpdate, this)));
 
 	m_connections.push_back(m_cutCopiedItemManager.cutItemChangedSignal.AddObserver(
 		std::bind_front(&ShellTreeView::OnCutItemChanged, this)));
@@ -141,11 +147,10 @@ HWND ShellTreeView::CreateTreeView(HWND parent)
 ShellTreeView::~ShellTreeView()
 {
 	auto *clipboardDataObject = m_cutCopiedItemManager.GetCutCopiedClipboardDataObject();
-	auto *clipboardStore = m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore();
 
-	if (clipboardDataObject && clipboardStore->IsDataObjectCurrent(clipboardDataObject))
+	if (clipboardDataObject && m_clipboardStore->IsDataObjectCurrent(clipboardDataObject))
 	{
-		clipboardStore->FlushDataObject();
+		m_clipboardStore->FlushDataObject();
 	}
 
 	m_iconThreadPool.clear_queue();
@@ -592,10 +597,9 @@ void ShellTreeView::OnSelectionChanged(const NMTREEVIEW *eventInfo)
 #pragma warning(push)
 #pragma warning(                                                                                   \
 	disable : 4244) // 'argument': conversion from '_Rep' to 'size_t', possible loss of data
-		m_selectionChangedTimer =
-			m_app->GetAppServices()->GetRuntime()->GetTimerQueue()->make_one_shot_timer(500ms,
-				m_app->GetAppServices()->GetRuntime()->GetUiThreadExecutor(),
-				std::bind_front(&ShellTreeView::OnSelectionChangedTimer, this));
+		m_selectionChangedTimer = m_appServices->GetRuntime()->GetTimerQueue()->make_one_shot_timer(
+			500ms, m_appServices->GetRuntime()->GetUiThreadExecutor(),
+			std::bind_front(&ShellTreeView::OnSelectionChangedTimer, this));
 #pragma warning(pop)
 	}
 	else
@@ -1202,8 +1206,8 @@ bool ShellTreeView::OnBeginLabelEdit(const NMTVDISPINFO *dispInfo)
 	HWND editControl = TreeView_GetEditControl(m_hTreeView);
 	SetWindowText(editControl, editingName.get());
 
-	LabelEditHandler::CreateForMainWindow(editControl,
-		m_app->GetAppServices()->GetAcceleratorManager(), false);
+	LabelEditHandler::CreateForMainWindow(editControl, m_appServices->GetAcceleratorManager(),
+		false);
 
 	return false;
 }
@@ -1315,8 +1319,7 @@ void ShellTreeView::OnShowContextMenu(const POINT &ptScreen)
 
 	ShellItemContextMenu contextMenu(pidl.get(), { child.get() }, m_browser);
 
-	OpenItemsContextMenuDelegate openItemsDelegate(m_browser,
-		m_app->GetAppServices()->GetResourceLoader());
+	OpenItemsContextMenuDelegate openItemsDelegate(m_browser, m_appServices->GetResourceLoader());
 	contextMenu.AddDelegate(&openItemsDelegate);
 
 	ShellTreeViewContextMenuDelegate treeViewDelegate(this);
@@ -1419,14 +1422,13 @@ void ShellTreeView::ExecuteCommand(int command)
 void ShellTreeView::CopySelectedItemPath(PathType pathType) const
 {
 	auto pidl = GetSelectedNodePidl();
-	CopyItemPathsToClipboard(m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
-		{ pidl.get() }, pathType);
+	CopyItemPathsToClipboard(m_clipboardStore, { pidl.get() }, pathType);
 }
 
 void ShellTreeView::SetFileAttributesForSelectedItem()
 {
 	auto pidl = GetSelectedNodePidl();
-	DialogHelper::MaybeShowSetFileAttributesDialog(m_app->GetAppServices()->GetResourceLoader(),
+	DialogHelper::MaybeShowSetFileAttributesDialog(m_appServices->GetResourceLoader(),
 		m_browser->GetHWND(), { { pidl.get() } });
 }
 
@@ -1435,7 +1437,7 @@ void ShellTreeView::CopySelectedItemToFolder(TransferAction action)
 	auto pidl = GetSelectedNodePidl();
 	std::vector<PCIDLIST_ABSOLUTE> rawPidls = { pidl.get() };
 	Epp::FileOperations::CopyFilesToFolder(m_hTreeView, rawPidls, action,
-		m_app->GetAppServices()->GetResourceLoader());
+		m_appServices->GetResourceLoader());
 }
 
 void ShellTreeView::UpdateSelection()
@@ -1493,8 +1495,6 @@ void ShellTreeView::CopyItemToClipboard(PCIDLIST_ABSOLUTE pidl, ClipboardAction 
 
 void ShellTreeView::CopyItemToClipboard(HTREEITEM treeItem, ClipboardAction action)
 {
-	auto *clipboardStore = m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore();
-
 	auto *node = GetNodeFromTreeViewItem(treeItem);
 	auto pidl = node->GetFullPidl();
 	std::vector<PidlAbsolute> items = { pidl.get() };
@@ -1504,7 +1504,7 @@ void ShellTreeView::CopyItemToClipboard(HTREEITEM treeItem, ClipboardAction acti
 
 	if (action == ClipboardAction::Copy)
 	{
-		hr = CopyFiles(clipboardStore, items, &clipboardDataObject);
+		hr = CopyFiles(m_clipboardStore, items, &clipboardDataObject);
 
 		if (SUCCEEDED(hr))
 		{
@@ -1513,7 +1513,7 @@ void ShellTreeView::CopyItemToClipboard(HTREEITEM treeItem, ClipboardAction acti
 	}
 	else
 	{
-		hr = CutFiles(clipboardStore, items, &clipboardDataObject);
+		hr = CutFiles(m_clipboardStore, items, &clipboardDataObject);
 
 		if (SUCCEEDED(hr))
 		{
@@ -1524,8 +1524,7 @@ void ShellTreeView::CopyItemToClipboard(HTREEITEM treeItem, ClipboardAction acti
 
 void ShellTreeView::Paste()
 {
-	auto clipboardObject =
-		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore()->GetDataObject();
+	auto clipboardObject = m_clipboardStore->GetDataObject();
 
 	if (!clipboardObject)
 	{
@@ -1567,9 +1566,7 @@ void ShellTreeView::OnClipboardUpdate()
 {
 	auto *clipboardDataObject = m_cutCopiedItemManager.GetCutCopiedClipboardDataObject();
 
-	if (clipboardDataObject
-		&& !m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore()->IsDataObjectCurrent(
-			clipboardDataObject))
+	if (clipboardDataObject && !m_clipboardStore->IsDataObjectCurrent(clipboardDataObject))
 	{
 		m_cutCopiedItemManager.ClearCutCopiedItem();
 	}

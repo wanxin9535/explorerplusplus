@@ -4,7 +4,8 @@
 
 #include "stdafx.h"
 #include "ShellTreeView.h"
-#include "App.h"
+#include "AppServices.h"
+#include "Runtime.h"
 #include "ShellTreeNode.h"
 #include "../Helper/DpiCompatibility.h"
 
@@ -71,10 +72,9 @@ void ShellTreeView::UpdateUiForTargetItem(HTREEITEM targetItem)
 #pragma warning(push)
 #pragma warning(                                                                                   \
 	disable : 4244) // 'argument': conversion from '_Rep' to 'size_t', possible loss of data
-			m_dropExpandTimer =
-				m_app->GetAppServices()->GetRuntime()->GetTimerQueue()->make_one_shot_timer(800ms,
-					m_app->GetAppServices()->GetRuntime()->GetUiThreadExecutor(),
-					std::bind_front(&ShellTreeView::OnDropExpandTimer, this));
+			m_dropExpandTimer = m_appServices->GetRuntime()->GetTimerQueue()->make_one_shot_timer(
+				800ms, m_appServices->GetRuntime()->GetUiThreadExecutor(),
+				std::bind_front(&ShellTreeView::OnDropExpandTimer, this));
 #pragma warning(pop)
 		}
 	}
