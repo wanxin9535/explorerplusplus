@@ -6,15 +6,15 @@
 
 #include "ShellBrowserFactory.h"
 
-class App;
+class AppServices;
 class BrowserWindow;
 class FileActionHandler;
 
 class ShellBrowserFactoryImpl : public ShellBrowserFactory
 {
 public:
-	ShellBrowserFactoryImpl(App *app, HINSTANCE resourceInstance, BrowserWindow *browser,
-		FileActionHandler *fileActionHandler);
+	ShellBrowserFactoryImpl(BrowserWindow *browser, AppServices *appServices,
+		HINSTANCE resourceInstance, FileActionHandler *fileActionHandler);
 
 	// ShellBrowserFactory
 	std::unique_ptr<ShellBrowser> Create(const PidlAbsolute &initialPidl,
@@ -23,8 +23,8 @@ public:
 		const PreservedShellBrowser &preservedShellBrowser) override;
 
 private:
-	App *const m_app;
-	const HINSTANCE m_resourceInstance;
 	BrowserWindow *const m_browser;
+	AppServices *const m_appServices;
+	const HINSTANCE m_resourceInstance;
 	FileActionHandler *const m_fileActionHandler;
 };

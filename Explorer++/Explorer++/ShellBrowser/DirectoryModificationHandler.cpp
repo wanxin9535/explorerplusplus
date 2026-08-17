@@ -4,13 +4,15 @@
 
 #include "stdafx.h"
 #include "ShellBrowserImpl.h"
-#include "App.h"
+#include "AppServices.h"
 #include "ColumnDataRetrieval.h"
 #include "Config.h"
+#include "DirectoryWatcherFactory.h"
 #include "ItemData.h"
 #include "NavigateParams.h"
 #include "Runtime.h"
 #include "RuntimeHelper.h"
+#include "ShellBrowserEvents.h"
 #include "ShellNavigationController.h"
 #include "ViewModes.h"
 #include "../Helper/ListViewHelper.h"
@@ -20,11 +22,10 @@
 
 void ShellBrowserImpl::StartDirectoryMonitoring()
 {
-	m_directoryState.directoryWatcher =
-		m_app->GetAppServices()->GetDirectoryWatcherFactory()->MaybeCreate(
-			m_directoryState.pidlDirectory, DirectoryWatcher::Filters::All,
-			std::bind_front(&ShellBrowserImpl::ProcessDirectoryChangeNotification, this),
-			DirectoryWatcher::Behavior::NonRecursive);
+	m_directoryState.directoryWatcher = m_appServices->GetDirectoryWatcherFactory()->MaybeCreate(
+		m_directoryState.pidlDirectory, DirectoryWatcher::Filters::All,
+		std::bind_front(&ShellBrowserImpl::ProcessDirectoryChangeNotification, this),
+		DirectoryWatcher::Behavior::NonRecursive);
 
 	if (m_config->changeNotifyMode == ChangeNotifyMode::Shell)
 	{
@@ -36,7 +37,7 @@ void ShellBrowserImpl::StartDirectoryMonitoring()
 		// This will also implicitly monitor directory update events, which is useful when a parent
 		// folder is renamed.
 		m_directoryState.rootDirectoryWatcher =
-			m_app->GetAppServices()->GetDirectoryWatcherFactory()->MaybeCreate(GetRootPidl(),
+			m_appServices->GetDirectoryWatcherFactory()->MaybeCreate(GetRootPidl(),
 				DirectoryWatcher::Filters::DirectoryRemoved,
 				std::bind_front(&ShellBrowserImpl::ProcessDirectoryChangeNotification, this),
 				DirectoryWatcher::Behavior::Recursive);
@@ -64,7 +65,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 		else if (ArePidlsEquivalent(m_directoryState.pidlDirectory.Raw(), simplePidl1.Raw()))
 		{
 			OnCurrentDirectoryRenamed(m_weakPtrFactory.GetWeakPtr(), simplePidl2.Raw(),
-				m_app->GetAppServices()->GetRuntime());
+				m_appServices->GetRuntime());
 		}
 		break;
 
@@ -80,7 +81,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 			// - If the icon for the folder is changed.
 			// - If the folder is virtual (e.g. the recycle bin) and the name is changed.
 			OnDirectoryPropertiesChanged(m_weakPtrFactory.GetWeakPtr(),
-				m_directoryState.pidlDirectory, m_app->GetAppServices()->GetRuntime());
+				m_directoryState.pidlDirectory, m_appServices->GetRuntime());
 		}
 		break;
 
@@ -90,8 +91,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 			// It's not safe to perform an immediate refresh here, since the set of changes is being
 			// iterated through by the directory watcher. Therefore, the function below will perform
 			// the refresh asynchronously.
-			RefreshDirectoryAfterUpdate(m_weakPtrFactory.GetWeakPtr(),
-				m_app->GetAppServices()->GetRuntime());
+			RefreshDirectoryAfterUpdate(m_weakPtrFactory.GetWeakPtr(), m_appServices->GetRuntime());
 		}
 		else if (ILIsParent(simplePidl1.Raw(), m_directoryState.pidlDirectory.Raw(), false))
 		{
@@ -100,7 +100,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 			// required. It's also possible an unrelated item was updated, in which case no action
 			// will be taken by the function below.
 			NavigateUpToClosestExistingItemIfNecessary(m_weakPtrFactory.GetWeakPtr(),
-				m_directoryState.pidlDirectory, m_app->GetAppServices()->GetRuntime());
+				m_directoryState.pidlDirectory, m_appServices->GetRuntime());
 		}
 		break;
 
@@ -120,12 +120,12 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 			// parents. That makes it necessary to navigate to another folder. For similarity with
 			// Explorer, a navigation to a parent will occur.
 			NavigateUpToClosestExistingItemIfNecessary(m_weakPtrFactory.GetWeakPtr(),
-				m_directoryState.pidlDirectory, m_app->GetAppServices()->GetRuntime());
+				m_directoryState.pidlDirectory, m_appServices->GetRuntime());
 		}
 		break;
 	}
 
-	m_app->GetAppServices()->GetShellBrowserEvents()->NotifyItemsChanged(this);
+	m_shellBrowserEvents->NotifyItemsChanged(this);
 }
 
 void ShellBrowserImpl::OnItemAdded(PCIDLIST_ABSOLUTE simplePidl)
@@ -462,8 +462,7 @@ concurrencpp::null_result ShellBrowserImpl::OnDirectoryPropertiesChanged(
 	// this function being triggered, but only if the item is virtual. In that case, the parsing
 	// path isn't going to change.
 	weakSelf->m_directoryState.pidlDirectory = updatedPidl;
-	weakSelf->m_app->GetAppServices()->GetShellBrowserEvents()->NotifyDirectoryPropertiesChanged(
-		weakSelf.Get());
+	weakSelf->m_shellBrowserEvents->NotifyDirectoryPropertiesChanged(weakSelf.Get());
 }
 
 concurrencpp::null_result ShellBrowserImpl::RefreshDirectoryAfterUpdate(

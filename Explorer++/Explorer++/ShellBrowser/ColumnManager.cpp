@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "ShellBrowserImpl.h"
-#include "App.h"
 #include "ColumnDataRetrieval.h"
 #include "ColumnHelper.h"
 #include "Columns.h"
@@ -187,8 +186,7 @@ void ShellBrowserImpl::SetUpListViewColumns()
 
 void ShellBrowserImpl::InsertColumn(ColumnType columnType, int columnIndex, int width)
 {
-	std::wstring columnName =
-		GetColumnName(m_app->GetAppServices()->GetResourceLoader(), columnType);
+	std::wstring columnName = GetColumnName(m_resourceLoader, columnType);
 
 	LV_COLUMN lvColumn;
 	lvColumn.mask = LVCF_TEXT | LVCF_WIDTH;

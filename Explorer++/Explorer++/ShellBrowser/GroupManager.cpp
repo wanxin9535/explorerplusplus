@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "ShellBrowserImpl.h"
-#include "App.h"
 #include "ColumnDataRetrieval.h"
 #include "Config.h"
 #include "ItemData.h"
@@ -303,9 +302,7 @@ int ShellBrowserImpl::DetermineItemGroup(int iItemInternal)
 
 	if (!groupInfo)
 	{
-		groupInfo = GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_UNSPECIFIED),
-			INT_MIN);
+		groupInfo = GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_UNSPECIFIED), INT_MIN);
 	}
 
 	return GetOrCreateListViewGroup(*groupInfo);
@@ -334,9 +331,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemNameGr
 	}
 	else
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_NAME_OTHER),
-			INT_MAX);
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_NAME_OTHER), INT_MAX);
 	}
 }
 
@@ -345,8 +340,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemSizeGr
 {
 	if ((itemInfo.wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_SIZE_FOLDERS), 0);
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_SIZE_FOLDERS), 0);
 	}
 	else if (!itemInfo.isFindDataValid)
 	{
@@ -375,8 +369,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemSizeGr
 		currentIndex++;
 	}
 
-	return GroupInfo(m_app->GetAppServices()->GetResourceLoader()->LoadString(
-						 sizeGroups[currentIndex].nameResourceId),
+	return GroupInfo(m_resourceLoader->LoadString(sizeGroups[currentIndex].nameResourceId),
 		static_cast<int>(currentIndex + 1));
 }
 
@@ -502,8 +495,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate > today)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_FUTURE),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_FUTURE),
 			relativeSortPosition);
 	}
 
@@ -511,8 +503,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate == today)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_TODAY),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_TODAY),
 			relativeSortPosition);
 	}
 
@@ -522,8 +513,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate == yesterday)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_YESTERDAY),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_YESTERDAY),
 			relativeSortPosition);
 	}
 
@@ -535,8 +525,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate >= startOfWeek)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_THIS_WEEK),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_THIS_WEEK),
 			relativeSortPosition);
 	}
 
@@ -546,8 +535,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate >= startOfLastWeek)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_LAST_WEEK),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_LAST_WEEK),
 			relativeSortPosition);
 	}
 
@@ -557,8 +545,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate >= startOfMonth)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_THIS_MONTH),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_THIS_MONTH),
 			relativeSortPosition);
 	}
 
@@ -568,8 +555,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate >= startOfLastMonth)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_LAST_MONTH),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_LAST_MONTH),
 			relativeSortPosition);
 	}
 
@@ -579,8 +565,7 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate >= startOfYear)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_THIS_YEAR),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_THIS_YEAR),
 			relativeSortPosition);
 	}
 
@@ -590,16 +575,13 @@ std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemDateGr
 
 	if (fileDate >= startOfLastYear)
 	{
-		return GroupInfo(
-			m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_LAST_YEAR),
+		return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_LAST_YEAR),
 			relativeSortPosition);
 	}
 
 	relativeSortPosition--;
 
-	return GroupInfo(
-		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GROUPBY_DATE_LONG_AGO),
-		relativeSortPosition);
+	return GroupInfo(m_resourceLoader->LoadString(IDS_GROUPBY_DATE_LONG_AGO), relativeSortPosition);
 }
 
 std::optional<ShellBrowserImpl::GroupInfo> ShellBrowserImpl::DetermineItemSummaryGroup(

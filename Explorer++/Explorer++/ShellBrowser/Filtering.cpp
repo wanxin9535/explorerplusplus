@@ -4,9 +4,10 @@
 
 #include "stdafx.h"
 #include "ShellBrowserImpl.h"
-#include "App.h"
+#include "AppServices.h"
 #include "FilterDialog.h"
 #include "MainResource.h"
+#include "ShellBrowserEvents.h"
 #include "../Helper/ListViewHelper.h"
 
 std::wstring ShellBrowserImpl::GetFilterText() const
@@ -103,7 +104,7 @@ void ShellBrowserImpl::RemoveFilteredItems()
 		}
 	}
 
-	m_app->GetAppServices()->GetShellBrowserEvents()->NotifyItemsChanged(this);
+	m_shellBrowserEvents->NotifyItemsChanged(this);
 }
 
 void ShellBrowserImpl::RemoveFilteredItem(int iItem, int iItemInternal)
@@ -155,7 +156,7 @@ void ShellBrowserImpl::UnfilterAllItems()
 	}
 
 	m_directoryState.filteredItemsList.clear();
-	m_app->GetAppServices()->GetShellBrowserEvents()->NotifyItemsChanged(this);
+	m_shellBrowserEvents->NotifyItemsChanged(this);
 }
 
 void ShellBrowserImpl::UnfilterItem(int internalIndex)
@@ -164,7 +165,7 @@ void ShellBrowserImpl::UnfilterItem(int internalIndex)
 
 	RestoreFilteredItem(internalIndex);
 	m_directoryState.filteredItemsList.erase(internalIndex);
-	m_app->GetAppServices()->GetShellBrowserEvents()->NotifyItemsChanged(this);
+	m_shellBrowserEvents->NotifyItemsChanged(this);
 }
 
 void ShellBrowserImpl::RestoreFilteredItem(int internalIndex)
@@ -183,7 +184,6 @@ void ShellBrowserImpl::RestoreFilteredItem(int internalIndex)
 
 void ShellBrowserImpl::EditFilterSettings()
 {
-	auto *filterDialog =
-		FilterDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_owner, this);
+	auto *filterDialog = FilterDialog::Create(m_resourceLoader, m_owner, this);
 	filterDialog->ShowModalDialog();
 }

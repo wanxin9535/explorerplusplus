@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "ShellBrowserImpl.h"
-#include "App.h"
+#include "AppServices.h"
 #include "BackgroundContextMenuDelegate.h"
 #include "BrowserWindow.h"
 #include "ColorRuleModel.h"
@@ -23,6 +23,7 @@
 #include "SelectColumnsDialog.h"
 #include "ServiceProvider.h"
 #include "ShellBrowserContextMenuDelegate.h"
+#include "ShellBrowserEvents.h"
 #include "ShellNavigationController.h"
 #include "ShellView.h"
 #include "../Helper/CachedIcons.h"
@@ -469,9 +470,7 @@ void ShellBrowserImpl::ShowBackgroundContextMenu(const POINT &pt)
 {
 	ShellBackgroundContextMenu contextMenu(m_directoryState.pidlDirectory.Raw(), m_browser);
 
-	BackgroundContextMenuDelegate backgroundDelegate(m_browser,
-		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
-		m_app->GetAppServices()->GetResourceLoader());
+	BackgroundContextMenuDelegate backgroundDelegate(m_browser, m_clipboardStore, m_resourceLoader);
 	contextMenu.AddDelegate(&backgroundDelegate);
 
 	auto serviceProvider = winrt::make_self<ServiceProvider>();
@@ -509,8 +508,7 @@ void ShellBrowserImpl::ShowItemContextMenu(const POINT &pt)
 
 	ShellItemContextMenu contextMenu(m_directoryState.pidlDirectory.Raw(), childPidls, m_browser);
 
-	OpenItemsContextMenuDelegate openItemsDelegate(m_browser,
-		m_app->GetAppServices()->GetResourceLoader());
+	OpenItemsContextMenuDelegate openItemsDelegate(m_browser, m_resourceLoader);
 	contextMenu.AddDelegate(&openItemsDelegate);
 
 	ShellBrowserContextMenuDelegate shellBrowserDelegate(m_weakPtrFactory.GetWeakPtr());
@@ -660,8 +658,7 @@ BOOL ShellBrowserImpl::OnListViewGetEmptyMarkup(NMLVEMPTYMARKUP *emptyMarkup)
 {
 	emptyMarkup->dwFlags = EMF_CENTERED;
 
-	auto folderEmptyText =
-		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_LISTVIEW_FOLDER_EMPTY);
+	auto folderEmptyText = m_resourceLoader->LoadString(IDS_LISTVIEW_FOLDER_EMPTY);
 	StringCchCopy(emptyMarkup->szMarkup, std::size(emptyMarkup->szMarkup), folderEmptyText.c_str());
 
 	return TRUE;
@@ -829,7 +826,7 @@ void ShellBrowserImpl::OnListViewItemChanged(const NMLISTVIEW *changeData)
 
 	UpdateFileSelectionInfo(static_cast<int>(changeData->lParam), currentlySelected);
 
-	m_app->GetAppServices()->GetShellBrowserEvents()->NotifySelectionChanged(this);
+	m_shellBrowserEvents->NotifySelectionChanged(this);
 }
 
 void ShellBrowserImpl::UpdateFileSelectionInfo(int internalIndex, BOOL selected)
@@ -1113,8 +1110,7 @@ void ShellBrowserImpl::OnListViewHeaderRightClick(const POINTS &cursorPos)
 		mii.cbSize = sizeof(mii);
 		mii.fMask = MIIM_STRING | MIIM_STATE | MIIM_ID;
 
-		std::wstring columnName =
-			GetColumnName(m_app->GetAppServices()->GetResourceLoader(), column.type);
+		std::wstring columnName = GetColumnName(m_resourceLoader, column.type);
 
 		if (column.checked)
 		{
@@ -1209,8 +1205,7 @@ void ShellBrowserImpl::OnListViewHeaderMenuItemSelected(int menuItemId,
 
 void ShellBrowserImpl::OnShowMoreColumnsSelected()
 {
-	auto *selectColumnsDialog =
-		SelectColumnsDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_listView, this);
+	auto *selectColumnsDialog = SelectColumnsDialog::Create(m_resourceLoader, m_listView, this);
 	selectColumnsDialog->ShowModalDialog();
 }
 
@@ -1552,7 +1547,7 @@ LRESULT ShellBrowserImpl::OnListViewCustomDraw(NMLVCUSTOMDRAW *listViewCustomDra
 		const auto &itemInfo =
 			GetItemByIndex(static_cast<int>(listViewCustomDraw->nmcd.dwItemSpec));
 
-		for (const auto &colorRule : m_app->GetAppServices()->GetColorRuleModel()->GetItems())
+		for (const auto &colorRule : m_appServices->GetColorRuleModel()->GetItems())
 		{
 			bool matchedFileName = false;
 			bool matchedAttributes = false;

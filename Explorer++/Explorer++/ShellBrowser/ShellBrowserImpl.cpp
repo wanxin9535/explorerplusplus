@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "ShellBrowserImpl.h"
-#include "App.h"
+#include "AppServices.h"
 #include "BrowserWindow.h"
 #include "ClipboardOperations.h"
 #include "ColorRuleModel.h"
@@ -12,6 +12,7 @@
 #include "Config.h"
 #include "DialogHelper.h"
 #include "DirectoryOperationsHelper.h"
+#include "FeatureList.h"
 #include "FileOperations.h"
 #include "FileProgressSink.h"
 #include "FolderView.h"
@@ -20,8 +21,11 @@
 #include "MainResource.h"
 #include "MassRenameDialog.h"
 #include "MergeFilesDialog.h"
+#include "NavigationEvents.h"
+#include "PlatformContext.h"
 #include "PreservedShellBrowser.h"
 #include "ResourceLoader.h"
+#include "Runtime.h"
 #include "ServiceProvider.h"
 #include "ShellEnumeratorImpl.h"
 #include "ShellNavigationController.h"
@@ -31,6 +35,8 @@
 #include "ViewModeHelper.h"
 #include "ViewModes.h"
 #include "WildcardSelectDialog.h"
+#include "../Helper/ClipboardStore.h"
+#include "../Helper/ClipboardWatcher.h"
 #include "../Helper/Controls.h"
 #include "../Helper/DriveInfo.h"
 #include "../Helper/FileActionHandler.h"
@@ -40,57 +46,58 @@
 #include <wil/com.h>
 #include <list>
 
-ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance,
-	BrowserWindow *browser, FileActionHandler *fileActionHandler,
-	const PreservedShellBrowser &preservedShellBrowser) :
-	ShellBrowserImpl(owner, app, resourceInstance, browser, fileActionHandler,
-		preservedShellBrowser.folderSettings, &preservedShellBrowser.folderColumns)
+ShellBrowserImpl::ShellBrowserImpl(const PreservedShellBrowser &preservedShellBrowser,
+	BrowserWindow *browser, AppServices *appServices, HINSTANCE resourceInstance,
+	FileActionHandler *fileActionHandler) :
+	ShellBrowserImpl(preservedShellBrowser.folderSettings, &preservedShellBrowser.folderColumns,
+		browser, appServices, resourceInstance, fileActionHandler)
 {
 	m_navigationController = std::make_unique<ShellNavigationController>(this, browser,
-		&m_navigationManager, m_app->GetAppServices()->GetNavigationEvents(),
-		preservedShellBrowser.history, preservedShellBrowser.currentEntry);
+		&m_navigationManager, appServices->GetNavigationEvents(), preservedShellBrowser.history,
+		preservedShellBrowser.currentEntry);
 
 	ChangeToInitialFolder();
 }
 
-ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance,
-	BrowserWindow *browser, FileActionHandler *fileActionHandler, const PidlAbsolute &initialPidl,
-	const FolderSettings &folderSettings, const FolderColumns *initialColumns) :
-	ShellBrowserImpl(owner, app, resourceInstance, browser, fileActionHandler, folderSettings,
-		initialColumns)
+ShellBrowserImpl::ShellBrowserImpl(const PidlAbsolute &initialPidl,
+	const FolderSettings &folderSettings, const FolderColumns *initialColumns,
+	BrowserWindow *browser, AppServices *appServices, HINSTANCE resourceInstance,
+	FileActionHandler *fileActionHandler) :
+	ShellBrowserImpl(folderSettings, initialColumns, browser, appServices, resourceInstance,
+		fileActionHandler)
 {
 	m_navigationController = std::make_unique<ShellNavigationController>(this, browser,
-		&m_navigationManager, m_app->GetAppServices()->GetNavigationEvents(), initialPidl);
+		&m_navigationManager, appServices->GetNavigationEvents(), initialPidl);
 
 	ChangeToInitialFolder();
 }
 
-ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance,
-	BrowserWindow *browser, FileActionHandler *fileActionHandler,
-	const FolderSettings &folderSettings, const FolderColumns *initialColumns) :
-	ShellDropTargetWindow(CreateListView(owner)),
+ShellBrowserImpl::ShellBrowserImpl(const FolderSettings &folderSettings,
+	const FolderColumns *initialColumns, BrowserWindow *browser, AppServices *appServices,
+	HINSTANCE resourceInstance, FileActionHandler *fileActionHandler) :
+	ShellDropTargetWindow(CreateListView(browser->GetHWND())),
 	m_listView(GetHWND()),
-	m_owner(owner),
-	m_app(app),
+	m_owner(browser->GetHWND()),
 	m_browser(browser),
-	m_shellEnumerator(std::make_shared<ShellEnumeratorImpl>(owner)),
-	m_navigationManager(this, app->GetAppServices()->GetNavigationEvents(), m_shellEnumerator,
-		app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::BackgroundThreadEnumeration)
-			? app->GetAppServices()->GetRuntime()->GetComStaExecutor()
-			: app->GetAppServices()->GetRuntime()->GetInlineExecutor(),
-		app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::BackgroundThreadEnumeration)
-			? app->GetAppServices()->GetRuntime()->GetUiThreadExecutor()
-			: app->GetAppServices()->GetRuntime()->GetInlineExecutor()),
+	m_appServices(appServices),
+	m_shellEnumerator(std::make_shared<ShellEnumeratorImpl>(m_owner)),
+	m_navigationManager(this, appServices->GetNavigationEvents(), m_shellEnumerator,
+		appServices->GetFeatureList()->IsEnabled(Feature::BackgroundThreadEnumeration)
+			? appServices->GetRuntime()->GetComStaExecutor()
+			: appServices->GetRuntime()->GetInlineExecutor(),
+		appServices->GetFeatureList()->IsEnabled(Feature::BackgroundThreadEnumeration)
+			? appServices->GetRuntime()->GetUiThreadExecutor()
+			: appServices->GetRuntime()->GetInlineExecutor()),
 	m_progressCursor(LoadCursor(nullptr, IDC_APPSTARTING)),
 	m_commandTarget(browser->GetCommandTargetManager(), this),
 	m_fileActionHandler(fileActionHandler),
-	m_fontSetter(GetHWND(), app->GetAppServices()->GetConfig()),
+	m_fontSetter(GetHWND(), appServices->GetConfig()),
 	m_tooltipFontSetter(reinterpret_cast<HWND>(SendMessage(GetHWND(), LVM_GETTOOLTIPS, 0, 0)),
-		app->GetAppServices()->GetConfig()),
+		appServices->GetConfig()),
 	m_columnThreadPool(1, std::bind(CoInitializeEx, nullptr, COINIT_APARTMENTTHREADED),
 		CoUninitialize),
 	m_columnResultIDCounter(0),
-	m_cachedIcons(app->GetAppServices()->GetCachedIcons()),
+	m_cachedIcons(appServices->GetCachedIcons()),
 	m_thumbnailThreadPool(1, std::bind(CoInitializeEx, nullptr, COINIT_APARTMENTTHREADED),
 		CoUninitialize),
 	m_thumbnailResultIDCounter(0),
@@ -98,33 +105,34 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInsta
 		CoUninitialize),
 	m_infoTipResultIDCounter(0),
 	m_resourceInstance(resourceInstance),
-	m_acceleratorManager(app->GetAppServices()->GetAcceleratorManager()),
-	m_config(app->GetAppServices()->GetConfig()),
+	m_acceleratorManager(appServices->GetAcceleratorManager()),
+	m_shellBrowserEvents(appServices->GetShellBrowserEvents()),
+	m_config(appServices->GetConfig()),
+	m_clipboardStore(appServices->GetPlatformContext()->GetClipboardStore()),
+	m_resourceLoader(appServices->GetResourceLoader()),
 	m_folderSettings(folderSettings),
 	m_shellWindowRegistered(false),
-	m_folderColumns(initialColumns
-			? *initialColumns
-			: app->GetAppServices()->GetConfig()->globalFolderSettings.folderColumns),
+	m_folderColumns(initialColumns ? *initialColumns
+								   : appServices->GetConfig()->globalFolderSettings.folderColumns),
 	m_weakPtrFactory(this)
 {
 	InitializeListView();
 	m_iconFetcher = std::make_unique<IconFetcherImpl>(m_listView, m_cachedIcons);
 
-	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddStartedObserver(
+	m_connections.push_back(m_appServices->GetNavigationEvents()->AddStartedObserver(
 		std::bind_front(&ShellBrowserImpl::OnNavigationStarted, this),
 		NavigationEventScope::ForShellBrowser(*this)));
-	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddWillCommitObserver(
+	m_connections.push_back(m_appServices->GetNavigationEvents()->AddWillCommitObserver(
 		std::bind_front(&ShellBrowserImpl::OnNavigationWillCommit, this),
 		NavigationEventScope::ForShellBrowser(*this), boost::signals2::at_front,
 		SlotGroup::HighPriority));
-	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(m_appServices->GetNavigationEvents()->AddCommittedObserver(
 		std::bind_front(&ShellBrowserImpl::OnNavigationComitted, this),
 		NavigationEventScope::ForShellBrowser(*this), boost::signals2::at_front,
 		SlotGroup::HighPriority));
 
-	m_connections.push_back(
-		m_app->GetAppServices()->GetClipboardWatcher()->AddClipboardUpdatedObserver(
-			std::bind_front(&ShellBrowserImpl::OnClipboardUpdate, this)));
+	m_connections.push_back(m_appServices->GetClipboardWatcher()->AddClipboardUpdatedObserver(
+		std::bind_front(&ShellBrowserImpl::OnClipboardUpdate, this)));
 
 	m_performingDrag = false;
 	m_nCurrentColumns = 0;
@@ -146,16 +154,14 @@ ShellBrowserImpl::~ShellBrowserImpl()
 {
 	m_destroyedSignal();
 
-	auto *clipboardStore = m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore();
-
-	if (m_clipboardDataObject && clipboardStore->IsDataObjectCurrent(m_clipboardDataObject.get()))
+	if (m_clipboardDataObject && m_clipboardStore->IsDataObjectCurrent(m_clipboardDataObject.get()))
 	{
 		// Ensure that any data that was copied to the clipboard remains there. Technically, this
 		// only needs to be done when the application is closed. However, determining whether the
 		// application set the current data on the clipboard when the tab that set the data has
 		// already been closed is difficult, so the easiest thing to do is just flush the clipboard
 		// here.
-		clipboardStore->FlushDataObject();
+		m_clipboardStore->FlushDataObject();
 	}
 
 	DestroyWindow(m_listView);
@@ -215,24 +221,24 @@ void ShellBrowserImpl::InitializeListView()
 	m_connections.push_back(m_config->globalFolderSettings.oneClickActivateHoverTime.addObserver(
 		std::bind_front(&ShellBrowserImpl::OnOneClickActivateHoverTimeUpdated, this)));
 
-	m_app->GetAppServices()->GetThemeManager()->ApplyThemeToWindowAndChildren(m_listView);
+	m_appServices->GetThemeManager()->ApplyThemeToWindowAndChildren(m_listView);
 
 	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(m_listView,
 		std::bind_front(&ShellBrowserImpl::ListViewProc, this)));
 	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(GetParent(m_listView),
 		std::bind_front(&ShellBrowserImpl::ListViewParentProc, this)));
 
-	m_connections.push_back(m_app->GetAppServices()->GetColorRuleModel()->AddItemAddedObserver(
+	auto *colorRuleModel = m_appServices->GetColorRuleModel();
+	m_connections.push_back(colorRuleModel->AddItemAddedObserver(
 		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
-	m_connections.push_back(m_app->GetAppServices()->GetColorRuleModel()->AddItemUpdatedObserver(
+	m_connections.push_back(colorRuleModel->AddItemUpdatedObserver(
 		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
-	m_connections.push_back(m_app->GetAppServices()->GetColorRuleModel()->AddItemMovedObserver(
+	m_connections.push_back(colorRuleModel->AddItemMovedObserver(
 		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
-	m_connections.push_back(m_app->GetAppServices()->GetColorRuleModel()->AddItemRemovedObserver(
+	m_connections.push_back(colorRuleModel->AddItemRemovedObserver(
 		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
-	m_connections.push_back(
-		m_app->GetAppServices()->GetColorRuleModel()->AddAllItemsRemovedObserver(
-			std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
+	m_connections.push_back(colorRuleModel->AddAllItemsRemovedObserver(
+		std::bind(&ShellBrowserImpl::OnColorRulesUpdated, this)));
 
 	if (m_folderSettings.showInGroups)
 	{
@@ -1029,8 +1035,8 @@ void ShellBrowserImpl::StartRenamingMultipleItems(const std::vector<PidlAbsolute
 		return;
 	}
 
-	auto *massRenameDialog = MassRenameDialog::Create(m_app->GetAppServices()->GetResourceLoader(),
-		m_resourceInstance, m_listView, fullFilenameList, m_fileActionHandler);
+	auto *massRenameDialog = MassRenameDialog::Create(m_resourceLoader, m_resourceInstance,
+		m_listView, fullFilenameList, m_fileActionHandler);
 	massRenameDialog->ShowModalDialog();
 }
 
@@ -1047,14 +1053,12 @@ HRESULT ShellBrowserImpl::CopyItemsToClipboard(const std::vector<PidlAbsolute> &
 		return E_UNEXPECTED;
 	}
 
-	auto *clipboardStore = m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore();
-
 	wil::com_ptr_nothrow<IDataObject> clipboardDataObject;
 	HRESULT hr;
 
 	if (action == ClipboardAction::Copy)
 	{
-		hr = CopyFiles(clipboardStore, items, &clipboardDataObject);
+		hr = CopyFiles(m_clipboardStore, items, &clipboardDataObject);
 
 		if (SUCCEEDED(hr))
 		{
@@ -1063,7 +1067,7 @@ HRESULT ShellBrowserImpl::CopyItemsToClipboard(const std::vector<PidlAbsolute> &
 	}
 	else
 	{
-		hr = CutFiles(clipboardStore, items, &clipboardDataObject);
+		hr = CutFiles(m_clipboardStore, items, &clipboardDataObject);
 
 		if (SUCCEEDED(hr))
 		{
@@ -1095,8 +1099,7 @@ void ShellBrowserImpl::UpdateCurrentClipboardObject(
 void ShellBrowserImpl::OnClipboardUpdate()
 {
 	if (m_clipboardDataObject
-		&& !m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore()->IsDataObjectCurrent(
-			m_clipboardDataObject.get()))
+		&& !m_clipboardStore->IsDataObjectCurrent(m_clipboardDataObject.get()))
 	{
 		RestoreStateOfCutItems();
 
@@ -1131,15 +1134,13 @@ void ShellBrowserImpl::PasteShortcut()
 
 void ShellBrowserImpl::PasteHardLinks()
 {
-	auto pastedItems = ClipboardOperations::PasteHardLinks(
-		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(), GetDirectoryPath());
+	auto pastedItems = ClipboardOperations::PasteHardLinks(m_clipboardStore, GetDirectoryPath());
 	OnInternalPaste(pastedItems);
 }
 
 void ShellBrowserImpl::PasteSymLinks()
 {
-	auto pastedItems = ClipboardOperations::PasteSymLinks(
-		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(), GetDirectoryPath());
+	auto pastedItems = ClipboardOperations::PasteSymLinks(m_clipboardStore, GetDirectoryPath());
 	OnInternalPaste(pastedItems);
 }
 
@@ -1262,8 +1263,7 @@ void ShellBrowserImpl::ExecuteCommand(int command)
 void ShellBrowserImpl::CopySelectedItemPaths(PathType pathType) const
 {
 	auto selectedItems = GetSelectedItemPidls();
-	CopyItemPathsToClipboard(m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
-		selectedItems, pathType);
+	CopyItemPathsToClipboard(m_clipboardStore, selectedItems, pathType);
 }
 
 void ShellBrowserImpl::SetFileAttributesForSelectedItems()
@@ -1277,8 +1277,7 @@ void ShellBrowserImpl::SetFileAttributesForSelectedItems()
 		selectedItems.emplace_back(item.pidlComplete, item.wfd);
 	}
 
-	DialogHelper::MaybeShowSetFileAttributesDialog(m_app->GetAppServices()->GetResourceLoader(),
-		m_owner, selectedItems);
+	DialogHelper::MaybeShowSetFileAttributesDialog(m_resourceLoader, m_owner, selectedItems);
 }
 
 bool ShellBrowserImpl::CanCreateNewFolder() const
@@ -1307,8 +1306,7 @@ void ShellBrowserImpl::CreateNewFolder()
 			QueueRename(pidl);
 		});
 
-	auto newFolderName =
-		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_NEW_FOLDER_NAME);
+	auto newFolderName = m_resourceLoader->LoadString(IDS_NEW_FOLDER_NAME);
 	FileOperations::CreateNewFolder(directoryShellItem.get(), newFolderName, sink.get());
 }
 
@@ -1326,8 +1324,7 @@ void ShellBrowserImpl::SplitFile()
 		return;
 	}
 
-	auto *splitFileDialog =
-		SplitFileDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_owner, *itemPath);
+	auto *splitFileDialog = SplitFileDialog::Create(m_resourceLoader, m_owner, *itemPath);
 	splitFileDialog->ShowModalDialog();
 }
 
@@ -1376,9 +1373,8 @@ void ShellBrowserImpl::MergeFiles()
 		return;
 	}
 
-	auto *mergeFilesDialog =
-		MergeFilesDialog::Create(m_app->GetAppServices()->GetResourceLoader(), m_owner,
-			m_directoryState.directory, *items, m_config->globalFolderSettings.showFriendlyDates);
+	auto *mergeFilesDialog = MergeFilesDialog::Create(m_resourceLoader, m_owner,
+		m_directoryState.directory, *items, m_config->globalFolderSettings.showFriendlyDates);
 	mergeFilesDialog->ShowModalDialog();
 }
 
@@ -1431,8 +1427,7 @@ void ShellBrowserImpl::CopySelectedItemsToFolder(TransferAction action)
 	std::ranges::transform(pidls, std::back_inserter(rawPidls),
 		[](const auto &pidl) { return pidl.Raw(); });
 
-	Epp::FileOperations::CopyFilesToFolder(m_owner, rawPidls, action,
-		m_app->GetAppServices()->GetResourceLoader());
+	Epp::FileOperations::CopyFilesToFolder(m_owner, rawPidls, action, m_resourceLoader);
 }
 
 void ShellBrowserImpl::SelectAllItems()
@@ -1460,8 +1455,8 @@ bool ShellBrowserImpl::CanStartWildcardSelection(SelectionType selectionType) co
 
 void ShellBrowserImpl::StartWildcardSelection(SelectionType selectionType)
 {
-	auto *wilcardSelectDialog = WildcardSelectDialog::Create(
-		m_app->GetAppServices()->GetResourceLoader(), m_owner, this, selectionType);
+	auto *wilcardSelectDialog =
+		WildcardSelectDialog::Create(m_resourceLoader, m_owner, this, selectionType);
 	wilcardSelectDialog->ShowModalDialog();
 }
 
@@ -1504,11 +1499,10 @@ void ShellBrowserImpl::SaveDirectoryListing()
 		return;
 	}
 
-	const auto *resourceLoader = m_app->GetAppServices()->GetResourceLoader();
-	auto defaultFileName = resourceLoader->LoadString(IDS_DIRECTORY_LISTING_FILENAME);
+	auto defaultFileName = m_resourceLoader->LoadString(IDS_DIRECTORY_LISTING_FILENAME);
 
 	std::vector<FileDialogs::FileType> fileTypes = {
-		{ resourceLoader->LoadString(IDS_DIRECTORY_LISTING_TEXT_DOCUMENT), L"*.txt" }
+		{ m_resourceLoader->LoadString(IDS_DIRECTORY_LISTING_TEXT_DOCUMENT), L"*.txt" }
 	};
 
 	std::wstring filePath;

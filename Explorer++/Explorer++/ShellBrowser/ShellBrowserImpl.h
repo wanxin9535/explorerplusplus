@@ -40,16 +40,19 @@
 #include <unordered_set>
 
 class AcceleratorManager;
-class App;
+class AppServices;
 struct BasicItemInfo_t;
 class BrowserWindow;
 class CachedIcons;
+class ClipboardStore;
 struct Config;
 class FileActionHandler;
 class IconFetcher;
 class NavigationRequest;
 struct PreservedShellBrowser;
+class ResourceLoader;
 class Runtime;
+class ShellBrowserEvents;
 class ShellEnumeratorImpl;
 class ShellNavigationController;
 class WindowSubclass;
@@ -67,11 +70,11 @@ class ShellBrowserImpl :
 	private boost::noncopyable
 {
 public:
-	ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance, BrowserWindow *browser,
-		FileActionHandler *fileActionHandler, const PreservedShellBrowser &preservedShellBrowser);
-	ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance, BrowserWindow *browser,
-		FileActionHandler *fileActionHandler, const PidlAbsolute &initialPidl,
-		const FolderSettings &folderSettings, const FolderColumns *initialColumns);
+	ShellBrowserImpl(const PreservedShellBrowser &preservedShellBrowser, BrowserWindow *browser,
+		AppServices *appServices, HINSTANCE resourceInstance, FileActionHandler *fileActionHandler);
+	ShellBrowserImpl(const PidlAbsolute &initialPidl, const FolderSettings &folderSettings,
+		const FolderColumns *initialColumns, BrowserWindow *browser, AppServices *appServices,
+		HINSTANCE resourceInstance, FileActionHandler *fileActionHandler);
 	~ShellBrowserImpl();
 
 	HWND GetListView() const;
@@ -358,9 +361,9 @@ private:
 	static const UINT WM_APP_THUMBNAIL_RESULT_READY = WM_APP + 151;
 	static const UINT WM_APP_INFO_TIP_READY = WM_APP + 152;
 
-	ShellBrowserImpl(HWND owner, App *app, HINSTANCE resourceInstance, BrowserWindow *browser,
-		FileActionHandler *fileActionHandler, const FolderSettings &folderSettings,
-		const FolderColumns *initialColumns);
+	ShellBrowserImpl(const FolderSettings &folderSettings, const FolderColumns *initialColumns,
+		BrowserWindow *browser, AppServices *appServices, HINSTANCE resourceInstance,
+		FileActionHandler *fileActionHandler);
 
 	static HWND CreateListView(HWND parent);
 	void InitializeListView();
@@ -624,8 +627,8 @@ private:
 	HWND m_listView;
 	HWND m_owner;
 
-	App *const m_app;
 	BrowserWindow *const m_browser;
+	AppServices *const m_appServices;
 
 	std::shared_ptr<ShellEnumeratorImpl> m_shellEnumerator;
 	NavigationManager m_navigationManager;
@@ -680,7 +683,10 @@ private:
 	modification. */
 	int m_uniqueFolderId;
 
-	const Config *m_config;
+	ShellBrowserEvents *const m_shellBrowserEvents;
+	const Config *const m_config;
+	ClipboardStore *const m_clipboardStore;
+	const ResourceLoader *const m_resourceLoader;
 	FolderSettings m_folderSettings;
 
 	int m_middleButtonItem;
