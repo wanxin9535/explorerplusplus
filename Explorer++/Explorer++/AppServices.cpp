@@ -210,6 +210,21 @@ void AppServices::SetDarkModeManager(DarkModeManager *darkModeManager)
 	Set(darkModeManager);
 }
 
+DirectoryWatcherFactory *AppServices::GetDirectoryWatcherFactory()
+{
+	return Get<DirectoryWatcherFactory>();
+}
+
+const DirectoryWatcherFactory *AppServices::GetDirectoryWatcherFactory() const
+{
+	return Get<DirectoryWatcherFactory>();
+}
+
+void AppServices::SetDirectoryWatcherFactory(DirectoryWatcherFactory *directoryWatcherFactory)
+{
+	Set(directoryWatcherFactory);
+}
+
 DriveModel *AppServices::GetDriveModel()
 {
 	return Get<DriveModel>();

@@ -20,10 +20,11 @@
 
 void ShellBrowserImpl::StartDirectoryMonitoring()
 {
-	m_directoryState.directoryWatcher = m_app->GetDirectoryWatcherFactory()->MaybeCreate(
-		m_directoryState.pidlDirectory, DirectoryWatcher::Filters::All,
-		std::bind_front(&ShellBrowserImpl::ProcessDirectoryChangeNotification, this),
-		DirectoryWatcher::Behavior::NonRecursive);
+	m_directoryState.directoryWatcher =
+		m_app->GetAppServices()->GetDirectoryWatcherFactory()->MaybeCreate(
+			m_directoryState.pidlDirectory, DirectoryWatcher::Filters::All,
+			std::bind_front(&ShellBrowserImpl::ProcessDirectoryChangeNotification, this),
+			DirectoryWatcher::Behavior::NonRecursive);
 
 	if (m_config->changeNotifyMode == ChangeNotifyMode::Shell)
 	{
@@ -34,10 +35,11 @@ void ShellBrowserImpl::StartDirectoryMonitoring()
 		//
 		// This will also implicitly monitor directory update events, which is useful when a parent
 		// folder is renamed.
-		m_directoryState.rootDirectoryWatcher = m_app->GetDirectoryWatcherFactory()->MaybeCreate(
-			GetRootPidl(), DirectoryWatcher::Filters::DirectoryRemoved,
-			std::bind_front(&ShellBrowserImpl::ProcessDirectoryChangeNotification, this),
-			DirectoryWatcher::Behavior::Recursive);
+		m_directoryState.rootDirectoryWatcher =
+			m_app->GetAppServices()->GetDirectoryWatcherFactory()->MaybeCreate(GetRootPidl(),
+				DirectoryWatcher::Filters::DirectoryRemoved,
+				std::bind_front(&ShellBrowserImpl::ProcessDirectoryChangeNotification, this),
+				DirectoryWatcher::Behavior::Recursive);
 	}
 }
 

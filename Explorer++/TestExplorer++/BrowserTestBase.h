@@ -32,6 +32,8 @@
 #include "Runtime.h"
 #include "ShellBrowser/NavigationEvents.h"
 #include "ShellBrowser/ShellBrowserEvents.h"
+#include "SimulatedFileSystem.h"
+#include "SimulatedFileSystemWatcherFactory.h"
 #include "TabEvents.h"
 #include "TabList.h"
 #include "TabRestorer.h"
@@ -64,6 +66,8 @@ protected:
 	AppControllerFake m_appController;
 	PlatformContextFake m_platformContext;
 	Runtime m_runtime;
+	SimulatedFileSystem m_fileSystem;
+	SimulatedFileSystemWatcherFactory m_directoryWatcherFactory;
 	NoOpClipboardWatcher m_clipboardWatcher;
 
 	FeatureList m_featureList;

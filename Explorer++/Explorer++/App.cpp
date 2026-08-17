@@ -277,6 +277,7 @@ void App::SetUpAppServices()
 	m_appServices.SetConfig(&m_config);
 	m_appServices.SetDarkModeColorProvider(&m_darkModeColorProvider);
 	m_appServices.SetDarkModeManager(&m_darkModeManager);
+	m_appServices.SetDirectoryWatcherFactory(&m_directoryWatcherFactory);
 	m_appServices.SetDriveModel(&m_driveModel);
 	m_appServices.SetFeatureList(&m_featureList);
 	m_appServices.SetFrequentLocationsModel(&m_frequentLocationsModel);
@@ -334,11 +335,6 @@ void App::SetSaveLocation(SaveLocation saveLocation)
 AppServices *App::GetAppServices()
 {
 	return &m_appServices;
-}
-
-DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()
-{
-	return &m_directoryWatcherFactory;
 }
 
 void App::OnWillRemoveBrowser()

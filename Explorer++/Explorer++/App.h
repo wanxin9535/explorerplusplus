@@ -59,7 +59,6 @@ public:
 	int Run();
 
 	AppServices *GetAppServices();
-	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
 
 private:
 	// Represents the maximum number of icons that can be cached. This cache is shared between

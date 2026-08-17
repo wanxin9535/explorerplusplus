@@ -18,6 +18,7 @@ class ColorRuleModel;
 struct Config;
 class DarkModeColorProvider;
 class DarkModeManager;
+class DirectoryWatcherFactory;
 class DriveModel;
 class FeatureList;
 class FrequentLocationsModel;
@@ -120,6 +121,10 @@ public:
 	const DarkModeManager *GetDarkModeManager() const;
 	void SetDarkModeManager(DarkModeManager *darkModeManager);
 
+	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
+	const DirectoryWatcherFactory *GetDirectoryWatcherFactory() const;
+	void SetDirectoryWatcherFactory(DirectoryWatcherFactory *directoryWatcherFactory);
+
 	DriveModel *GetDriveModel();
 	const DriveModel *GetDriveModel() const;
 	void SetDriveModel(DriveModel *driveModel);
@@ -191,9 +196,9 @@ private:
 	std::tuple<AcceleratorManager *, AppController *, Applications::ApplicationModel *,
 		AsyncIconFetcher *, BookmarkTree *, BrowserList *, BrowserWindowFactory *, CachedIcons *,
 		ClipboardWatcher *, ColorRuleModel *, const CommandLine::Settings *, Config *,
-		DarkModeColorProvider *, DarkModeManager *, DriveModel *, FeatureList *,
-		FrequentLocationsModel *, HistoryModel *, ModelessDialogList *, NavigationEvents *,
-		PlatformContext *, ResourceLoader *, Runtime *, ShellBrowserEvents *, TabEvents *,
-		TabList *, TabRestorer *, ThemeManager *>
+		DarkModeColorProvider *, DarkModeManager *, DirectoryWatcherFactory *, DriveModel *,
+		FeatureList *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
+		NavigationEvents *, PlatformContext *, ResourceLoader *, Runtime *, ShellBrowserEvents *,
+		TabEvents *, TabList *, TabRestorer *, ThemeManager *>
 		m_services;
 };
