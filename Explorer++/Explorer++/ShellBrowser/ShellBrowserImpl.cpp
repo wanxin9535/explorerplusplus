@@ -74,11 +74,11 @@ ShellBrowserImpl::ShellBrowserImpl(HWND owner, App *app, BrowserWindow *browser,
 	m_shellEnumerator(std::make_shared<ShellEnumeratorImpl>(owner)),
 	m_navigationManager(this, app->GetAppServices()->GetNavigationEvents(), m_shellEnumerator,
 		app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::BackgroundThreadEnumeration)
-			? app->GetRuntime()->GetComStaExecutor()
-			: app->GetRuntime()->GetInlineExecutor(),
+			? app->GetAppServices()->GetRuntime()->GetComStaExecutor()
+			: app->GetAppServices()->GetRuntime()->GetInlineExecutor(),
 		app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::BackgroundThreadEnumeration)
-			? app->GetRuntime()->GetUiThreadExecutor()
-			: app->GetRuntime()->GetInlineExecutor()),
+			? app->GetAppServices()->GetRuntime()->GetUiThreadExecutor()
+			: app->GetAppServices()->GetRuntime()->GetInlineExecutor()),
 	m_progressCursor(LoadCursor(nullptr, IDC_APPSTARTING)),
 	m_commandTarget(browser->GetCommandTargetManager(), this),
 	m_fileActionHandler(fileActionHandler),

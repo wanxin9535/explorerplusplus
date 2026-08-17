@@ -1008,7 +1008,7 @@ LRESULT CALLBACK Explorerplusplus::NotifyHandler(HWND hwnd, UINT msg, WPARAM wPa
 		// This message can be dispatched within the middle of an existing layout operation (if the
 		// height of the rebar is updated). To avoid making re-entrant layout calls, the layout
 		// update will be scheduled, instead of being immediately invoked.
-		ScheduleUpdateLayout(m_weakPtrFactory.GetWeakPtr(), m_app->GetRuntime());
+		ScheduleUpdateLayout(m_weakPtrFactory.GetWeakPtr(), m_app->GetAppServices()->GetRuntime());
 		break;
 
 	case RBN_CHEVRONPUSHED:

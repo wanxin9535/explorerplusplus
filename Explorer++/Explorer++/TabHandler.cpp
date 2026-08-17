@@ -299,7 +299,8 @@ void Explorerplusplus::OnTabRemoved(const Tab &tab)
 		// listeners that run after this one. Secondly, because the Tab object relies on items that
 		// are owned by this class, so destroying this class (by destroying the window) needs to be
 		// done only after the listeners have all finished running.
-		ScheduleFinishShutdown(m_weakPtrFactory.GetWeakPtr(), m_app->GetRuntime());
+		ScheduleFinishShutdown(m_weakPtrFactory.GetWeakPtr(),
+			m_app->GetAppServices()->GetRuntime());
 	}
 }
 

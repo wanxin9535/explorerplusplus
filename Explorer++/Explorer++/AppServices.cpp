@@ -330,6 +330,21 @@ void AppServices::SetResourceLoader(ResourceLoader *resourceLoader)
 	Set(resourceLoader);
 }
 
+Runtime *AppServices::GetRuntime()
+{
+	return Get<Runtime>();
+}
+
+const Runtime *AppServices::GetRuntime() const
+{
+	return Get<Runtime>();
+}
+
+void AppServices::SetRuntime(Runtime *runtime)
+{
+	Set(runtime);
+}
+
 ShellBrowserEvents *AppServices::GetShellBrowserEvents()
 {
 	return Get<ShellBrowserEvents>();

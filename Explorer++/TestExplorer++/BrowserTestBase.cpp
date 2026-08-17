@@ -7,11 +7,13 @@
 #include "BrowserWindowFake.h"
 #include "DriveEnumeratorFake.h"
 #include "PidlTestHelper.h"
+#include "RuntimeTestHelper.h"
 #include "ShellBrowser/ShellBrowser.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include <wil/common.h>
 
 BrowserTestBase::BrowserTestBase() :
+	m_runtime(BuildRuntimeForTest()),
 	m_cachedIcons(10),
 	m_resourceLoader(GetModuleHandle(nullptr), IconSet::Color, nullptr, nullptr),
 	m_tabList(&m_tabEvents),
@@ -50,6 +52,7 @@ void BrowserTestBase::SetUpAppServices()
 	m_appServices.SetNavigationEvents(&m_navigationEvents);
 	m_appServices.SetPlatformContext(&m_platformContext);
 	m_appServices.SetResourceLoader(&m_resourceLoader);
+	m_appServices.SetRuntime(&m_runtime);
 	m_appServices.SetShellBrowserEvents(&m_shellBrowserEvents);
 	m_appServices.SetTabEvents(&m_tabEvents);
 	m_appServices.SetTabList(&m_tabList);

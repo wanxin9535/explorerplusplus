@@ -26,6 +26,7 @@ class ModelessDialogList;
 class NavigationEvents;
 class PlatformContext;
 class ResourceLoader;
+class Runtime;
 class ShellBrowserEvents;
 class TabEvents;
 class TabList;
@@ -150,6 +151,10 @@ public:
 	const ResourceLoader *GetResourceLoader() const;
 	void SetResourceLoader(ResourceLoader *resourceLoader);
 
+	Runtime *GetRuntime();
+	const Runtime *GetRuntime() const;
+	void SetRuntime(Runtime *runtime);
+
 	ShellBrowserEvents *GetShellBrowserEvents();
 	const ShellBrowserEvents *GetShellBrowserEvents() const;
 	void SetShellBrowserEvents(ShellBrowserEvents *shellBrowserEvents);
@@ -183,7 +188,7 @@ private:
 		ClipboardWatcher *, ColorRuleModel *, const CommandLine::Settings *, Config *,
 		DarkModeColorProvider *, DarkModeManager *, DriveModel *, FeatureList *,
 		FrequentLocationsModel *, HistoryModel *, ModelessDialogList *, NavigationEvents *,
-		PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *,
-		TabRestorer *>
+		PlatformContext *, ResourceLoader *, Runtime *, ShellBrowserEvents *, TabEvents *,
+		TabList *, TabRestorer *>
 		m_services;
 };

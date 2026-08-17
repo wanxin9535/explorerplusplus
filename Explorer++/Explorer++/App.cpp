@@ -286,6 +286,7 @@ void App::SetUpAppServices()
 	m_appServices.SetNavigationEvents(&m_navigationEvents);
 	m_appServices.SetPlatformContext(&m_platformContext);
 	m_appServices.SetResourceLoader(m_resourceLoader.get());
+	m_appServices.SetRuntime(&m_runtime);
 	m_appServices.SetShellBrowserEvents(&m_shellBrowserEvents);
 	m_appServices.SetTabEvents(&m_tabEvents);
 	m_appServices.SetTabList(&m_tabList);
@@ -333,11 +334,6 @@ void App::SetSaveLocation(SaveLocation saveLocation)
 AppServices *App::GetAppServices()
 {
 	return &m_appServices;
-}
-
-Runtime *App::GetRuntime()
-{
-	return &m_runtime;
 }
 
 DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()

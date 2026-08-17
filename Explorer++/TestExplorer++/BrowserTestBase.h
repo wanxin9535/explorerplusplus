@@ -28,6 +28,7 @@
 #include "ModelessDialogList.h"
 #include "NoOpClipboardWatcher.h"
 #include "PlatformContextFake.h"
+#include "Runtime.h"
 #include "ShellBrowser/NavigationEvents.h"
 #include "ShellBrowser/ShellBrowserEvents.h"
 #include "TabEvents.h"
@@ -61,6 +62,7 @@ protected:
 	AppServices m_appServices;
 	AppControllerFake m_appController;
 	PlatformContextFake m_platformContext;
+	Runtime m_runtime;
 	NoOpClipboardWatcher m_clipboardWatcher;
 
 	FeatureList m_featureList;

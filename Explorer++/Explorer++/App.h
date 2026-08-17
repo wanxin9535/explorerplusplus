@@ -59,7 +59,6 @@ public:
 	int Run();
 
 	AppServices *GetAppServices();
-	Runtime *GetRuntime();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
 	HINSTANCE GetResourceInstance() const;
 	ThemeManager *GetThemeManager();

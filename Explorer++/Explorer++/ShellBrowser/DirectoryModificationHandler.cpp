@@ -62,7 +62,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 		else if (ArePidlsEquivalent(m_directoryState.pidlDirectory.Raw(), simplePidl1.Raw()))
 		{
 			OnCurrentDirectoryRenamed(m_weakPtrFactory.GetWeakPtr(), simplePidl2.Raw(),
-				m_app->GetRuntime());
+				m_app->GetAppServices()->GetRuntime());
 		}
 		break;
 
@@ -78,7 +78,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 			// - If the icon for the folder is changed.
 			// - If the folder is virtual (e.g. the recycle bin) and the name is changed.
 			OnDirectoryPropertiesChanged(m_weakPtrFactory.GetWeakPtr(),
-				m_directoryState.pidlDirectory, m_app->GetRuntime());
+				m_directoryState.pidlDirectory, m_app->GetAppServices()->GetRuntime());
 		}
 		break;
 
@@ -88,7 +88,8 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 			// It's not safe to perform an immediate refresh here, since the set of changes is being
 			// iterated through by the directory watcher. Therefore, the function below will perform
 			// the refresh asynchronously.
-			RefreshDirectoryAfterUpdate(m_weakPtrFactory.GetWeakPtr(), m_app->GetRuntime());
+			RefreshDirectoryAfterUpdate(m_weakPtrFactory.GetWeakPtr(),
+				m_app->GetAppServices()->GetRuntime());
 		}
 		else if (ILIsParent(simplePidl1.Raw(), m_directoryState.pidlDirectory.Raw(), false))
 		{
@@ -97,7 +98,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 			// required. It's also possible an unrelated item was updated, in which case no action
 			// will be taken by the function below.
 			NavigateUpToClosestExistingItemIfNecessary(m_weakPtrFactory.GetWeakPtr(),
-				m_directoryState.pidlDirectory, m_app->GetRuntime());
+				m_directoryState.pidlDirectory, m_app->GetAppServices()->GetRuntime());
 		}
 		break;
 
@@ -117,7 +118,7 @@ void ShellBrowserImpl::ProcessDirectoryChangeNotification(DirectoryWatcher::Even
 			// parents. That makes it necessary to navigate to another folder. For similarity with
 			// Explorer, a navigation to a parent will occur.
 			NavigateUpToClosestExistingItemIfNecessary(m_weakPtrFactory.GetWeakPtr(),
-				m_directoryState.pidlDirectory, m_app->GetRuntime());
+				m_directoryState.pidlDirectory, m_app->GetAppServices()->GetRuntime());
 		}
 		break;
 	}

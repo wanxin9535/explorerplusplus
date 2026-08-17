@@ -592,9 +592,10 @@ void ShellTreeView::OnSelectionChanged(const NMTREEVIEW *eventInfo)
 #pragma warning(push)
 #pragma warning(                                                                                   \
 	disable : 4244) // 'argument': conversion from '_Rep' to 'size_t', possible loss of data
-		m_selectionChangedTimer = m_app->GetRuntime()->GetTimerQueue()->make_one_shot_timer(500ms,
-			m_app->GetRuntime()->GetUiThreadExecutor(),
-			std::bind_front(&ShellTreeView::OnSelectionChangedTimer, this));
+		m_selectionChangedTimer =
+			m_app->GetAppServices()->GetRuntime()->GetTimerQueue()->make_one_shot_timer(500ms,
+				m_app->GetAppServices()->GetRuntime()->GetUiThreadExecutor(),
+				std::bind_front(&ShellTreeView::OnSelectionChangedTimer, this));
 #pragma warning(pop)
 	}
 	else

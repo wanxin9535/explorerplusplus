@@ -8,8 +8,6 @@
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
 #include "PidlTestHelper.h"
-#include "Runtime.h"
-#include "RuntimeTestHelper.h"
 #include "ShellBrowser/ShellBrowser.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "Tab.h"
@@ -21,7 +19,6 @@ class AddressBarTest : public BrowserTestBase
 {
 protected:
 	AddressBarTest() :
-		m_runtime(BuildRuntimeForTest()),
 		m_browser(AddBrowser()),
 		m_addressBarView(AddressBarView::Create(m_browser->GetHWND(), &m_config)),
 		m_addressBar(AddressBar::Create(m_addressBarView, m_browser, &m_tabEvents,
@@ -37,8 +34,6 @@ protected:
 		m_addressBarView = nullptr;
 		m_addressBar = nullptr;
 	}
-
-	Runtime m_runtime;
 
 	BrowserWindowFake *const m_browser;
 	AddressBarView *m_addressBarView = nullptr;
