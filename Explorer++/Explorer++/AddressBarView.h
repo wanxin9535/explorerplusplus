@@ -34,6 +34,7 @@ public:
 
 	AddressBarViewDelegate *GetDelegateForTesting();
 	void SetTextForTesting(const std::wstring &text);
+	void DestroyForTesting();
 
 private:
 	AddressBarView(HWND parent, const Config *config);

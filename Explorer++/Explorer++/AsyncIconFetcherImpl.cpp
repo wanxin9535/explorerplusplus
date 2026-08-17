@@ -3,13 +3,13 @@
 // See LICENSE in the top level directory
 
 #include "stdafx.h"
-#include "AsyncIconFetcher.h"
+#include "AsyncIconFetcherImpl.h"
 #include "RuntimeHelper.h"
 #include "../Helper/CachedIcons.h"
 #include "../Helper/Pidl.h"
 #include "../Helper/ShellHelper.h"
 
-AsyncIconFetcher::AsyncIconFetcher(const Runtime *runtime, CachedIcons *cachedIcons) :
+AsyncIconFetcherImpl::AsyncIconFetcherImpl(const Runtime *runtime, CachedIcons *cachedIcons) :
 	m_runtime(runtime),
 	m_cachedIcons(cachedIcons)
 {
@@ -17,14 +17,14 @@ AsyncIconFetcher::AsyncIconFetcher(const Runtime *runtime, CachedIcons *cachedIc
 	FAIL_FAST_IF_FAILED(GetDefaultFolderIconIndex(m_defaultFolderIconIndex));
 }
 
-concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIconIndexAsync(
+concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcherImpl::GetIconIndexAsync(
 	PCIDLIST_ABSOLUTE pidl, std::stop_token stopToken)
 {
 	return GetIconIndexAsyncImpl(m_weakPtrFactory.GetWeakPtr(), pidl, stopToken);
 }
 
-concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIconIndexAsyncImpl(
-	WeakPtr<AsyncIconFetcher> weakSelf, PidlAbsolute pidl, std::stop_token stopToken)
+concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcherImpl::GetIconIndexAsyncImpl(
+	WeakPtr<AsyncIconFetcherImpl> weakSelf, PidlAbsolute pidl, std::stop_token stopToken)
 {
 	auto *runtime = weakSelf->m_runtime;
 
@@ -80,7 +80,7 @@ concurrencpp::lazy_result<std::optional<ShellIconInfo>> AsyncIconFetcher::GetIco
 	co_return iconInfo;
 }
 
-int AsyncIconFetcher::GetCachedIconIndexOrDefault(PCIDLIST_ABSOLUTE pidl) const
+int AsyncIconFetcherImpl::GetCachedIconIndexOrDefault(PCIDLIST_ABSOLUTE pidl) const
 {
 	auto cachedIconIndex = MaybeGetCachedIconIndex(pidl);
 
@@ -92,7 +92,7 @@ int AsyncIconFetcher::GetCachedIconIndexOrDefault(PCIDLIST_ABSOLUTE pidl) const
 	return GetDefaultIconIndex(pidl);
 }
 
-std::optional<int> AsyncIconFetcher::MaybeGetCachedIconIndex(PCIDLIST_ABSOLUTE pidl) const
+std::optional<int> AsyncIconFetcherImpl::MaybeGetCachedIconIndex(PCIDLIST_ABSOLUTE pidl) const
 {
 	std::wstring itemPath;
 	HRESULT hr = GetDisplayName(pidl, SHGDN_FORPARSING, itemPath);
@@ -105,7 +105,7 @@ std::optional<int> AsyncIconFetcher::MaybeGetCachedIconIndex(PCIDLIST_ABSOLUTE p
 	return m_cachedIcons->MaybeGetIconIndex(itemPath);
 }
 
-int AsyncIconFetcher::GetDefaultIconIndex(PCIDLIST_ABSOLUTE pidl) const
+int AsyncIconFetcherImpl::GetDefaultIconIndex(PCIDLIST_ABSOLUTE pidl) const
 {
 	SFGAOF attributes = SFGAO_FOLDER;
 	HRESULT hr = GetItemAttributes(pidl, &attributes);

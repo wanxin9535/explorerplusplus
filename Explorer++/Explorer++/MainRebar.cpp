@@ -254,7 +254,7 @@ void Explorerplusplus::CreateAddressBar()
 	m_addressBar = AddressBar::Create(addressBarView, this, m_app->GetAppServices()->GetTabEvents(),
 		m_app->GetAppServices()->GetShellBrowserEvents(),
 		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetRuntime(),
-		m_app->GetIconFetcher());
+		m_app->GetAppServices()->GetAsyncIconFetcher());
 }
 
 void Explorerplusplus::OnAddressBarSizeUpdated()

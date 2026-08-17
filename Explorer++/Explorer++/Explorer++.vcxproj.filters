@@ -571,7 +571,7 @@
     <ClCompile Include="RuntimeHelper.cpp">
       <Filter>Async</Filter>
     </ClCompile>
-    <ClCompile Include="AsyncIconFetcher.cpp">
+    <ClCompile Include="AsyncIconFetcherImpl.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="StartupCommandLineProcessor.cpp">
@@ -1539,7 +1539,7 @@
     <ClInclude Include="RuntimeHelper.h">
       <Filter>Async</Filter>
     </ClInclude>
-    <ClInclude Include="AsyncIconFetcher.h">
+    <ClInclude Include="AsyncIconFetcherImpl.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="ExitCode.h">
@@ -1985,6 +1985,9 @@
     </ClInclude>
     <ClInclude Include="DarkModeManager.h">
       <Filter>Dark Mode Support</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncIconFetcher.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

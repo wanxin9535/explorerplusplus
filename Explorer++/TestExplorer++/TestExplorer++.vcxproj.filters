@@ -213,7 +213,7 @@
     <ClCompile Include="RuntimeHelperTest.cpp">
       <Filter>Async</Filter>
     </ClCompile>
-    <ClCompile Include="AsyncIconFetcherTest.cpp">
+    <ClCompile Include="AsyncIconFetcherImplTest.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="RuntimeTestHelper.cpp">
@@ -585,6 +585,9 @@
     </ClCompile>
     <ClCompile Include="BrowserWindowFactoryFake.cpp">
       <Filter>Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncIconFetcherFake.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -977,6 +980,9 @@
     </ClInclude>
     <ClInclude Include="NoOpClipboardWatcher.h">
       <Filter>Helper\Data Exchange\Clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncIconFetcherFake.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

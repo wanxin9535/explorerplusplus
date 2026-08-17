@@ -5,7 +5,6 @@
 #include "pch.h"
 #include "AddressBar.h"
 #include "AddressBarView.h"
-#include "AsyncIconFetcher.h"
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
 #include "PidlTestHelper.h"
@@ -15,7 +14,6 @@
 #include "ShellBrowser/ShellNavigationController.h"
 #include "Tab.h"
 #include <gtest/gtest.h>
-#include <memory>
 
 using namespace testing;
 
@@ -24,7 +22,6 @@ class AddressBarTest : public BrowserTestBase
 protected:
 	AddressBarTest() :
 		m_runtime(BuildRuntimeForTest()),
-		m_iconFetcher(&m_runtime, &m_cachedIcons),
 		m_browser(AddBrowser()),
 		m_addressBarView(AddressBarView::Create(m_browser->GetHWND(), &m_config)),
 		m_addressBar(AddressBar::Create(m_addressBarView, m_browser, &m_tabEvents,
@@ -32,12 +29,20 @@ protected:
 	{
 	}
 
+	void DestroyAddressBar()
+	{
+		// The lifetime of the AddressBar instance is tied to the lifetime of the view. So, this
+		// will destroy both instances.
+		m_addressBarView->DestroyForTesting();
+		m_addressBarView = nullptr;
+		m_addressBar = nullptr;
+	}
+
 	Runtime m_runtime;
-	AsyncIconFetcher m_iconFetcher;
 
 	BrowserWindowFake *const m_browser;
-	AddressBarView *const m_addressBarView;
-	AddressBar *const m_addressBar;
+	AddressBarView *m_addressBarView = nullptr;
+	AddressBar *m_addressBar = nullptr;
 };
 
 TEST_F(AddressBarTest, DisplayUpdateAfterNavigation)
@@ -114,4 +119,17 @@ TEST_F(AddressBarTest, ActiveTargetOnFocus)
 	auto *delegate = m_addressBarView->GetDelegateForTesting();
 	delegate->OnFocused();
 	EXPECT_EQ(commandTargetManager->GetCurrentTarget(), m_addressBar);
+}
+
+TEST_F(AddressBarTest, IconRetrievalAfterDestruction)
+{
+	// Doing this will cause the address bar to queue at least one icon retrieval task.
+	m_browser->AddTab(L"c:\\");
+	EXPECT_TRUE(m_iconFetcher.HasPendingRequests());
+
+	DestroyAddressBar();
+
+	// This will cause the pending icon retrieval task(s) to return. This should be safe, even
+	// though the address bar has been destroyed.
+	m_iconFetcher.CompletePendingRequests();
 }

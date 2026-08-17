@@ -198,3 +198,10 @@ void AddressBarView::SetTextForTesting(const std::wstring &text)
 	SendMessage(m_hwnd, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(text.c_str()));
 	SendMessage(GetEditControl(), EM_SETMODIFY, TRUE, 0);
 }
+
+void AddressBarView::DestroyForTesting()
+{
+	CHECK(IsInTest());
+	auto res = DestroyWindow(m_hwnd);
+	CHECK(res);
+}

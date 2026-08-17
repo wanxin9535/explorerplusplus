@@ -50,6 +50,21 @@ void AppServices::SetApplicationModel(Applications::ApplicationModel *applicatio
 	Set(applicationModel);
 }
 
+AsyncIconFetcher *AppServices::GetAsyncIconFetcher()
+{
+	return Get<AsyncIconFetcher>();
+}
+
+const AsyncIconFetcher *AppServices::GetAsyncIconFetcher() const
+{
+	return Get<AsyncIconFetcher>();
+}
+
+void AppServices::SetAsyncIconFetcher(AsyncIconFetcher *asyncIconFetcher)
+{
+	Set(asyncIconFetcher);
+}
+
 BookmarkTree *AppServices::GetBookmarkTree()
 {
 	return Get<BookmarkTree>();

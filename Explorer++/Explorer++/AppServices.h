@@ -8,6 +8,7 @@
 
 class AcceleratorManager;
 class AppController;
+class AsyncIconFetcher;
 class BookmarkTree;
 class BrowserList;
 class BrowserWindowFactory;
@@ -73,6 +74,10 @@ public:
 	Applications::ApplicationModel *GetApplicationModel();
 	const Applications::ApplicationModel *GetApplicationModel() const;
 	void SetApplicationModel(Applications::ApplicationModel *applicationModel);
+
+	AsyncIconFetcher *GetAsyncIconFetcher();
+	const AsyncIconFetcher *GetAsyncIconFetcher() const;
+	void SetAsyncIconFetcher(AsyncIconFetcher *asyncIconFetcher);
 
 	BookmarkTree *GetBookmarkTree();
 	const BookmarkTree *GetBookmarkTree() const;
@@ -174,10 +179,11 @@ private:
 	void Set(T *service);
 
 	std::tuple<AcceleratorManager *, AppController *, Applications::ApplicationModel *,
-		BookmarkTree *, BrowserList *, BrowserWindowFactory *, CachedIcons *, ClipboardWatcher *,
-		ColorRuleModel *, const CommandLine::Settings *, Config *, DarkModeColorProvider *,
-		DarkModeManager *, DriveModel *, FeatureList *, FrequentLocationsModel *, HistoryModel *,
-		ModelessDialogList *, NavigationEvents *, PlatformContext *, ResourceLoader *,
-		ShellBrowserEvents *, TabEvents *, TabList *, TabRestorer *>
+		AsyncIconFetcher *, BookmarkTree *, BrowserList *, BrowserWindowFactory *, CachedIcons *,
+		ClipboardWatcher *, ColorRuleModel *, const CommandLine::Settings *, Config *,
+		DarkModeColorProvider *, DarkModeManager *, DriveModel *, FeatureList *,
+		FrequentLocationsModel *, HistoryModel *, ModelessDialogList *, NavigationEvents *,
+		PlatformContext *, ResourceLoader *, ShellBrowserEvents *, TabEvents *, TabList *,
+		TabRestorer *>
 		m_services;
 };

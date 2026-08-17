@@ -8,6 +8,7 @@
 #include "AppControllerFake.h"
 #include "AppServices.h"
 #include "ApplicationModel.h"
+#include "AsyncIconFetcherFake.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
 #include "BrowserWindowFactoryFake.h"
@@ -70,6 +71,7 @@ protected:
 	DarkModeColorProvider m_darkModeColorProvider;
 	BookmarkTree m_bookmarkTree;
 	CachedIcons m_cachedIcons;
+	AsyncIconFetcherFake m_iconFetcher;
 	Win32ResourceLoader m_resourceLoader;
 	ColorRuleModel m_colorRuleModel;
 	Applications::ApplicationModel m_applicationModel;

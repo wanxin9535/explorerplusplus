@@ -31,6 +31,7 @@ void BrowserTestBase::SetUpAppServices()
 	m_appServices.SetAcceleratorManager(&m_acceleratorManager);
 	m_appServices.SetAppController(&m_appController);
 	m_appServices.SetApplicationModel(&m_applicationModel);
+	m_appServices.SetAsyncIconFetcher(&m_iconFetcher);
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);

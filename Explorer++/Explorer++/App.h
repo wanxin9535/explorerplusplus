@@ -8,7 +8,7 @@
 #include "AppController.h"
 #include "AppServices.h"
 #include "ApplicationModel.h"
-#include "AsyncIconFetcher.h"
+#include "AsyncIconFetcherImpl.h"
 #include "Bookmarks/BookmarkTree.h"
 #include "BrowserList.h"
 #include "BrowserWindowFactoryImpl.h"
@@ -61,7 +61,6 @@ public:
 	AppServices *GetAppServices();
 	Runtime *GetRuntime();
 	DirectoryWatcherFactory *GetDirectoryWatcherFactory();
-	AsyncIconFetcher *GetIconFetcher();
 	HINSTANCE GetResourceInstance() const;
 	ThemeManager *GetThemeManager();
 
@@ -108,7 +107,7 @@ private:
 	DarkModeColorProvider m_darkModeColorProvider;
 	ThemeManager m_themeManager;
 	CachedIcons m_cachedIcons;
-	AsyncIconFetcher m_iconFetcher;
+	AsyncIconFetcherImpl m_iconFetcher;
 	BrowserList m_browserList;
 	BrowserWindowFactoryImpl m_browserWindowFactory;
 	ModelessDialogList m_modelessDialogList;

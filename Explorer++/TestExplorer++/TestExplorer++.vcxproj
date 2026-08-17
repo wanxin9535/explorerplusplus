@@ -223,6 +223,7 @@
     <ClCompile Include="ApplicationToolbarStorageTestHelper.cpp" />
     <ClCompile Include="ApplicationToolbarTest.cpp" />
     <ClCompile Include="ApplicationToolbarXmlStorageTest.cpp" />
+    <ClCompile Include="AsyncIconFetcherFake.cpp" />
     <ClCompile Include="AutoResetTest.cpp" />
     <ClCompile Include="BookmarkColumnHelperTest.cpp" />
     <ClCompile Include="BookmarkContextMenuTest.cpp" />
@@ -330,7 +331,7 @@
     <ClCompile Include="FrequentLocationsTrackerTest.cpp" />
     <ClCompile Include="FrequentLocationsXmlStorageTest.cpp" />
     <ClCompile Include="GdiplusHelperTest.cpp" />
-    <ClCompile Include="AsyncIconFetcherTest.cpp" />
+    <ClCompile Include="AsyncIconFetcherImplTest.cpp" />
     <ClCompile Include="HistoryTrackerTest.cpp" />
     <ClCompile Include="NavigationEventsTest.cpp" />
     <ClCompile Include="ResourceLoaderFake.cpp" />
@@ -458,6 +459,7 @@
     <ClInclude Include="AppControllerFake.h" />
     <ClInclude Include="ApplicationExecutorMock.h" />
     <ClInclude Include="ApplicationToolbarStorageTestHelper.h" />
+    <ClInclude Include="AsyncIconFetcherFake.h" />
     <ClInclude Include="BookmarkStorageTestHelper.h" />
     <ClInclude Include="BookmarkTestHelper.h" />
     <ClInclude Include="BookmarkTreeHelper.h" />

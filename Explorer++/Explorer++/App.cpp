@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "App.h"
-#include "AsyncIconFetcher.h"
 #include "BrowserWindow.h"
 #include "ColorRuleModel.h"
 #include "ColorRuleModelFactory.h"
@@ -268,6 +267,7 @@ void App::SetUpAppServices()
 	m_appServices.SetAcceleratorManager(&m_acceleratorManager);
 	m_appServices.SetAppController(this);
 	m_appServices.SetApplicationModel(&m_applicationModel);
+	m_appServices.SetAsyncIconFetcher(&m_iconFetcher);
 	m_appServices.SetBookmarkTree(&m_bookmarkTree);
 	m_appServices.SetBrowserList(&m_browserList);
 	m_appServices.SetBrowserWindowFactory(&m_browserWindowFactory);
@@ -343,11 +343,6 @@ Runtime *App::GetRuntime()
 DirectoryWatcherFactory *App::GetDirectoryWatcherFactory()
 {
 	return &m_directoryWatcherFactory;
-}
-
-AsyncIconFetcher *App::GetIconFetcher()
-{
-	return &m_iconFetcher;
 }
 
 HINSTANCE App::GetResourceInstance() const
