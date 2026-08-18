@@ -4,12 +4,12 @@
 
 #include "stdafx.h"
 #include "Explorer++.h"
-#include "App.h"
 #include "Config.h"
 #include "FolderView.h"
 #include "IDropFilesCallback.h"
 #include "MainResource.h"
 #include "MainToolbar.h"
+#include "PlatformContext.h"
 #include "ResourceHelper.h"
 #include "ServiceProvider.h"
 #include "ShellBrowser/Columns.h"
@@ -20,6 +20,7 @@
 #include "TabContainer.h"
 #include "ViewModeHelper.h"
 #include "../Helper/ClipboardHelper.h"
+#include "../Helper/ClipboardStore.h"
 #include "../Helper/DropHandler.h"
 #include "../Helper/Helper.h"
 #include "../Helper/ListViewHelper.h"
@@ -54,8 +55,7 @@ LRESULT Explorerplusplus::OnListViewKeyDown(LPARAM lParam)
 
 void Explorerplusplus::OnListViewPaste()
 {
-	auto clipboardObject =
-		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore()->GetDataObject();
+	auto clipboardObject = m_platformContext->GetClipboardStore()->GetDataObject();
 
 	if (!clipboardObject)
 	{

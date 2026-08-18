@@ -6,16 +6,16 @@
 
 #include "BrowserWindowFactory.h"
 
-class App;
+class AppServices;
 
 class BrowserWindowFactoryImpl : public BrowserWindowFactory
 {
 public:
-	BrowserWindowFactoryImpl(App *app, HINSTANCE resourceInstance);
+	BrowserWindowFactoryImpl(AppServices *appServices, HINSTANCE resourceInstance);
 
 	BrowserWindow *CreateBrowserWindow(const WindowStorageData *storageData) override;
 
 private:
-	App *const m_app;
+	AppServices *const m_appServices;
 	const HINSTANCE m_resourceInstance;
 };

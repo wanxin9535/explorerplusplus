@@ -36,14 +36,17 @@
 /* Sent when a folder size calculation has finished. */
 #define WM_APP_FOLDERSIZECOMPLETED WM_APP + 3
 
+class AcceleratorManager;
 class AddressBar;
-class App;
+class AppServices;
 class BookmarksMainMenu;
 class BookmarksToolbar;
+class BrowserList;
 class BrowserView;
 struct Config;
 class DisplayWindow;
 class DrivesToolbar;
+class FeatureList;
 class HistoryMenu;
 class HolderWindow;
 class MainFontSetter;
@@ -53,14 +56,19 @@ class MainToolbar;
 class MenuBase;
 class MenuView;
 struct NavigateParams;
+class NavigationEvents;
 class NavigationRequest;
+class PlatformContext;
 struct RebarBandStorageInfo;
+class ResourceLoader;
 class Runtime;
+class ShellBrowserEvents;
 class ShellBrowserImpl;
 class ShellTreeView;
 class StatusBar;
 class TabBacking;
 class TabContainer;
+class TabEvents;
 class TaskbarThumbnails;
 class ThemeWindowTracker;
 class WindowSubclass;
@@ -80,7 +88,7 @@ class Explorerplusplus : public BrowserWindow, public CoreInterface, public Plug
 public:
 	static constexpr wchar_t WINDOW_CLASS_NAME[] = L"Explorer++";
 
-	static Explorerplusplus *Create(App *app, HINSTANCE resourceInstance,
+	static Explorerplusplus *Create(AppServices *appServices, HINSTANCE resourceInstance,
 		const WindowStorageData *storageData = nullptr);
 
 	// BrowserWindow
@@ -171,7 +179,8 @@ private:
 		std::unique_ptr<MenuBase> menu;
 	};
 
-	Explorerplusplus(App *app, HINSTANCE resourceInstance, const WindowStorageData *storageData);
+	Explorerplusplus(AppServices *appServices, HINSTANCE resourceInstance,
+		const WindowStorageData *storageData);
 	~Explorerplusplus();
 
 	static HWND CreateMainWindow(const WindowStorageData *storageData);
@@ -349,8 +358,16 @@ private:
 	void BeginShutdown();
 	void FinishShutdown();
 
-	App *const m_app;
+	AppServices *const m_appServices;
 	const HINSTANCE m_resourceInstance;
+	PlatformContext *const m_platformContext;
+	AcceleratorManager *const m_acceleratorManager;
+	FeatureList *const m_featureList;
+	BrowserList *const m_browserList;
+	TabEvents *const m_tabEvents;
+	ShellBrowserEvents *const m_shellBrowserEvents;
+	NavigationEvents *const m_navigationEvents;
+	const ResourceLoader *const m_resourceLoader;
 	HWND m_hwnd;
 
 	BrowserCommandController m_commandController;

@@ -5,18 +5,23 @@
 #include "stdafx.h"
 #include "Explorer++.h"
 #include "AddressBar.h"
-#include "App.h"
+#include "AppServices.h"
+#include "BrowserList.h"
+#include "BrowserWindowFactory.h"
 #include "ColorRule.h"
 #include "Config.h"
 #include "DarkModeManager.h"
 #include "DisplayWindow/DisplayWindow.h"
+#include "FeatureList.h"
 #include "HolderWindow.h"
 #include "MainRebarStorage.h"
 #include "MainRebarView.h"
 #include "MainResource.h"
 #include "MainToolbar.h"
+#include "PlatformContext.h"
 #include "Plugins/PluginManager.h"
 #include "ResourceHelper.h"
+#include "Runtime.h"
 #include "ShellBrowser/ColumnHelper.h"
 #include "ShellBrowser/NavigateParams.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
@@ -216,7 +221,7 @@ void Explorerplusplus::OpenFolderItem(PCIDLIST_ABSOLUTE pidlItem,
 
 void Explorerplusplus::OpenDirectoryInNewWindow(PCIDLIST_ABSOLUTE pidlDirectory)
 {
-	if (m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::MultipleWindowsPerSession))
+	if (m_featureList->IsEnabled(Feature::MultipleWindowsPerSession))
 	{
 		CreateNewWindow({ { .pidl = pidlDirectory } });
 	}
@@ -487,7 +492,7 @@ std::optional<LRESULT> Explorerplusplus::OnCtlColorStatic(HWND hwnd, HDC hdc)
 
 	if (hwnd == m_tabBacking->GetHWND())
 	{
-		if (!m_app->GetAppServices()->GetDarkModeManager()->IsDarkModeEnabled())
+		if (!m_appServices->GetDarkModeManager()->IsDarkModeEnabled())
 		{
 			return std::nullopt;
 		}
@@ -618,8 +623,7 @@ void Explorerplusplus::CopyColumnInfoToClipboard()
 	{
 		if (column.checked)
 		{
-			strColumnInfo +=
-				GetColumnName(m_app->GetAppServices()->GetResourceLoader(), column.type) + L"\t";
+			strColumnInfo += GetColumnName(m_resourceLoader, column.type) + L"\t";
 
 			nActiveColumns++;
 		}
@@ -650,8 +654,7 @@ void Explorerplusplus::CopyColumnInfoToClipboard()
 	/* Remove the trailing newline. */
 	strColumnInfo = strColumnInfo.substr(0, strColumnInfo.size() - 2);
 
-	BulkClipboardWriter clipboardWriter(
-		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore());
+	BulkClipboardWriter clipboardWriter(m_platformContext->GetClipboardStore());
 	clipboardWriter.WriteText(strColumnInfo);
 }
 
@@ -681,7 +684,7 @@ void Explorerplusplus::CreateNewWindow(const std::vector<TabStorageData> &tabs)
 	initialData.displayWindowHeight = m_displayWindowHeight;
 	initialData.tabs = tabs;
 
-	m_app->GetAppServices()->GetBrowserWindowFactory()->CreateBrowserWindow(&initialData);
+	m_appServices->GetBrowserWindowFactory()->CreateBrowserWindow(&initialData);
 }
 
 void Explorerplusplus::OnCloneWindow()
@@ -757,7 +760,7 @@ ShellBrowserImpl *Explorerplusplus::GetActiveShellBrowserImpl() const
 
 TabEvents *Explorerplusplus::GetTabEvents()
 {
-	return m_app->GetAppServices()->GetTabEvents();
+	return m_tabEvents;
 }
 
 TabContainer *Explorerplusplus::GetTabContainer() const
@@ -785,7 +788,7 @@ bool Explorerplusplus::OnActivate(int activationState, bool minimized)
 	// as the active browser.
 	if (IsWindowVisible(m_hwnd) && activationState != WA_INACTIVE && !minimized)
 	{
-		m_app->GetAppServices()->GetBrowserList()->SetLastActive(this);
+		m_browserList->SetLastActive(this);
 	}
 
 	if (activationState == WA_INACTIVE)

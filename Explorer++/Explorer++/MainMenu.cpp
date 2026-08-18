@@ -5,8 +5,9 @@
 #include "stdafx.h"
 #include "Explorer++.h"
 #include "AcceleratorHelper.h"
-#include "App.h"
+#include "AppServices.h"
 #include "Bookmarks/UI/BookmarksMainMenu.h"
+#include "Config.h"
 #include "FeatureList.h"
 #include "FrequentLocationsMenu.h"
 #include "HistoryMenu.h"
@@ -74,7 +75,7 @@ void Explorerplusplus::InitializeMainMenu()
 	// before the tabs are restored.
 	HMENU mainMenu = LoadMenu(m_resourceInstance, MAKEINTRESOURCE(IDR_MAINMENU));
 
-	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::MultipleWindowsPerSession))
+	if (!m_featureList->IsEnabled(Feature::MultipleWindowsPerSession))
 	{
 		DeleteMenu(mainMenu, IDM_FILE_NEW_WINDOW, MF_BYCOMMAND);
 	}
@@ -86,12 +87,12 @@ void Explorerplusplus::InitializeMainMenu()
 		DeleteMenu(mainMenu, IDM_FILE_CLONEWINDOW, MF_BYCOMMAND);
 	}
 
-	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::DualPane))
+	if (!m_featureList->IsEnabled(Feature::DualPane))
 	{
 		DeleteMenu(mainMenu, IDM_VIEW_DUAL_PANE, MF_BYCOMMAND);
 	}
 
-	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::Plugins))
+	if (!m_featureList->IsEnabled(Feature::Plugins))
 	{
 		DeleteMenu(mainMenu, IDM_TOOLS_RUNSCRIPT, MF_BYCOMMAND);
 	}
@@ -101,14 +102,12 @@ void Explorerplusplus::InitializeMainMenu()
 	AddMainMenuSubmenu(mainMenu, IDM_FILE_REOPEN_RECENT_TAB,
 		[this](MenuView *menuView)
 		{
-			return std::make_unique<TabRestorerMenu>(menuView,
-				m_app->GetAppServices()->GetAcceleratorManager(),
-				m_app->GetAppServices()->GetTabRestorer(), &m_shellIconLoader,
-				m_app->GetAppServices()->GetResourceLoader(), MENU_RECENT_TABS_START_ID,
-				MENU_RECENT_TABS_END_ID);
+			return std::make_unique<TabRestorerMenu>(menuView, m_acceleratorManager,
+				m_appServices->GetTabRestorer(), &m_shellIconLoader, m_resourceLoader,
+				MENU_RECENT_TABS_START_ID, MENU_RECENT_TABS_END_ID);
 		});
 
-	ViewsMenuBuilder viewsMenuBuilder(m_app->GetAppServices()->GetResourceLoader());
+	ViewsMenuBuilder viewsMenuBuilder(m_resourceLoader);
 	viewsMenuBuilder.AddViewModesToMenu(mainMenu, IDM_VIEW_PLACEHOLDER, false);
 	DeleteMenu(mainMenu, IDM_VIEW_PLACEHOLDER, MF_BYCOMMAND);
 
@@ -119,22 +118,20 @@ void Explorerplusplus::InitializeMainMenu()
 	AddMainMenuSubmenu(mainMenu, IDM_GO_HISTORY,
 		[this](MenuView *menuView)
 		{
-			return std::make_unique<HistoryMenu>(menuView,
-				m_app->GetAppServices()->GetAcceleratorManager(),
-				m_app->GetAppServices()->GetHistoryModel(), this, &m_shellIconLoader,
-				MENU_HISTORY_START_ID, MENU_HISTORY_END_ID);
+			return std::make_unique<HistoryMenu>(menuView, m_acceleratorManager,
+				m_appServices->GetHistoryModel(), this, &m_shellIconLoader, MENU_HISTORY_START_ID,
+				MENU_HISTORY_END_ID);
 		});
 
 	AddMainMenuSubmenu(mainMenu, IDM_GO_FREQUENT_LOCATIONS,
 		[this](MenuView *menuView)
 		{
-			return std::make_unique<FrequentLocationsMenu>(menuView,
-				m_app->GetAppServices()->GetAcceleratorManager(),
-				m_app->GetAppServices()->GetFrequentLocationsModel(), this, &m_shellIconLoader,
+			return std::make_unique<FrequentLocationsMenu>(menuView, m_acceleratorManager,
+				m_appServices->GetFrequentLocationsModel(), this, &m_shellIconLoader,
 				MENU_FREQUENT_LOCATIONS_START_ID, MENU_FREQUENT_LOCATIONS_END_ID);
 		});
 
-	UpdateMenuAcceleratorStrings(mainMenu, m_app->GetAppServices()->GetAcceleratorManager());
+	UpdateMenuAcceleratorStrings(mainMenu, m_acceleratorManager);
 }
 
 void Explorerplusplus::AddMainMenuSubmenu(HMENU mainMenu, UINT subMenuItemId,
@@ -152,8 +149,8 @@ void Explorerplusplus::SetMainMenuImages()
 
 	for (const auto &mapping : MAIN_MENU_IMAGE_MAPPINGS)
 	{
-		ResourceHelper::SetMenuItemImage(mainMenu, mapping.first,
-			m_app->GetAppServices()->GetResourceLoader(), mapping.second, dpi, m_mainMenuImages);
+		ResourceHelper::SetMenuItemImage(mainMenu, mapping.first, m_resourceLoader, mapping.second,
+			dpi, m_mainMenuImages);
 	}
 
 	SetPasteSymLinkElevationIcon();
@@ -477,7 +474,7 @@ void Explorerplusplus::SetMainMenuItemStates(HMENU mainMenu)
 		m_commandController.IsCommandEnabled(IDM_EDIT_SELECTNONE));
 	MenuHelper::EnableItem(mainMenu, IDM_EDIT_RESOLVELINK, anySelected);
 
-	if (m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::DualPane))
+	if (m_featureList->IsEnabled(Feature::DualPane))
 	{
 		MenuHelper::CheckItem(mainMenu, IDM_VIEW_DUAL_PANE, m_config->dualPane);
 	}
@@ -550,7 +547,7 @@ void Explorerplusplus::SetMainMenuItemStates(HMENU mainMenu)
 			tab.GetShellBrowser()->IsAutoArrangeEnabled());
 	}
 
-	SortMenuBuilder sortMenuBuilder(m_app->GetAppServices()->GetResourceLoader());
+	SortMenuBuilder sortMenuBuilder(m_resourceLoader);
 	auto [sortByMenu, groupByMenu] = sortMenuBuilder.BuildMenus(tab);
 
 	MenuHelper::AttachSubMenu(mainMenu, std::move(sortByMenu), IDM_VIEW_SORTBY, FALSE);

@@ -4,9 +4,9 @@
 
 #include "stdafx.h"
 #include "Explorer++.h"
-#include "App.h"
 #include "ClipboardOperations.h"
 #include "DirectoryOperationsHelper.h"
+#include "PlatformContext.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "ShellTreeView/ShellTreeView.h"
 
@@ -19,16 +19,14 @@ BOOL Explorerplusplus::CanPaste(PasteType pasteType) const
 		return false;
 	}
 
-	return CanPasteInDirectory(m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
-		directory.Raw(), pasteType);
+	return CanPasteInDirectory(m_platformContext->GetClipboardStore(), directory.Raw(), pasteType);
 }
 
 // Tests whether a hard link or symlink can be pasted.
 bool Explorerplusplus::CanPasteLink() const
 {
 	const auto *activeShellBrowser = GetActiveShellBrowserImpl();
-	return ClipboardOperations::CanPasteLinkInDirectory(
-		m_app->GetAppServices()->GetPlatformContext()->GetClipboardStore(),
+	return ClipboardOperations::CanPasteLinkInDirectory(m_platformContext->GetClipboardStore(),
 		activeShellBrowser->GetDirectoryIdl().get());
 }
 

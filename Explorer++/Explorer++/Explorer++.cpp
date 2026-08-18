@@ -5,9 +5,11 @@
 #include "stdafx.h"
 #include "Explorer++.h"
 #include "App.h"
+#include "AppServices.h"
 #include "Application.h"
 #include "Bookmarks/BookmarkIconManager.h"
 #include "Bookmarks/UI/BookmarksMainMenu.h"
+#include "BrowserList.h"
 #include "BrowserView.h"
 #include "Config.h"
 #include "DisplayWindow/DisplayWindow.h"
@@ -38,26 +40,34 @@
 #include <fmt/format.h>
 #include <fmt/xchar.h>
 
-Explorerplusplus *Explorerplusplus::Create(App *app, HINSTANCE resourceInstance,
+Explorerplusplus *Explorerplusplus::Create(AppServices *appServices, HINSTANCE resourceInstance,
 	const WindowStorageData *storageData)
 {
-	return new Explorerplusplus(app, resourceInstance, storageData);
+	return new Explorerplusplus(appServices, resourceInstance, storageData);
 }
 
-Explorerplusplus::Explorerplusplus(App *app, HINSTANCE resourceInstance,
+Explorerplusplus::Explorerplusplus(AppServices *appServices, HINSTANCE resourceInstance,
 	const WindowStorageData *storageData) :
-	m_app(app),
+	m_appServices(appServices),
 	m_resourceInstance(resourceInstance),
+	m_platformContext(appServices->GetPlatformContext()),
+	m_acceleratorManager(appServices->GetAcceleratorManager()),
+	m_featureList(appServices->GetFeatureList()),
+	m_browserList(appServices->GetBrowserList()),
+	m_tabEvents(appServices->GetTabEvents()),
+	m_shellBrowserEvents(appServices->GetShellBrowserEvents()),
+	m_navigationEvents(appServices->GetNavigationEvents()),
+	m_resourceLoader(appServices->GetResourceLoader()),
 	m_hwnd(CreateMainWindow(storageData)),
-	m_commandController(this, app->GetAppServices()),
+	m_commandController(this, appServices),
 	m_tabBarBackgroundBrush(CreateSolidBrush(TAB_BAR_DARK_MODE_BACKGROUND_COLOR)),
 	m_pluginMenuManager(m_hwnd, MENU_PLUGIN_START_ID, MENU_PLUGIN_END_ID),
-	m_acceleratorUpdater(app->GetAppServices()->GetAcceleratorManager()),
-	m_pluginCommandManager(app->GetAppServices()->GetAcceleratorManager(),
-		ACCELERATOR_PLUGIN_START_ID, ACCELERATOR_PLUGIN_END_ID),
-	m_shellBrowserFactory(this, app->GetAppServices(), resourceInstance, &m_fileActionHandler),
-	m_config(app->GetAppServices()->GetConfig()),
-	m_iconFetcher(m_hwnd, m_app->GetAppServices()->GetCachedIcons()),
+	m_acceleratorUpdater(appServices->GetAcceleratorManager()),
+	m_pluginCommandManager(appServices->GetAcceleratorManager(), ACCELERATOR_PLUGIN_START_ID,
+		ACCELERATOR_PLUGIN_END_ID),
+	m_shellBrowserFactory(this, appServices, resourceInstance, &m_fileActionHandler),
+	m_config(appServices->GetConfig()),
+	m_iconFetcher(m_hwnd, appServices->GetCachedIcons()),
 	m_shellIconLoader(&m_iconFetcher),
 	m_applicationExecutor(this)
 {
@@ -92,7 +102,7 @@ Explorerplusplus::Explorerplusplus(App *app, HINSTANCE resourceInstance,
 	ShowWindow(m_hwnd, ShowStateToNativeShowState(showState));
 	UpdateWindow(m_hwnd);
 
-	m_app->GetAppServices()->GetBrowserList()->AddBrowser(this);
+	m_browserList->AddBrowser(this);
 }
 
 Explorerplusplus::~Explorerplusplus() = default;
@@ -162,20 +172,16 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 {
 	m_bookmarksMainMenu = std::make_unique<BookmarksMainMenu>(this,
 		BookmarkMenuBuilder::MenuIdRange{ MENU_BOOKMARK_START_ID, MENU_BOOKMARK_END_ID },
-		m_app->GetAppServices(), &m_iconFetcher, this);
+		m_appServices, &m_iconFetcher, this);
 
-	m_view = BrowserView::Create(m_hwnd, this, m_config, m_app->GetAppServices()->GetTabEvents(),
-		m_app->GetAppServices()->GetShellBrowserEvents(),
-		m_app->GetAppServices()->GetNavigationEvents(),
-		m_app->GetAppServices()->GetResourceLoader());
+	m_view = BrowserView::Create(m_hwnd, this, m_config, m_tabEvents, m_shellBrowserEvents,
+		m_navigationEvents, m_resourceLoader);
 
 	InitializeMainMenu();
 
 	auto *statusBarView = StatusBarView::Create(m_hwnd, m_config);
-	m_statusBar = StatusBar::Create(statusBarView, this, m_config,
-		m_app->GetAppServices()->GetTabEvents(), m_app->GetAppServices()->GetShellBrowserEvents(),
-		m_app->GetAppServices()->GetNavigationEvents(),
-		m_app->GetAppServices()->GetResourceLoader());
+	m_statusBar = StatusBar::Create(statusBarView, this, m_config, m_tabEvents,
+		m_shellBrowserEvents, m_navigationEvents, m_resourceLoader);
 
 	CreateMainRebarAndChildren(storageData);
 	InitializeDisplayWindow();
@@ -193,7 +199,7 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 	UpdateLayout();
 
 	m_taskbarThumbnails = std::make_unique<TaskbarThumbnails>(this,
-		GetActivePane()->GetTabContainer(), m_app->GetAppServices());
+		GetActivePane()->GetTabContainer(), m_appServices);
 
 	CreateInitialTabs(storageData);
 
@@ -202,7 +208,7 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 	InitializePlugins();
 
 	m_themeWindowTracker =
-		std::make_unique<ThemeWindowTracker>(m_hwnd, m_app->GetAppServices()->GetThemeManager());
+		std::make_unique<ThemeWindowTracker>(m_hwnd, m_appServices->GetThemeManager());
 
 	SetLifecycleState(LifecycleState::Main);
 }
@@ -224,19 +230,16 @@ void Explorerplusplus::CreateFolderControls()
 	}
 
 	m_treeViewHolder = HolderWindow::Create(m_hwnd,
-		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_FOLDERS_WINDOW_TEXT),
-		holderStyle,
-		m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_HIDE_FOLDERS_PANE),
-		m_app->GetAppServices()->GetConfig(), m_app->GetAppServices()->GetResourceLoader(),
-		m_app->GetAppServices()->GetDarkModeManager(),
-		m_app->GetAppServices()->GetDarkModeColorProvider());
+		m_resourceLoader->LoadString(IDS_FOLDERS_WINDOW_TEXT), holderStyle,
+		m_resourceLoader->LoadString(IDS_HIDE_FOLDERS_PANE), m_config, m_resourceLoader,
+		m_appServices->GetDarkModeManager(), m_appServices->GetDarkModeColorProvider());
 	m_treeViewHolder->SetCloseButtonClickedCallback(
 		[this]() { m_config->showFolders = !m_config->showFolders.get(); });
 	m_treeViewHolder->SetResizedCallback(
 		std::bind_front(&Explorerplusplus::OnTreeViewHolderResized, this));
 
-	m_shellTreeView = ShellTreeView::Create(m_treeViewHolder->GetHWND(), this,
-		m_app->GetAppServices(), &m_fileActionHandler);
+	m_shellTreeView = ShellTreeView::Create(m_treeViewHolder->GetHWND(), this, m_appServices,
+		&m_fileActionHandler);
 	m_treeViewHolder->SetContentChild(m_shellTreeView->GetHWND());
 }
 
@@ -311,9 +314,9 @@ bool Explorerplusplus::ConfirmClose()
 		return true;
 	}
 
-	std::wstring message = fmt::format(
-		fmt::runtime(m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_CLOSE_ALL_TABS)),
-		fmt::arg(L"num_tabs", numTabs));
+	std::wstring message =
+		fmt::format(fmt::runtime(m_resourceLoader->LoadString(IDS_CLOSE_ALL_TABS)),
+			fmt::arg(L"num_tabs", numTabs));
 	int response =
 		MessageBox(m_hwnd, message.c_str(), App::APP_NAME, MB_ICONINFORMATION | MB_YESNO);
 
@@ -347,7 +350,7 @@ void Explorerplusplus::BeginShutdown()
 
 	SetLifecycleState(LifecycleState::WillClose);
 
-	m_app->GetAppServices()->GetBrowserList()->WillRemoveBrowser(this);
+	m_browserList->WillRemoveBrowser(this);
 
 	// Past this point, the remaining tabs will be closed, which can cause other UI updates. There's
 	// no need for that to be shown, however, since the window will be destroyed shortly afterwards.
@@ -358,7 +361,7 @@ void Explorerplusplus::FinishShutdown()
 {
 	SetLifecycleState(LifecycleState::Closing);
 
-	m_app->GetAppServices()->GetBrowserList()->RemoveBrowser(this);
+	m_browserList->RemoveBrowser(this);
 
 	DestroyWindow(m_hwnd);
 }
@@ -415,7 +418,7 @@ std::optional<std::wstring> Explorerplusplus::RequestMenuHelpText(HMENU menu, UI
 
 	if (!helpText)
 	{
-		helpText = m_app->GetAppServices()->GetResourceLoader()->MaybeLoadString(id);
+		helpText = m_resourceLoader->MaybeLoadString(id);
 	}
 
 	return helpText;

@@ -6,13 +6,14 @@
 #include "BrowserWindowFactoryImpl.h"
 #include "Explorer++.h"
 
-BrowserWindowFactoryImpl::BrowserWindowFactoryImpl(App *app, HINSTANCE resourceInstance) :
-	m_app(app),
+BrowserWindowFactoryImpl::BrowserWindowFactoryImpl(AppServices *appServices,
+	HINSTANCE resourceInstance) :
+	m_appServices(appServices),
 	m_resourceInstance(resourceInstance)
 {
 }
 
 BrowserWindow *BrowserWindowFactoryImpl::CreateBrowserWindow(const WindowStorageData *storageData)
 {
-	return Explorerplusplus::Create(m_app, m_resourceInstance, storageData);
+	return Explorerplusplus::Create(m_appServices, m_resourceInstance, storageData);
 }

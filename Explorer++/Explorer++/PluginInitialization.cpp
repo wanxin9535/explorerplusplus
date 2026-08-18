@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "Explorer++.h"
 #include "AcceleratorHelper.h"
-#include "App.h"
 #include "FeatureList.h"
 #include "Plugins/PluginManager.h"
 #include "../Helper/ProcessHelper.h"
@@ -13,7 +12,7 @@
 
 void Explorerplusplus::InitializePlugins()
 {
-	if (!m_app->GetAppServices()->GetFeatureList()->IsEnabled(Feature::Plugins))
+	if (!m_featureList->IsEnabled(Feature::Plugins))
 	{
 		return;
 	}
@@ -28,5 +27,5 @@ void Explorerplusplus::InitializePlugins()
 	m_pluginManager = std::make_unique<Plugins::PluginManager>(this, m_config);
 	m_pluginManager->loadAllPlugins(processDirectoryPath);
 
-	UpdateMenuAcceleratorStrings(GetMenu(m_hwnd), m_app->GetAppServices()->GetAcceleratorManager());
+	UpdateMenuAcceleratorStrings(GetMenu(m_hwnd), m_acceleratorManager);
 }

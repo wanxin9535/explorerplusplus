@@ -6,7 +6,8 @@
 #include "Explorer++.h"
 #include "AddressBar.h"
 #include "AddressBarView.h"
-#include "App.h"
+#include "AppController.h"
+#include "AppServices.h"
 #include "Application.h"
 #include "ApplicationEditorDialog.h"
 #include "ApplicationToolbar.h"
@@ -147,8 +148,7 @@ LRESULT Explorerplusplus::WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LP
 			auto folderSizeText =
 				FormatSizeString(pDWFolderSizeCompletion->liFolderSize.QuadPart, displayFormat);
 
-			auto totalSizeText =
-				m_app->GetAppServices()->GetResourceLoader()->LoadString(IDS_GENERAL_TOTALSIZE);
+			auto totalSizeText = m_resourceLoader->LoadString(IDS_GENERAL_TOTALSIZE);
 			StringCchPrintf(szSizeString, std::size(szSizeString), _T("%s: %s"),
 				totalSizeText.c_str(), folderSizeText.c_str());
 
@@ -215,7 +215,7 @@ LRESULT Explorerplusplus::WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LP
 	case WM_ENDSESSION:
 		if (wParam)
 		{
-			m_app->GetAppServices()->GetAppController()->NotifySessionEnding();
+			m_appServices->GetAppController()->NotifySessionEnding();
 		}
 		return 0;
 
@@ -871,31 +871,25 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 
 	case MainToolbarButton::AddBookmark:
 	case IDM_BOOKMARKS_BOOKMARKTHISTAB:
-		BookmarkHelper::AddBookmarkItem(m_app->GetAppServices()->GetBookmarkTree(),
-			BookmarkItem::Type::Bookmark, nullptr, std::nullopt, hwnd, this,
-			m_app->GetAppServices()->GetAcceleratorManager(),
-			m_app->GetAppServices()->GetResourceLoader(),
-			m_app->GetAppServices()->GetPlatformContext());
+		BookmarkHelper::AddBookmarkItem(m_appServices->GetBookmarkTree(),
+			BookmarkItem::Type::Bookmark, nullptr, std::nullopt, hwnd, this, m_acceleratorManager,
+			m_resourceLoader, m_platformContext);
 		break;
 
 	case IDM_BOOKMARKS_BOOKMARK_ALL_TABS:
-		BookmarkHelper::BookmarkAllTabs(m_app->GetAppServices()->GetBookmarkTree(),
-			m_app->GetAppServices()->GetResourceLoader(), hwnd, this,
-			m_app->GetAppServices()->GetAcceleratorManager(),
-			m_app->GetAppServices()->GetPlatformContext());
+		BookmarkHelper::BookmarkAllTabs(m_appServices->GetBookmarkTree(), m_resourceLoader, hwnd,
+			this, m_acceleratorManager, m_platformContext);
 		break;
 
 	case MainToolbarButton::Bookmarks:
 	case IDM_BOOKMARKS_MANAGEBOOKMARKS:
-		CreateOrSwitchToModelessDialog(m_app->GetAppServices()->GetModelessDialogList(),
+		CreateOrSwitchToModelessDialog(m_appServices->GetModelessDialogList(),
 			L"ManageBookmarksDialog",
 			[this, hwnd]
 			{
-				return ManageBookmarksDialog::Create(m_app->GetAppServices()->GetResourceLoader(),
-					m_resourceInstance, hwnd, m_app->GetAppServices()->GetBookmarkTree(),
-					m_app->GetAppServices()->GetBrowserList(), m_config,
-					m_app->GetAppServices()->GetAcceleratorManager(), &m_iconFetcher,
-					m_app->GetAppServices()->GetPlatformContext());
+				return ManageBookmarksDialog::Create(m_resourceLoader, m_resourceInstance, hwnd,
+					m_appServices->GetBookmarkTree(), m_browserList, m_config, m_acceleratorManager,
+					&m_iconFetcher, m_platformContext);
 			});
 		break;
 
@@ -1008,7 +1002,7 @@ LRESULT CALLBACK Explorerplusplus::NotifyHandler(HWND hwnd, UINT msg, WPARAM wPa
 		// This message can be dispatched within the middle of an existing layout operation (if the
 		// height of the rebar is updated). To avoid making re-entrant layout calls, the layout
 		// update will be scheduled, instead of being immediately invoked.
-		ScheduleUpdateLayout(m_weakPtrFactory.GetWeakPtr(), m_app->GetAppServices()->GetRuntime());
+		ScheduleUpdateLayout(m_weakPtrFactory.GetWeakPtr(), m_appServices->GetRuntime());
 		break;
 
 	case RBN_CHEVRONPUSHED:
@@ -1117,8 +1111,7 @@ LRESULT CALLBACK Explorerplusplus::NotifyHandler(HWND hwnd, UINT msg, WPARAM wPa
 
 							case MainToolbarButton::Views:
 							{
-								ViewsMenuBuilder viewsMenuBuilder(
-									m_app->GetAppServices()->GetResourceLoader());
+								ViewsMenuBuilder viewsMenuBuilder(m_resourceLoader);
 								auto viewsMenu = viewsMenuBuilder.BuildMenu(this);
 
 								// The submenu will be destroyed when the parent menu is

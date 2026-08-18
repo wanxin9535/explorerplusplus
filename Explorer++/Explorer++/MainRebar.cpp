@@ -6,7 +6,7 @@
 #include "Explorer++.h"
 #include "AddressBar.h"
 #include "AddressBarView.h"
-#include "App.h"
+#include "AppServices.h"
 #include "ApplicationToolbar.h"
 #include "ApplicationToolbarView.h"
 #include "Bookmarks/UI/BookmarksToolbar.h"
@@ -239,7 +239,7 @@ bool Explorerplusplus::OnToolbarRightClick(const NMMOUSE *mouseInfo)
 	ClientToScreen(mouseInfo->hdr.hwndFrom, &ptScreen);
 
 	PopupMenuView popupMenu(this);
-	ToolbarContextMenu toolbarContextMenu(&popupMenu, source, this, m_app->GetAppServices());
+	ToolbarContextMenu toolbarContextMenu(&popupMenu, source, this, m_appServices);
 	popupMenu.Show(m_hwnd, ptScreen);
 
 	return true;
@@ -251,10 +251,8 @@ void Explorerplusplus::CreateAddressBar()
 	addressBarView->sizeUpdatedSignal.AddObserver(
 		std::bind_front(&Explorerplusplus::OnAddressBarSizeUpdated, this));
 
-	m_addressBar = AddressBar::Create(addressBarView, this, m_app->GetAppServices()->GetTabEvents(),
-		m_app->GetAppServices()->GetShellBrowserEvents(),
-		m_app->GetAppServices()->GetNavigationEvents(), m_app->GetAppServices()->GetRuntime(),
-		m_app->GetAppServices()->GetAsyncIconFetcher());
+	m_addressBar = AddressBar::Create(addressBarView, this, m_tabEvents, m_shellBrowserEvents,
+		m_navigationEvents, m_appServices->GetRuntime(), m_appServices->GetAsyncIconFetcher());
 }
 
 void Explorerplusplus::OnAddressBarSizeUpdated()
@@ -268,7 +266,7 @@ void Explorerplusplus::CreateMainToolbar(
 	const std::optional<MainToolbarStorage::MainToolbarButtons> &initialButtons)
 {
 	m_mainToolbar = MainToolbar::Create(m_mainRebarView->GetHWND(), initialButtons, this,
-		m_app->GetAppServices(), this, &m_shellIconLoader);
+		m_appServices, this, &m_shellIconLoader);
 	m_mainToolbar->sizeUpdatedSignal.AddObserver(
 		std::bind(&Explorerplusplus::OnRebarToolbarSizeUpdated, this, m_mainToolbar->GetHWND()));
 }
@@ -277,10 +275,8 @@ void Explorerplusplus::CreateBookmarksToolbar()
 {
 	auto bookmarksToolbarView = BookmarksToolbarView::Create(m_mainRebarView->GetHWND(), m_config);
 
-	m_bookmarksToolbar = BookmarksToolbar::Create(bookmarksToolbarView, this,
-		m_app->GetAppServices()->GetAcceleratorManager(),
-		m_app->GetAppServices()->GetResourceLoader(), &m_iconFetcher,
-		m_app->GetAppServices()->GetBookmarkTree(), m_app->GetAppServices()->GetPlatformContext());
+	m_bookmarksToolbar = BookmarksToolbar::Create(bookmarksToolbarView, this, m_acceleratorManager,
+		m_resourceLoader, &m_iconFetcher, m_appServices->GetBookmarkTree(), m_platformContext);
 	m_bookmarksToolbar->GetView()->AddToolbarSizeUpdatedObserver(
 		std::bind(&Explorerplusplus::OnRebarToolbarSizeUpdated, this,
 			m_bookmarksToolbar->GetView()->GetHWND()));
@@ -289,9 +285,8 @@ void Explorerplusplus::CreateBookmarksToolbar()
 void Explorerplusplus::CreateDrivesToolbar()
 {
 	auto drivesToolbarView = DrivesToolbarView::Create(m_mainRebarView->GetHWND(), m_config);
-	m_drivesToolbar =
-		DrivesToolbar::Create(drivesToolbarView, m_app->GetAppServices()->GetDriveModel(), this,
-			m_app->GetAppServices()->GetResourceLoader());
+	m_drivesToolbar = DrivesToolbar::Create(drivesToolbarView, m_appServices->GetDriveModel(), this,
+		m_resourceLoader);
 	m_drivesToolbar->GetView()->AddToolbarSizeUpdatedObserver(std::bind(
 		&Explorerplusplus::OnRebarToolbarSizeUpdated, this, m_drivesToolbar->GetView()->GetHWND()));
 }
@@ -302,9 +297,8 @@ void Explorerplusplus::CreateApplicationToolbar()
 		Applications::ApplicationToolbarView::Create(m_mainRebarView->GetHWND(), m_config);
 
 	m_applicationToolbar = Applications::ApplicationToolbar::Create(applicationToolbarView,
-		m_app->GetAppServices()->GetApplicationModel(), &m_applicationExecutor, this,
-		m_app->GetAppServices()->GetAcceleratorManager(),
-		m_app->GetAppServices()->GetResourceLoader());
+		m_appServices->GetApplicationModel(), &m_applicationExecutor, this, m_acceleratorManager,
+		m_resourceLoader);
 	m_applicationToolbar->GetView()->AddToolbarSizeUpdatedObserver(
 		std::bind(&Explorerplusplus::OnRebarToolbarSizeUpdated, this,
 			m_applicationToolbar->GetView()->GetHWND()));

@@ -58,8 +58,6 @@ public:
 
 	int Run();
 
-	AppServices *GetAppServices();
-
 private:
 	// Represents the maximum number of icons that can be cached. This cache is shared between
 	// various components in the application.

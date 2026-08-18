@@ -258,7 +258,8 @@ void App::SetUpLanguageResourceInstance()
 
 	m_resourceLoader = std::make_unique<Win32ResourceLoader>(resourceInstance, m_config.iconSet,
 		&m_darkModeManager, &m_themeManager);
-	m_browserWindowFactory = std::make_unique<BrowserWindowFactoryImpl>(this, resourceInstance);
+	m_browserWindowFactory =
+		std::make_unique<BrowserWindowFactoryImpl>(&m_appServices, resourceInstance);
 }
 
 void App::SetUpAppServices()
@@ -330,11 +331,6 @@ SaveLocation App::GetSaveLocation() const
 void App::SetSaveLocation(SaveLocation saveLocation)
 {
 	m_saveLocation = saveLocation;
-}
-
-AppServices *App::GetAppServices()
-{
-	return &m_appServices;
 }
 
 void App::OnWillRemoveBrowser()

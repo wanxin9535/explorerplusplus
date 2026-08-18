@@ -4,63 +4,64 @@
 
 #include "stdafx.h"
 #include "Explorer++.h"
-#include "App.h"
+#include "AppServices.h"
 #include "ColumnStorage.h"
+#include "CommandLine.h"
 #include "Config.h"
 #include "MainTabView.h"
+#include "Runtime.h"
 #include "ShellBrowser/NavigateParams.h"
+#include "ShellBrowser/NavigationEvents.h"
+#include "ShellBrowser/NavigationRequest.h"
+#include "ShellBrowser/ShellBrowserEvents.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "TabBacking.h"
 #include "TabContainer.h"
+#include "TabEvents.h"
 #include "TabStorage.h"
 
 void Explorerplusplus::InitializeTabs()
 {
-	m_tabBacking =
-		TabBacking::Create(m_hwnd, this, this, m_app->GetAppServices()->GetResourceLoader(),
-			m_config, m_app->GetAppServices()->GetTabEvents());
+	m_tabBacking = TabBacking::Create(m_hwnd, this, this, m_resourceLoader, m_config, m_tabEvents);
 
-	auto *mainTabView = MainTabView::Create(m_tabBacking->GetHWND(), m_config,
-		m_app->GetAppServices()->GetResourceLoader());
+	auto *mainTabView = MainTabView::Create(m_tabBacking->GetHWND(), m_config, m_resourceLoader);
 	m_connections.push_back(mainTabView->sizeUpdatedSignal.AddObserver([this] { UpdateLayout(); }));
 
 	auto *tabContainer =
-		TabContainer::Create(mainTabView, this, &m_shellBrowserFactory, m_app->GetAppServices());
+		TabContainer::Create(mainTabView, this, &m_shellBrowserFactory, m_appServices);
 	m_browserPane = std::make_unique<BrowserPane>(tabContainer);
 
 	m_connections.push_back(m_config->alwaysShowTabBar.addObserver(
 		std::bind(&Explorerplusplus::MaybeUpdateTabBarVisibility, this)));
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddCreatedObserver(
+	m_connections.push_back(m_tabEvents->AddCreatedObserver(
 		std::bind(&Explorerplusplus::MaybeUpdateTabBarVisibility, this),
 		TabEventScope::ForBrowser(*this)));
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddRemovedObserver(
+	m_connections.push_back(m_tabEvents->AddRemovedObserver(
 		std::bind(&Explorerplusplus::MaybeUpdateTabBarVisibility, this),
 		TabEventScope::ForBrowser(*this)));
 
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddCreatedObserver(
-		std::bind_front(&Explorerplusplus::OnTabCreated, this), TabEventScope::ForBrowser(*this),
-		boost::signals2::at_front));
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddSelectedObserver(
-		std::bind_front(&Explorerplusplus::OnTabSelected, this), TabEventScope::ForBrowser(*this),
-		boost::signals2::at_front));
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddPreRemovalObserver(
+	m_connections.push_back(
+		m_tabEvents->AddCreatedObserver(std::bind_front(&Explorerplusplus::OnTabCreated, this),
+			TabEventScope::ForBrowser(*this), boost::signals2::at_front));
+	m_connections.push_back(
+		m_tabEvents->AddSelectedObserver(std::bind_front(&Explorerplusplus::OnTabSelected, this),
+			TabEventScope::ForBrowser(*this), boost::signals2::at_front));
+	m_connections.push_back(m_tabEvents->AddPreRemovalObserver(
 		std::bind_front(&Explorerplusplus::OnTabPreRemoval, this), TabEventScope::ForBrowser(*this),
 		boost::signals2::at_back));
-	m_connections.push_back(m_app->GetAppServices()->GetTabEvents()->AddRemovedObserver(
+	m_connections.push_back(m_tabEvents->AddRemovedObserver(
 		std::bind_front(&Explorerplusplus::OnTabRemoved, this), TabEventScope::ForBrowser(*this)));
 
-	m_connections.push_back(m_app->GetAppServices()->GetNavigationEvents()->AddCommittedObserver(
+	m_connections.push_back(m_navigationEvents->AddCommittedObserver(
 		std::bind_front(&Explorerplusplus::OnNavigationCommitted, this),
 		NavigationEventScope::ForActiveShellBrowser(*this), boost::signals2::at_front));
 
-	m_connections.push_back(
-		m_app->GetAppServices()->GetShellBrowserEvents()->AddItemsChangedObserver(
-			std::bind_front(&Explorerplusplus::OnDirectoryContentsChanged, this),
-			ShellBrowserEventScope::ForActiveShellBrowser(*this), boost::signals2::at_front));
-	m_connections.push_back(
-		m_app->GetAppServices()->GetShellBrowserEvents()->AddSelectionChangedObserver(
-			std::bind_front(&Explorerplusplus::OnTabListViewSelectionChanged, this),
-			ShellBrowserEventScope::ForBrowser(*this), boost::signals2::at_front));
+	m_connections.push_back(m_shellBrowserEvents->AddItemsChangedObserver(
+		std::bind_front(&Explorerplusplus::OnDirectoryContentsChanged, this),
+		ShellBrowserEventScope::ForActiveShellBrowser(*this), boost::signals2::at_front));
+	m_connections.push_back(m_shellBrowserEvents->AddSelectionChangedObserver(
+		std::bind_front(&Explorerplusplus::OnTabListViewSelectionChanged, this),
+		ShellBrowserEventScope::ForBrowser(*this), boost::signals2::at_front));
 
 	auto updateLayoutObserverMethod = [this](BOOL newValue)
 	{
@@ -198,8 +199,9 @@ void Explorerplusplus::CreateCommandLineTabs()
 	auto currentDirectory = GetCurrentDirectoryWrapper();
 	CHECK(currentDirectory);
 
-	for (const auto &fileToSelect :
-		m_app->GetAppServices()->GetCommandLineSettings()->filesToSelect)
+	const CommandLine::Settings *commandLineSettings = m_appServices->GetCommandLineSettings();
+
+	for (const auto &fileToSelect : commandLineSettings->filesToSelect)
 	{
 		auto absolutePath = TransformUserEnteredPathToAbsolutePathAndNormalize(fileToSelect,
 			currentDirectory.value(), EnvVarsExpansion::DontExpand);
@@ -237,7 +239,7 @@ void Explorerplusplus::CreateCommandLineTabs()
 		}
 	}
 
-	for (const auto &directory : m_app->GetAppServices()->GetCommandLineSettings()->directories)
+	for (const auto &directory : commandLineSettings->directories)
 	{
 		// Windows Explorer doesn't expand environment variables passed in on the command line. The
 		// command-line interpreter that's being used can expand variables - for example, running:
@@ -299,8 +301,7 @@ void Explorerplusplus::OnTabRemoved(const Tab &tab)
 		// listeners that run after this one. Secondly, because the Tab object relies on items that
 		// are owned by this class, so destroying this class (by destroying the window) needs to be
 		// done only after the listeners have all finished running.
-		ScheduleFinishShutdown(m_weakPtrFactory.GetWeakPtr(),
-			m_app->GetAppServices()->GetRuntime());
+		ScheduleFinishShutdown(m_weakPtrFactory.GetWeakPtr(), m_appServices->GetRuntime());
 	}
 }
 
