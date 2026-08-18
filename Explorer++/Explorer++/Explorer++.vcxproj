@@ -1441,7 +1441,6 @@
     <ClCompile Include="MsgHandler.cpp" />
     <ClCompile Include="OptionsDialog.cpp" />
     <ClCompile Include="Plugins\PluginCommandManager.cpp" />
-    <ClCompile Include="PluginInitialization.cpp" />
     <ClCompile Include="Plugins\PluginManager.cpp" />
     <ClCompile Include="Plugins\PluginMenuManager.cpp" />
     <ClCompile Include="FileProgressSink.cpp" />

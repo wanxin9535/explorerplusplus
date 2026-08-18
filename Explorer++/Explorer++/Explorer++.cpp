@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Explorer++.h"
+#include "AcceleratorHelper.h"
 #include "AppInfo.h"
 #include "AppServices.h"
 #include "Application.h"
@@ -13,6 +14,7 @@
 #include "BrowserView.h"
 #include "Config.h"
 #include "DisplayWindow/DisplayWindow.h"
+#include "FeatureList.h"
 #include "FrequentLocationsMenu.h"
 #include "HistoryMenu.h"
 #include "HolderWindow.h"
@@ -35,10 +37,12 @@
 #include "TaskbarThumbnails.h"
 #include "ThemeWindowTracker.h"
 #include "WindowStorage.h"
+#include "../Helper/ProcessHelper.h"
 #include "../Helper/WindowHelper.h"
 #include "../Helper/WindowSubclass.h"
 #include <fmt/format.h>
 #include <fmt/xchar.h>
+#include <filesystem>
 
 Explorerplusplus *Explorerplusplus::Create(AppServices *appServices, HINSTANCE resourceInstance,
 	const WindowStorageData *storageData)
@@ -248,6 +252,26 @@ void Explorerplusplus::OnTreeViewHolderResized(int newWidth)
 	m_treeViewWidth = newWidth;
 
 	UpdateLayout();
+}
+
+void Explorerplusplus::InitializePlugins()
+{
+	if (!m_featureList->IsEnabled(Feature::Plugins))
+	{
+		return;
+	}
+
+	TCHAR processImageName[MAX_PATH];
+	GetProcessImageName(GetCurrentProcessId(), processImageName, std::size(processImageName));
+
+	std::filesystem::path processDirectoryPath(processImageName);
+	processDirectoryPath.remove_filename();
+	processDirectoryPath.append(PLUGIN_FOLDER_NAME);
+
+	m_pluginManager = std::make_unique<Plugins::PluginManager>(this, m_config);
+	m_pluginManager->loadAllPlugins(processDirectoryPath);
+
+	UpdateMenuAcceleratorStrings(GetMenu(m_hwnd), m_acceleratorManager);
 }
 
 Tab *Explorerplusplus::CreateTabFromPreservedTab(const PreservedTab *tab)
