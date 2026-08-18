@@ -5,6 +5,7 @@
 #pragma once
 
 #include "BaseDialog.h"
+#include <richedit.h>
 
 class ThirdPartyCreditsDialog : public BaseDialog
 {

@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Helper.h"
+#include <intsafe.h>
 
 BOOL GetClusterSize(const TCHAR *drive, DWORD *pdwClusterSize)
 {

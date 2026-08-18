@@ -27,6 +27,7 @@
 #include "ComboBoxHelper.h"
 #include "Helper.h"
 #include "WindowHelper.h"
+#include <windowsx.h>
 
 UINT_PTR ComboBox::m_staticSubclassCounter = 0;
 

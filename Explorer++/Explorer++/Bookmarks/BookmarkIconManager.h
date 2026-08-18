@@ -7,6 +7,7 @@
 #include "../Helper/WeakPtrFactory.h"
 #include <wil/com.h>
 #include <wil/resource.h>
+#include <commoncontrols.h>
 
 class BookmarkItem;
 class IconFetcher;

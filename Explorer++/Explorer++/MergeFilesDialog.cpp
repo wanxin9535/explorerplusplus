@@ -14,6 +14,7 @@
 #include "../Helper/StringHelper.h"
 #include "../Helper/WindowHelper.h"
 #include <wil/resource.h>
+#include <Shlwapi.h>
 #include <algorithm>
 #include <regex>
 

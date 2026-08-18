@@ -26,6 +26,7 @@
 #include "../Helper/ImageHelper.h"
 #include <fmt/format.h>
 #include <fmt/xchar.h>
+#include <windowsx.h>
 #include <algorithm>
 
 namespace

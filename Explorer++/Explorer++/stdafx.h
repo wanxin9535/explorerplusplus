@@ -28,10 +28,6 @@
 // Third-party Header Files:
 #include "../ThirdParty/CTPL/cpl_stl.h"
 #include <cereal/archives/binary.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/string.hpp>
-#include <cereal/types/vector.hpp>
-#include <nlohmann/json.hpp>
 #include <sol/sol.hpp>
 
 // Windows Header Files:
@@ -39,31 +35,16 @@
 #include <Winsock2.h>
 #include <windows.h>
 // clang-format on
-#include <VersionHelpers.h>
-#include <WinInet.h>
 #include <commctrl.h>
 #include <commoncontrols.h>
-#include <dbt.h>
-#include <dwmapi.h>
 #include <gdiplus.h>
-#include <math.h>
-#include <objidl.h>
-#include <prsht.h>
-#include <psapi.h>
-#include <richedit.h>
-#include <shellapi.h>
-#include <shlguid.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <shobjidl.h>
 #include <strsafe.h>
 #include <tchar.h>
 #include <uxtheme.h>
-#include <vfw.h>
-#include <winbase.h>
 #include <windowsx.h>
-#include <winuser.h>
-#include <wmsdk.h>
 
 // The wrapper here will include Unknwn.h, which is why this appears after the rest of the Windows
 // headers.
@@ -75,12 +56,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/bimap.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/functional/hash.hpp>
 #include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/signals2.hpp>
 
@@ -102,9 +78,7 @@
 #include <algorithm>
 #include <cassert>
 #include <filesystem>
-#include <iostream>
 #include <memory>
 #include <optional>
-#include <sstream>
 #include <unordered_map>
 #include <vector>

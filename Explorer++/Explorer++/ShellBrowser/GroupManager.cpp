@@ -19,6 +19,8 @@
 #include <boost/integer_traits.hpp>
 #include <glog/logging.h>
 #include <wil/common.h>
+#include <Shlwapi.h>
+#include <gdiplus.h>
 #include <iphlpapi.h>
 #include <propkey.h>
 #include <cassert>

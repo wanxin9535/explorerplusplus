@@ -7,6 +7,7 @@
 #include "Helper.h"
 #include "ResourceHelper.h"
 #include <wil/com.h>
+#include <Shlwapi.h>
 
 namespace ImageHelper
 {

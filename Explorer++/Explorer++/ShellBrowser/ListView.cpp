@@ -39,7 +39,10 @@
 #include <boost/range/iterator_range.hpp>
 #include <glog/logging.h>
 #include <wil/common.h>
+#include <Shlwapi.h>
+#include <windowsx.h>
 #include <format>
+#include <ranges>
 
 const std::vector<ColumnType> COMMON_REAL_FOLDER_COLUMNS = { ColumnType::Name, ColumnType::Type,
 	ColumnType::Size, ColumnType::DateModified, ColumnType::Authors, ColumnType::Title };

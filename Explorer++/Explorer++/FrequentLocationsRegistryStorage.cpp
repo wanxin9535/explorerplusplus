@@ -10,6 +10,7 @@
 #include "../Helper/RegistrySettings.h"
 #include <wil/registry.h>
 #include <optional>
+#include <ranges>
 #include <vector>
 
 namespace

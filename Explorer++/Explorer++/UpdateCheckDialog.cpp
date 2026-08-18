@@ -19,6 +19,7 @@
 #include <boost/lexical_cast.hpp>
 #include <fmt/format.h>
 #include <fmt/xchar.h>
+#include <WinInet.h>
 #include <stdexcept>
 #include <vector>
 

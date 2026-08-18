@@ -7,6 +7,7 @@
 #include "ItemData.h"
 #include "ViewModes.h"
 #include <wil/com.h>
+#include <commoncontrols.h>
 #include <thumbcache.h>
 #include <list>
 

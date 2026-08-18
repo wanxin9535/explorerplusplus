@@ -26,6 +26,7 @@
 #include "../Helper/WindowHelper.h"
 #include "../Helper/WindowSubclass.h"
 #include <dwmapi.h>
+#include <gdiplus.h>
 
 namespace
 {

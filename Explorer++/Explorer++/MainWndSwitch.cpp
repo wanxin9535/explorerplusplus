@@ -45,6 +45,7 @@
 #include "../Helper/ListViewHelper.h"
 #include "../Helper/ShellHelper.h"
 #include "../Helper/WindowHelper.h"
+#include <windowsx.h>
 
 static const int FOLDER_SIZE_LINE_INDEX = 1;
 

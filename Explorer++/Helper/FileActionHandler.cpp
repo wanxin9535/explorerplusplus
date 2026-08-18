@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include "FileActionHandler.h"
 #include "FileOperations.h"
+#include <Shlwapi.h>
 
 BOOL FileActionHandler::RenameFiles(const RenamedItems_t &itemList)
 {

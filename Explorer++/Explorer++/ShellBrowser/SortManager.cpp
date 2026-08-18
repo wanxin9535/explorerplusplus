@@ -9,6 +9,8 @@
 #include "SortHelper.h"
 #include "SortModes.h"
 #include "ViewModes.h"
+#include <Shlwapi.h>
+#include <gdiplus.h>
 #include <propkey.h>
 #include <cassert>
 

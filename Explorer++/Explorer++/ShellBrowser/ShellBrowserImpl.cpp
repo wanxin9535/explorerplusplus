@@ -44,7 +44,9 @@
 #include "../Helper/ListViewHelper.h"
 #include "../Helper/ShellHelper.h"
 #include <wil/com.h>
+#include <commoncontrols.h>
 #include <list>
+#include <ranges>
 
 ShellBrowserImpl::ShellBrowserImpl(const PreservedShellBrowser &preservedShellBrowser,
 	BrowserWindow *browser, AppServices *appServices, HINSTANCE resourceInstance,

@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include "PasteSymLinksServer.h"
 #include <boost/interprocess/sync/scoped_lock.hpp>
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/vector.hpp>
 
 ClipboardOperations::PastedItems PasteSymLinksServer::LaunchClientAndWaitForResponse(
 	std::function<bool()> clientLauncher, std::chrono::milliseconds responseTimeout)

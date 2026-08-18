@@ -16,6 +16,7 @@
 #include <glog/logging.h>
 #include <wil/com.h>
 #include <propkey.h>
+#include <propvarutil.h>
 #include <wininet.h>
 #include <filesystem>
 

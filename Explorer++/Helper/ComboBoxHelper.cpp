@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "ComboBoxHelper.h"
+#include <windowsx.h>
 
 std::list<std::wstring> NComboBox::ComboBox_GetStrings(HWND hComboBox)
 {

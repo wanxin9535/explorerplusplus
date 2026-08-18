@@ -12,6 +12,7 @@
 #include "../Helper/DpiCompatibility.h"
 #include "../Helper/ResizableDialogHelper.h"
 #include "../Helper/WindowHelper.h"
+#include <windowsx.h>
 
 FontsOptionsPage::FontsOptionsPage(HWND parent, const ResourceLoader *resourceLoader,
 	Config *config, SettingChangedCallback settingChangedCallback, HWND tooltipWindow) :

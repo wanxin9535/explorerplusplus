@@ -21,6 +21,7 @@
 #include "../Helper/RegistrySettings.h"
 #include "../Helper/XMLSettings.h"
 #include <boost/locale.hpp>
+#include <Shlwapi.h>
 #include <iomanip>
 #include <list>
 #include <regex>

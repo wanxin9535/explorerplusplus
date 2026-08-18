@@ -49,7 +49,9 @@
 #include "../Helper/ShellHelper.h"
 #include "../Helper/ShellItemContextMenu.h"
 #include <wil/common.h>
+#include <Shlwapi.h>
 #include <propkey.h>
+#include <windowsx.h>
 
 ShellTreeView *ShellTreeView::Create(HWND parent, BrowserWindow *browser, AppServices *appServices,
 	FileActionHandler *fileActionHandler)

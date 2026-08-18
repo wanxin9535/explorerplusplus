@@ -11,6 +11,7 @@
 #include "../Helper/DropSourceImpl.h"
 #include "../Helper/MenuHelper.h"
 #include <glog/logging.h>
+#include <windowsx.h>
 
 BookmarkMenu::BookmarkMenu(BookmarkTree *bookmarkTree, const ResourceLoader *resourceLoader,
 	BrowserWindow *browserWindow, const AcceleratorManager *acceleratorManager,

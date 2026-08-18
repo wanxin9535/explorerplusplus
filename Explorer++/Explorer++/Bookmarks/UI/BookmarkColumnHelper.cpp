@@ -6,6 +6,7 @@
 #include "Bookmarks/UI/BookmarkColumnHelper.h"
 #include "Bookmarks/BookmarkItem.h"
 #include "MainResource.h"
+#include <Shlwapi.h>
 
 namespace
 {

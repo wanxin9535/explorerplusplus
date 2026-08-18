@@ -11,6 +11,7 @@
 #include "../Helper/RegistrySettings.h"
 #include "../Helper/WindowHelper.h"
 #include "../Helper/XMLSettings.h"
+#include <windowsx.h>
 #include <list>
 
 const TCHAR FilterDialogPersistentSettings::SETTINGS_KEY[] = _T("Filter");

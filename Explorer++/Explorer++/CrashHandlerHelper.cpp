@@ -18,6 +18,7 @@
 #include <glog/logging.h>
 #include <wil/resource.h>
 #include <DbgHelp.h>
+#include <Shlwapi.h>
 #include <format>
 
 LONG WINAPI TopLevelExceptionFilter(EXCEPTION_POINTERS *exception);

@@ -36,40 +36,11 @@
 #include <winsock2.h>
 #include <windows.h>
 // clang-format on
-#include <Iphlpapi.h>
-#include <Lm.h>
-#include <WinUser.h>
-#include <accctrl.h>
-#include <aclapi.h>
-#include <assert.h>
-#include <commctrl.h>
-#include <commoncontrols.h>
-#include <dbt.h>
 #include <gdiplus.h>
-#include <intrin.h>
-#include <intsafe.h>
-#include <intshcut.h>
-#include <malloc.h>
-#include <math.h>
-#include <objidl.h>
-#include <propvarutil.h>
-#include <psapi.h>
-#include <richedit.h>
-#include <sddl.h>
-#include <shellapi.h>
-#include <shlguid.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <shobjidl.h>
-#include <stdint.h>
-#include <strsafe.h>
 #include <tchar.h>
-#include <time.h>
-#include <userenv.h>
-#include <wincrypt.h>
-#include <windowsx.h>
-#include <winioctl.h>
-#include <wmsdk.h>
 
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #define GLOG_USE_GLOG_EXPORT
@@ -79,9 +50,7 @@
 #include "WinRTBaseWrapper.h"
 
 // C++ Header Files:
-#include <iostream>
 #include <list>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>

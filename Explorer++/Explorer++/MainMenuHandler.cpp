@@ -25,6 +25,7 @@
 #include "../Helper/ProcessHelper.h"
 #include "../Helper/ShellHelper.h"
 #include <wil/com.h>
+#include <Shlwapi.h>
 
 void Explorerplusplus::OnDestroyFiles()
 {

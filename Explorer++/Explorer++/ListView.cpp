@@ -13,6 +13,7 @@
 #include "../Helper/ListViewHelper.h"
 #include "../Helper/WindowSubclass.h"
 #include <wil/common.h>
+#include <windowsx.h>
 
 ListView::ListView(HWND hwnd, const KeyboardState *keyboardState,
 	LabelEditHandlerFactory labelEditHandlerFactory, const ResourceLoader *resourceLoader) :

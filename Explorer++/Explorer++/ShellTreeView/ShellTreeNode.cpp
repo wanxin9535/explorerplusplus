@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "ShellTreeNode.h"
 #include "DirectoryWatcher.h"
+#include <ranges>
 
 ShellTreeNode::ShellTreeNode(ShellTreeNodeType type, PCIDLIST_ABSOLUTE pidl,
 	IShellItem2 *shellItem) :

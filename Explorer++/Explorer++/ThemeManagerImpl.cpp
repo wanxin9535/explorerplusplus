@@ -19,7 +19,10 @@
 #include "../Helper/WindowSubclass.h"
 #include <glog/logging.h>
 #include <wil/resource.h>
+#include <dwmapi.h>
+#include <richedit.h>
 #include <vssym32.h>
+#include <windowsx.h>
 
 ThemeManagerImpl::ThemeManagerImpl(DarkModeManager *darkModeManager,
 	const DarkModeColorProvider *darkModeColorProvider) :

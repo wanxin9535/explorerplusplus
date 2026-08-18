@@ -11,6 +11,7 @@
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "../Helper/ListViewHelper.h"
+#include <Shlwapi.h>
 #include <algorithm>
 #include <functional>
 

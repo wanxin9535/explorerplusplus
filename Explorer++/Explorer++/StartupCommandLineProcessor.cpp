@@ -12,6 +12,7 @@
 #include "ResourceHelper.h"
 #include "Storage.h"
 #include "../Helper/SetDefaultFileManager.h"
+#include <Shlwapi.h>
 
 namespace
 {

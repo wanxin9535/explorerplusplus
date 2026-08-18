@@ -23,6 +23,7 @@
 #include "../Helper/WindowHelper.h"
 #include "../Helper/WindowSubclass.h"
 #include <boost/algorithm/string/predicate.hpp>
+#include <ranges>
 
 OptionsDialog *OptionsDialog::Create(const ResourceLoader *resourceLoader, HWND parent,
 	AppController *appController, Config *config, DarkModeManager *darkModeManager,

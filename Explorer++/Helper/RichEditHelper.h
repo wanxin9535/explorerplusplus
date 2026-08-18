@@ -4,4 +4,6 @@
 
 #pragma once
 
+#include <richedit.h>
+
 std::wstring GetRichEditLinkText(const ENLINK *linkNotificationDetails);

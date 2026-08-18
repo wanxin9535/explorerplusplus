@@ -13,6 +13,7 @@
 #include "../Helper/WindowHelper.h"
 #include "../Helper/XMLSettings.h"
 #include <wil/resource.h>
+#include <Shlwapi.h>
 #include <comdef.h>
 #include <unordered_map>
 

@@ -12,8 +12,12 @@
 #include <wil/com.h>
 #include <wil/resource.h>
 #include <wil/win32_helpers.h>
+#include <Shlwapi.h>
 #include <WbemIdl.h>
+#include <aclapi.h>
 #include <comutil.h>
+#include <sddl.h>
+#include <wmsdk.h>
 
 // Required for CLSID_WbemLocator.
 #pragma comment(lib, "wbemuuid.lib")

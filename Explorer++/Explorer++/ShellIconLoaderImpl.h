@@ -6,6 +6,7 @@
 
 #include "ShellIconLoader.h"
 #include <wil/com.h>
+#include <commoncontrols.h>
 
 class IconFetcher;
 

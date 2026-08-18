@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "DialogHelper.h"
 #include "SetFileAttributesDialog.h"
+#include <Shlwapi.h>
 
 namespace
 {

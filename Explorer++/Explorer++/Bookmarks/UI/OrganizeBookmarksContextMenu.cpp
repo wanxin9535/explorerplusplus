@@ -14,6 +14,7 @@
 #include "ResourceLoader.h"
 #include "../Helper/ClipboardStore.h"
 #include <algorithm>
+#include <ranges>
 
 OrganizeBookmarksContextMenu::OrganizeBookmarksContextMenu(MenuView *menuView,
 	const AcceleratorManager *acceleratorManager, HWND parentWindow, BookmarkTree *bookmarkTree,

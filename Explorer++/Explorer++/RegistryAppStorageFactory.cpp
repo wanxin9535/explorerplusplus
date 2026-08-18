@@ -6,6 +6,7 @@
 #include "RegistryAppStorageFactory.h"
 #include "RegistryAppStorage.h"
 #include <wil/registry.h>
+#include <Shlwapi.h>
 
 std::unique_ptr<RegistryAppStorage> RegistryAppStorageFactory::MaybeCreate(
 	const std::wstring &applicationKeyPath, Storage::OperationType operationType)

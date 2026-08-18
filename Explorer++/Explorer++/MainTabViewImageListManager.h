@@ -7,6 +7,7 @@
 #include <wil/com.h>
 #include <wil/resource.h>
 #include <CommCtrl.h>
+#include <commoncontrols.h>
 
 class ResourceLoader;
 

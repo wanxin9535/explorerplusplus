@@ -14,6 +14,8 @@
 // clang-format off
 #include <uxtheme.h>
 #include <wil/resource.h>
+#include <windowsx.h>
+#include <Shlwapi.h>
 // clang-format on
 
 constexpr int DEFAULT_CHECKBOX_WIDTH = 13;

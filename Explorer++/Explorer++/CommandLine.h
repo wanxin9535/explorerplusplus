@@ -9,6 +9,7 @@
 #include "Feature.h"
 #include "../Helper/SetDefaultFileManager.h"
 #include <optional>
+#include <set>
 #include <variant>
 
 namespace CommandLine

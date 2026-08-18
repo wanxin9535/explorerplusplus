@@ -8,6 +8,7 @@
 #include "../Helper/MenuHelpTextHost.h"
 #include "../Helper/MenuHelper.h"
 #include "../Helper/WeakPtr.h"
+#include <ranges>
 
 MenuView::MenuView(MenuHelpTextHost *menuHelpTextHost) : m_menuHelpTextHost(menuHelpTextHost)
 {

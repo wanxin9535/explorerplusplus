@@ -9,6 +9,7 @@
 #include "Helper.h"
 #include <glog/logging.h>
 #include <wil/resource.h>
+#include <Shlwapi.h>
 #include <chrono>
 
 /* Drop formats supported. */

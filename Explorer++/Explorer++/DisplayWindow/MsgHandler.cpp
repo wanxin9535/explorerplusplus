@@ -7,6 +7,7 @@
 #include "DisplayWindow.h"
 #include "../Helper/ShellHelper.h"
 #include "../Helper/WindowHelper.h"
+#include <windowsx.h>
 #include <algorithm>
 
 /* Defines how close the text can get to the bottom

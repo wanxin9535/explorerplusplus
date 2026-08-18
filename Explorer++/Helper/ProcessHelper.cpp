@@ -6,6 +6,7 @@
 #include "ProcessHelper.h"
 #include "Helper.h"
 #include <wil/resource.h>
+#include <Psapi.h>
 
 DWORD GetProcessImageName(DWORD dwProcessId, TCHAR *szImageName, DWORD nSize)
 {

@@ -14,6 +14,7 @@
 #include <boost/lexical_cast.hpp>
 #include <wil/com.h>
 #include <optional>
+#include <ranges>
 #include <vector>
 
 namespace

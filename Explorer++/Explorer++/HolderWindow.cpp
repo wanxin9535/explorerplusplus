@@ -16,6 +16,7 @@
 #include "ToolbarHelper.h"
 #include "../Helper/DpiCompatibility.h"
 #include "../Helper/WindowHelper.h"
+#include <windowsx.h>
 
 HolderWindow *HolderWindow::Create(HWND parent, const std::wstring &caption, DWORD style,
 	const std::wstring &closeButtonTooltip, const Config *config,

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <boost/signals2.hpp>
+
 class ColorRule
 {
 public:

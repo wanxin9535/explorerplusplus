@@ -11,6 +11,7 @@
 #include "../Helper/ResizableDialogHelper.h"
 #include "../Helper/RichEditHelper.h"
 #include <glog/logging.h>
+#include <richedit.h>
 
 const boost::bimap<bool, std::wstring> BOOL_MAPPINGS =
 	MakeBimap<bool, std::wstring>({ { true, L"true" }, { false, L"false" } });

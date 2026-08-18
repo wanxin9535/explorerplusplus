@@ -11,6 +11,7 @@
 #include "ShellHelper.h"
 #include "StringHelper.h"
 #include <wil/com.h>
+#include <Shlwapi.h>
 #include <filesystem>
 #include <list>
 #include <sstream>

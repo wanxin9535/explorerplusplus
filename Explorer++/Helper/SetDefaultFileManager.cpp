@@ -8,6 +8,7 @@
 #include "ProcessHelper.h"
 #include "RegistrySettings.h"
 #include <wil/resource.h>
+#include <Shlwapi.h>
 
 /*
 Notes:

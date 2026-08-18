@@ -24,6 +24,8 @@
 #include "../Helper/ShellItemContextMenu.h"
 #include "../Helper/WindowHelper.h"
 #include "../Helper/XMLSettings.h"
+#include <Shlwapi.h>
+#include <windowsx.h>
 #include <algorithm>
 #include <regex>
 

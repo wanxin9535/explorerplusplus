@@ -29,7 +29,6 @@
 #include "../Helper/WinRTBaseWrapper.h"
 
 // Boost Header Files:
-#include <boost/bimap.hpp>
 #include <boost/signals2.hpp>
 
 // Google logging Header Files:

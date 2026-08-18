@@ -9,6 +9,7 @@
 #include "../Helper/Helper.h"
 #include <glog/logging.h>
 #include <wil/common.h>
+#include <windowsx.h>
 
 ToolbarButton::ToolbarButton(MouseEventCallback clickedCallback) :
 	m_clickedCallback(clickedCallback)

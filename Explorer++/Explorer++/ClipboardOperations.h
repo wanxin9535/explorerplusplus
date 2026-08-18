@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <cereal/types/string.hpp>
 #include <shtypes.h>
 #include <string>
 #include <system_error>

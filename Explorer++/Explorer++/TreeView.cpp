@@ -11,6 +11,7 @@
 #include "../Helper/KeyboardState.h"
 #include "../Helper/WindowSubclass.h"
 #include <wil/common.h>
+#include <windowsx.h>
 
 TreeView::TreeView(HWND hwnd, const KeyboardState *keyboardState,
 	LabelEditHandlerFactory labelEditHandlerFactory) :

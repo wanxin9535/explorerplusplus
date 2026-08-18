@@ -16,6 +16,8 @@
 #include "../Helper/ScopedRedrawDisabler.h"
 #include "../Helper/WindowHelper.h"
 #include "../Helper/WindowSubclass.h"
+#include <windowsx.h>
+#include <ranges>
 
 StartupOptionsPage::StartupOptionsPage(HWND parent, const ResourceLoader *resourceLoader,
 	Config *config, SettingChangedCallback settingChangedCallback, HWND tooltipWindow,

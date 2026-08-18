@@ -7,6 +7,7 @@
 #include "../Helper/Controls.h"
 #include "../Helper/WindowHelper.h"
 #include "../Helper/WindowSubclass.h"
+#include <wil/resource.h>
 
 StatusBarView *StatusBarView::Create(HWND parent, const Config *config)
 {

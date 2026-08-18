@@ -7,6 +7,7 @@
 #include "AcceleratorHelper.h"
 #include "AcceleratorManager.h"
 #include "MenuView.h"
+#include <boost/numeric/conversion/cast.hpp>
 
 MenuBase::MenuBase(MenuView *menuView, const AcceleratorManager *acceleratorManager, UINT startId,
 	UINT endId) :

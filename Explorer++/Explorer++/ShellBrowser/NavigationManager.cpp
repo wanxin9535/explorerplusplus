@@ -10,6 +10,7 @@
 #include "../Helper/ScopedStopSource.h"
 #include "../Helper/ShellHelper.h"
 #include <algorithm>
+#include <ranges>
 
 NavigationManager::NavigationManager(const ShellBrowser *shellBrowser,
 	NavigationEvents *navigationEvents, std::shared_ptr<const ShellEnumerator> shellEnumerator,

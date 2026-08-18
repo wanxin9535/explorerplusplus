@@ -18,6 +18,7 @@
 #include "../Helper/WindowHelper.h"
 #include <fmt/format.h>
 #include <fmt/xchar.h>
+#include <Shlwapi.h>
 
 using namespace DefaultFileManager;
 

@@ -12,6 +12,7 @@
 #include "../Helper/WindowHelper.h"
 #include "../Helper/WindowSubclass.h"
 #include <wil/resource.h>
+#include <windowsx.h>
 
 void TabViewItem::SetParent(TabView *parent)
 {

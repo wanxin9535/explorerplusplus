@@ -4,6 +4,8 @@
 
 #include "stdafx.h"
 #include "StringHelper.h"
+#include <Shlwapi.h>
+#include <strsafe.h>
 #include <codecvt>
 
 BOOL CheckWildcardMatchInternal(const TCHAR *szWildcard, const TCHAR *szString,

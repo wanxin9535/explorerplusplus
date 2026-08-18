@@ -14,6 +14,7 @@
 #include "../Helper/FolderSize.h"
 #include "../Helper/Helper.h"
 #include "../Helper/ShellHelper.h"
+#include <Shlwapi.h>
 
 void Explorerplusplus::UpdateDisplayWindow(const Tab &tab)
 {

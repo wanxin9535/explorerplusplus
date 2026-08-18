@@ -6,6 +6,7 @@
 #include "TabList.h"
 #include "TabEvents.h"
 #include <boost/range/iterator_range.hpp>
+#include <ranges>
 
 TabList::TabList(TabEvents *tabEvents)
 {

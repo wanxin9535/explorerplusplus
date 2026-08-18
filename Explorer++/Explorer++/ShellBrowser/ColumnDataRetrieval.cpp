@@ -15,7 +15,10 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <wil/com.h>
 #include <IPHlpApi.h>
+#include <Shlwapi.h>
+#include <gdiplus.h>
 #include <propkey.h>
+#include <wmsdk.h>
 #include <filesystem>
 
 BOOL GetPrinterStatusDescription(DWORD dwStatus, TCHAR *szStatus, size_t cchMax);

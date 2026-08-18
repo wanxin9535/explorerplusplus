@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "PasteSymLinksClient.h"
 #include <cereal/archives/binary.hpp>
+#include <cereal/types/vector.hpp>
 
 void PasteSymLinksClient::NotifyServerOfResult(const ClipboardOperations::PastedItems &pastedItems)
 {

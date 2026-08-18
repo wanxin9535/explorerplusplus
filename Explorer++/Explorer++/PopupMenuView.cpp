@@ -8,6 +8,7 @@
 #include "../Helper/MenuHelpTextHost.h"
 #include "../Helper/MenuHelper.h"
 #include "../Helper/WindowSubclass.h"
+#include <windowsx.h>
 
 PopupMenuView::PopupMenuView(MenuHelpTextHost *menuHelpTextHost) :
 	MenuView(menuHelpTextHost),

@@ -7,6 +7,8 @@
 #include "ColorProvider.h"
 #include "../Helper/TabHelper.h"
 #include "../Helper/WindowHelper.h"
+#include <gdiplus.h>
+#include <uxtheme.h>
 
 ThemedTabControlPainter::ThemedTabControlPainter(HWND hwnd, const ColorProvider *colorProvider) :
 	m_hwnd(hwnd),
