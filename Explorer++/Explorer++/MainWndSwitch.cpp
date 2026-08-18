@@ -877,8 +877,7 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 		break;
 
 	case IDM_BOOKMARKS_BOOKMARK_ALL_TABS:
-		BookmarkHelper::BookmarkAllTabs(m_appServices->GetBookmarkTree(), m_resourceLoader, hwnd,
-			this, m_acceleratorManager, m_platformContext);
+		m_commandController.ExecuteCommand(id);
 		break;
 
 	case MainToolbarButton::Bookmarks:

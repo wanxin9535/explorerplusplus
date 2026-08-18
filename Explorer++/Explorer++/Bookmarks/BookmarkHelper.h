@@ -25,9 +25,11 @@ namespace BookmarkHelper
 bool IsFolder(const std::unique_ptr<BookmarkItem> &bookmarkItem);
 bool IsBookmark(const std::unique_ptr<BookmarkItem> &bookmarkItem);
 
-void BookmarkAllTabs(BookmarkTree *bookmarkTree, const ResourceLoader *resourceLoader,
-	HWND parentWindow, BrowserWindow *browser, const AcceleratorManager *acceleratorManager,
-	PlatformContext *platformContext);
+void BookmarkAllTabs(BookmarkTree *bookmarkTree, BrowserWindow *browser,
+	PlatformContext *platformContext, const AcceleratorManager *acceleratorManager,
+	const ResourceLoader *resourceLoader);
+void AddBrowserTabsToBookmarkFolder(BookmarkTree *bookmarkTree, BrowserWindow *browser,
+	BookmarkItem *bookmarkFolder);
 BookmarkItem *AddBookmarkItem(BookmarkTree *bookmarkTree, BookmarkItem::Type type,
 	BookmarkItem *defaultParentSelection, std::optional<size_t> suggestedIndex, HWND parentWindow,
 	BrowserWindow *browser, const AcceleratorManager *acceleratorManager,

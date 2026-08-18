@@ -8,6 +8,7 @@
 #include "AppController.h"
 #include "AppInfo.h"
 #include "AppServices.h"
+#include "Bookmarks/BookmarkHelper.h"
 #include "BrowserCommands.h"
 #include "BrowserWindow.h"
 #include "Config.h"
@@ -426,6 +427,12 @@ void BrowserCommandController::ExecuteCommand(int command, OpenFolderDisposition
 
 	case IDM_GO_WSL_DISTRIBUTIONS:
 		GoToPath(WSL_DISTRIBUTIONS_PATH, disposition);
+		break;
+
+	case IDM_BOOKMARKS_BOOKMARK_ALL_TABS:
+		BookmarkHelper::BookmarkAllTabs(m_appServices->GetBookmarkTree(), m_browser,
+			m_appServices->GetPlatformContext(), m_appServices->GetAcceleratorManager(),
+			m_appServices->GetResourceLoader());
 		break;
 
 	case IDM_TOOLS_CUSTOMIZECOLORS:

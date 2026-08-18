@@ -592,6 +592,9 @@
     <ClCompile Include="NoOpThemeManager.cpp">
       <Filter>Dark Mode Support</Filter>
     </ClCompile>
+    <ClCompile Include="BookmarkHelperTest.cpp">
+      <Filter>Bookmarks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Bookmarks">

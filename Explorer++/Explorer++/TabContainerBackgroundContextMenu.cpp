@@ -61,8 +61,8 @@ void TabContainerBackgroundContextMenu::OnMenuItemSelected(UINT menuItemId)
 		break;
 
 	case IDM_TAB_CONTAINER_BOOKMARK_ALL_TABS:
-		BookmarkHelper::BookmarkAllTabs(m_bookmarkTree, m_resourceLoader, m_browser->GetHWND(),
-			m_browser, m_acceleratorManager, m_platformContext);
+		BookmarkHelper::BookmarkAllTabs(m_bookmarkTree, m_browser, m_platformContext,
+			m_acceleratorManager, m_resourceLoader);
 		break;
 
 	default:

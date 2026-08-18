@@ -12,7 +12,7 @@
 #include "BrowserWindow.h"
 #include "MainResource.h"
 #include "ResourceLoader.h"
-#include "ShellBrowser/ShellBrowserImpl.h"
+#include "ShellBrowser/ShellBrowser.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "TabContainer.h"
 #include "../Helper/ShellHelper.h"
@@ -54,34 +54,37 @@ bool IsBookmark(const std::unique_ptr<BookmarkItem> &bookmarkItem)
 	return bookmarkItem->IsBookmark();
 }
 
-void BookmarkAllTabs(BookmarkTree *bookmarkTree, const ResourceLoader *resourceLoader,
-	HWND parentWindow, BrowserWindow *browser, const AcceleratorManager *acceleratorManager,
-	PlatformContext *platformContext)
+void BookmarkAllTabs(BookmarkTree *bookmarkTree, BrowserWindow *browser,
+	PlatformContext *platformContext, const AcceleratorManager *acceleratorManager,
+	const ResourceLoader *resourceLoader)
 {
 	std::wstring bookmarkAllTabsText =
 		resourceLoader->LoadString(IDS_ADD_BOOKMARK_TITLE_BOOKMARK_ALL_TABS);
 	auto bookmarkFolder = AddBookmarkItem(bookmarkTree, BookmarkItem::Type::Folder, nullptr,
-		std::nullopt, parentWindow, browser, acceleratorManager, resourceLoader, platformContext,
-		bookmarkAllTabsText);
+		std::nullopt, browser->GetHWND(), browser, acceleratorManager, resourceLoader,
+		platformContext, bookmarkAllTabsText);
 
 	if (!bookmarkFolder)
 	{
 		return;
 	}
 
-	size_t index = 0;
+	AddBrowserTabsToBookmarkFolder(bookmarkTree, browser, bookmarkFolder);
+}
 
-	for (const auto *tab : browser->GetActivePane()->GetTabContainer()->GetAllTabsInOrder())
+void AddBrowserTabsToBookmarkFolder(BookmarkTree *bookmarkTree, BrowserWindow *browser,
+	BookmarkItem *bookmarkFolder)
+{
+	DCHECK(bookmarkFolder->IsFolder());
+
+	for (const auto *tab : browser->GetActiveTabContainer()->GetAllTabsInOrder())
 	{
-		const auto *entry =
-			tab->GetShellBrowserImpl()->GetNavigationController()->GetCurrentEntry();
+		const auto &pidl = tab->GetShellBrowser()->GetDirectory();
 		auto bookmark = std::make_unique<BookmarkItem>(std::nullopt,
-			GetDisplayNameWithFallback(entry->GetPidl().Raw(), SHGDN_INFOLDER),
-			GetDisplayNameWithFallback(entry->GetPidl().Raw(), SHGDN_FORPARSING));
+			GetDisplayNameWithFallback(pidl.Raw(), SHGDN_INFOLDER),
+			GetDisplayNameWithFallback(pidl.Raw(), SHGDN_FORPARSING));
 
-		bookmarkTree->AddBookmarkItem(bookmarkFolder, std::move(bookmark), index);
-
-		index++;
+		bookmarkTree->AddBookmarkItem(bookmarkFolder, std::move(bookmark));
 	}
 }
 
