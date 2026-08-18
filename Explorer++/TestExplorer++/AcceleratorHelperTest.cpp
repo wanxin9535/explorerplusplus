@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "AcceleratorHelper.h"
+#include "Accelerator.h"
 #include "AcceleratorTestHelper.h"
 #include <gtest/gtest.h>
 
@@ -69,4 +70,61 @@ TEST(AcceleratorHelperTest, Validity)
 	EXPECT_TRUE(
 		DoAcceleratorsContainDuplicates({ { { FVIRTKEY | FCONTROL, 'A', commandIdCounter++ },
 			{ FVIRTKEY | FCONTROL, 'A', commandIdCounter++ } } }));
+}
+
+TEST(ApplyShortcutKeysToAcceleratorsTest, AddNewAccelerators)
+{
+	std::vector<ACCEL> accelerators;
+
+	std::vector<ShortcutKey> shortcutKeys = {
+		{ 1, std::vector<Accelerator>{ { FVIRTKEY | FCONTROL, 'G' } } },
+		{ 2, std::vector<Accelerator>{ { FVIRTKEY | FALT, '1' } } },
+	};
+
+	ApplyShortcutKeysToAccelerators(accelerators, shortcutKeys);
+
+	std::vector<ACCEL> expectedAccelerators = {
+		{ FVIRTKEY | FCONTROL, 'G', 1 },
+		{ FVIRTKEY | FALT, '1', 2 },
+	};
+	EXPECT_EQ(accelerators, expectedAccelerators);
+}
+
+TEST(ApplyShortcutKeysToAcceleratorsTest, ReplaceCommandAccelerators)
+{
+	std::vector<ACCEL> accelerators = {
+		{ FVIRTKEY | FCONTROL, 'F', 1 },
+		{ FVIRTKEY | FCONTROL, 'G', 1 },
+		{ FVIRTKEY | FCONTROL, 'S', 2 },
+	};
+
+	std::vector<ShortcutKey> shortcutKeys = {
+		{ 1, { { FVIRTKEY | FCONTROL, 'E' } } },
+	};
+
+	ApplyShortcutKeysToAccelerators(accelerators, shortcutKeys);
+
+	std::vector<ACCEL> expectedAccelerators = {
+		{ FVIRTKEY | FCONTROL, 'S', 2 },
+		{ FVIRTKEY | FCONTROL, 'E', 1 },
+	};
+	EXPECT_EQ(accelerators, expectedAccelerators);
+}
+
+TEST(ApplyShortcutKeysToAcceleratorsTest, OverwriteExistingAccelerators)
+{
+	std::vector<ACCEL> accelerators = {
+		{ FVIRTKEY | FCONTROL, 'A', 1 },
+	};
+
+	std::vector<ShortcutKey> shortcutKeys = {
+		{ 2, { { FVIRTKEY | FCONTROL, 'A' } } },
+	};
+
+	ApplyShortcutKeysToAccelerators(accelerators, shortcutKeys);
+
+	std::vector<ACCEL> expectedAccelerators = {
+		{ FVIRTKEY | FCONTROL, 'A', 2 },
+	};
+	EXPECT_EQ(accelerators, expectedAccelerators);
 }

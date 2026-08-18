@@ -1368,7 +1368,6 @@
     <ClCompile Include="DarkModeManagerImpl.cpp" />
     <ClCompile Include="FolderView.cpp" />
     <ClCompile Include="Plugins\AcceleratorParser.cpp" />
-    <ClCompile Include="AcceleratorUpdater.cpp" />
     <ClCompile Include="Bookmarks\UI\AddBookmarkDialog.cpp" />
     <ClCompile Include="AddressBar.cpp" />
     <ClCompile Include="Plugins\ApiBinding.cpp" />
@@ -1759,7 +1758,6 @@
     <ClInclude Include="DarkModeManagerImpl.h" />
     <ClInclude Include="FolderView.h" />
     <ClInclude Include="Plugins\AcceleratorParser.h" />
-    <ClInclude Include="AcceleratorUpdater.h" />
     <ClInclude Include="Bookmarks\UI\AddBookmarkDialog.h" />
     <ClInclude Include="AddressBar.h" />
     <ClInclude Include="Plugins\ApiBinding.h" />

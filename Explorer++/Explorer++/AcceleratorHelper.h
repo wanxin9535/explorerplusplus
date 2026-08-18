@@ -5,14 +5,19 @@
 #pragma once
 
 #include <span>
+#include <vector>
 
 class AcceleratorManager;
+struct ShortcutKey;
 
 void UpdateMenuAcceleratorStrings(HMENU menu, const AcceleratorManager *acceleratorManager);
 std::wstring BuildAcceleratorString(const ACCEL &accelerator);
 
 std::vector<ACCEL> TableToAcceleratorItems(HACCEL acceleratorTable);
 wil::unique_haccel AcceleratorItemsToTable(std::span<const ACCEL> accelerators);
+
+void ApplyShortcutKeysToAccelerators(std::vector<ACCEL> &accelerators,
+	const std::vector<ShortcutKey> &shortcutKeys);
 
 // As per https://devblogs.microsoft.com/oldnewthing/20040329-00/?p=40003, Ctrl+Alt shouldn't be
 // used as a shortcut modifier, since it acts as an alternate shift key on some keyboard layouts.

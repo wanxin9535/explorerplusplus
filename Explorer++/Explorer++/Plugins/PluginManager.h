@@ -24,13 +24,16 @@ class PluginManager
 public:
 	PluginManager(PluginInterface *pluginInterface, const Config *config);
 
-	void loadAllPlugins(const std::filesystem::path &pluginDirectory);
+	void LoadAllPlugins(const std::filesystem::path &pluginDirectory);
 
 private:
-	static const std::wstring MANIFEST_NAME;
+	static constexpr wchar_t MANIFEST_NAME[] = L"plugin.json";
 
-	bool attemptToLoadPlugin(const std::filesystem::path &directory);
-	bool registerPlugin(const std::filesystem::path &directory, const Manifest &manifest);
+	bool AttemptToLoadPlugin(const std::filesystem::path &directory);
+	bool RegisterPlugin(const std::filesystem::path &directory, const Manifest &manifest);
+	static std::vector<ShortcutKey> ConvertPluginShortcutKeys(
+		const std::vector<Plugins::PluginShortcutKey> &pluginShortcutKeys);
+	void ApplyShortcutKeys(const std::vector<ShortcutKey> &shortcutKeys);
 
 	PluginInterface *m_pluginInterface;
 	const Config *const m_config;

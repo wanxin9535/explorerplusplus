@@ -538,9 +538,6 @@
     <ClCompile Include="Version.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="AcceleratorUpdater.cpp">
-      <Filter>Core\Accelerators</Filter>
-    </ClCompile>
     <ClCompile Include="DefaultAccelerators.cpp">
       <Filter>Core\Accelerators</Filter>
     </ClCompile>
@@ -1496,9 +1493,6 @@
     </ClInclude>
     <ClInclude Include="Version.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="AcceleratorUpdater.h">
-      <Filter>Core\Accelerators</Filter>
     </ClInclude>
     <ClInclude Include="DefaultAccelerators.h">
       <Filter>Core\Accelerators</Filter>

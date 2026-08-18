@@ -15,9 +15,9 @@ Plugins::PluginMenuManager *Explorerplusplus::GetPluginMenuManager()
 	return &m_pluginMenuManager;
 }
 
-AcceleratorUpdater *Explorerplusplus::GetAccleratorUpdater()
+AcceleratorManager *Explorerplusplus::GetAcceleratorManager()
 {
-	return &m_acceleratorUpdater;
+	return m_acceleratorManager;
 }
 
 Plugins::PluginCommandManager *Explorerplusplus::GetPluginCommandManager()

@@ -4,16 +4,12 @@
 
 #include "stdafx.h"
 #include "Plugins/PluginManager.h"
-#include "AcceleratorUpdater.h"
+#include "AcceleratorHelper.h"
+#include "AcceleratorManager.h"
 #include "Plugins/Manifest.h"
 #include "Plugins/PluginCommandManager.h"
 #include <sol/forward.hpp>
 #include <filesystem>
-
-const std::wstring Plugins::PluginManager::MANIFEST_NAME = L"plugin.json";
-
-std::vector<ShortcutKey> convertPluginShortcutKeys(
-	const std::vector<Plugins::PluginShortcutKey> &pluginShortcutKeys);
 
 Plugins::PluginManager::PluginManager(PluginInterface *pluginInterface, const Config *config) :
 	m_pluginInterface(pluginInterface),
@@ -21,12 +17,11 @@ Plugins::PluginManager::PluginManager(PluginInterface *pluginInterface, const Co
 {
 }
 
-void Plugins::PluginManager::loadAllPlugins(const std::filesystem::path &pluginDirectory)
+void Plugins::PluginManager::LoadAllPlugins(const std::filesystem::path &pluginDirectory)
 {
 	std::error_code error;
 
-	/* TODO: Ideally, any error would be logged somewhere. For now, it's
-	ignored. */
+	// TODO: Ideally, any error would be logged somewhere. For now, it's ignored.
 	for (const auto &entry : std::filesystem::directory_iterator(pluginDirectory, error))
 	{
 		std::error_code statusError;
@@ -34,15 +29,14 @@ void Plugins::PluginManager::loadAllPlugins(const std::filesystem::path &pluginD
 
 		if (!statusError && std::filesystem::is_directory(status))
 		{
-			/* TODO: This should return an error code, perhaps using
-			something like std::expected or boost::outcome, once either
-			is available. */
-			attemptToLoadPlugin(entry);
+			// TODO: This should return an error code, perhaps using something like std::expected or
+			// boost::outcome, once either is available.
+			AttemptToLoadPlugin(entry);
 		}
 	}
 }
 
-bool Plugins::PluginManager::attemptToLoadPlugin(const std::filesystem::path &directory)
+bool Plugins::PluginManager::AttemptToLoadPlugin(const std::filesystem::path &directory)
 {
 	auto manifestPath = directory / MANIFEST_NAME;
 	auto manifest = parseManifest(manifestPath);
@@ -52,10 +46,10 @@ bool Plugins::PluginManager::attemptToLoadPlugin(const std::filesystem::path &di
 		return false;
 	}
 
-	return registerPlugin(directory, *manifest);
+	return RegisterPlugin(directory, *manifest);
 }
 
-bool Plugins::PluginManager::registerPlugin(const std::filesystem::path &directory,
+bool Plugins::PluginManager::RegisterPlugin(const std::filesystem::path &directory,
 	const Manifest &manifest)
 {
 	auto plugin =
@@ -63,22 +57,19 @@ bool Plugins::PluginManager::registerPlugin(const std::filesystem::path &directo
 
 	for (auto library : manifest.libraries)
 	{
-		// open_libraries takes an rvalue reference. It also checks that
-		// the arguments passed in are all of type sol::lib. If library
-		// is passed in directly, the type T will be "sol::lib &", which
-		// won't match the type sol::lib. To ensure that they do match,
-		// an rvalue reference needs to be passed in (which makes sense,
-		// as this function is designed to be called with enum values
-		// directly (e.g. sol::lib::base), which are rvalues). This is
-		// why std::move is being used here.
+		// open_libraries takes an rvalue reference. It also checks that the arguments passed in are
+		// all of type sol::lib. If library is passed in directly, the type T will be "sol::lib &",
+		// which won't match the type sol::lib. To ensure that they do match, an rvalue reference
+		// needs to be passed in (which makes sense, as this function is designed to be called with
+		// enum values directly (e.g. sol::lib::base), which are rvalues). This is why std::move is
+		// being used here.
 		plugin->GetLuaState().open_libraries(std::move(library));
 	}
 
 	auto pluginFile = directory / manifest.file;
 
-	// There's a potential race issue here. The file could exist at this
-	// point, but not when used by the safe_script_file call below. That
-	// doesn't really matter though.
+	// There's a potential race issue here. The file could exist at this point, but not when used by
+	// the safe_script_file call below. That doesn't really matter though.
 	if (!std::filesystem::exists(pluginFile))
 	{
 		return false;
@@ -90,29 +81,23 @@ bool Plugins::PluginManager::registerPlugin(const std::filesystem::path &directo
 	}
 	catch (const sol::error &)
 	{
-		// Ignore the error. An exception can be thrown for something
-		// simple like a Lua script trying to use a variable that
-		// doesn't exist. That definitely shouldn't result in the
-		// application being terminated because of an uncaught
-		// exception.
-		// The assumption here is that since the panic handler wasn't
-		// called, the Lua state is still usable. Loading the plugin
-		// even if there's an error can be potentially useful for users,
-		// as it means that the plugin might still offer some of its
-		// functionality (if that functionality was set up before the
-		// error occurred).
+		// Ignore the error. An exception can be thrown for something simple like a Lua script
+		// trying to use a variable that doesn't exist. That definitely shouldn't result in the
+		// application being terminated because of an uncaught exception.
+		//
+		// The assumption here is that since the panic handler wasn't called, the Lua state is still
+		// usable. Loading the plugin even if there's an error can be potentially useful for users,
+		// as it means that the plugin might still offer some of its functionality (if that
+		// functionality was set up before the error occurred).
 	}
 	catch (const LuaPanicException &)
 	{
-		// If a panic has occurred, the Lua state is irretrievably
-		// broken. It's not safe to attempt to continue to use it.
-		// Returning here will ensure that the state is simply
-		// destroyed.
+		// If a panic has occurred, the Lua state is irretrievably broken. It's not safe to attempt
+		// to continue to use it. Returning here will ensure that the state is simply destroyed.
 		return false;
 	}
 
-	m_pluginInterface->GetAccleratorUpdater()->update(
-		convertPluginShortcutKeys(manifest.shortcutKeys));
+	ApplyShortcutKeys(ConvertPluginShortcutKeys(manifest.shortcutKeys));
 	m_pluginInterface->GetPluginCommandManager()->addCommands(plugin->GetId(), manifest.commands);
 
 	m_plugins.push_back(std::move(plugin));
@@ -120,7 +105,7 @@ bool Plugins::PluginManager::registerPlugin(const std::filesystem::path &directo
 	return true;
 }
 
-std::vector<ShortcutKey> convertPluginShortcutKeys(
+std::vector<ShortcutKey> Plugins::PluginManager::ConvertPluginShortcutKeys(
 	const std::vector<Plugins::PluginShortcutKey> &pluginShortcutKeys)
 {
 	std::vector<ShortcutKey> shortcutKeys;
@@ -149,4 +134,14 @@ std::vector<ShortcutKey> convertPluginShortcutKeys(
 	}
 
 	return shortcutKeys;
+}
+
+void Plugins::PluginManager::ApplyShortcutKeys(const std::vector<ShortcutKey> &shortcutKeys)
+{
+	auto *acceleratorManager = m_pluginInterface->GetAcceleratorManager();
+	auto accelerators = acceleratorManager->GetAccelerators();
+
+	ApplyShortcutKeysToAccelerators(accelerators, shortcutKeys);
+
+	acceleratorManager->SetAccelerators(accelerators);
 }

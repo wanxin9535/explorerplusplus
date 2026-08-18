@@ -66,7 +66,6 @@ Explorerplusplus::Explorerplusplus(AppServices *appServices, HINSTANCE resourceI
 	m_commandController(this, appServices),
 	m_tabBarBackgroundBrush(CreateSolidBrush(TAB_BAR_DARK_MODE_BACKGROUND_COLOR)),
 	m_pluginMenuManager(m_hwnd, MENU_PLUGIN_START_ID, MENU_PLUGIN_END_ID),
-	m_acceleratorUpdater(appServices->GetAcceleratorManager()),
 	m_pluginCommandManager(appServices->GetAcceleratorManager(), ACCELERATOR_PLUGIN_START_ID,
 		ACCELERATOR_PLUGIN_END_ID),
 	m_shellBrowserFactory(this, appServices, resourceInstance, &m_fileActionHandler),
@@ -269,7 +268,7 @@ void Explorerplusplus::InitializePlugins()
 	processDirectoryPath.append(PLUGIN_FOLDER_NAME);
 
 	m_pluginManager = std::make_unique<Plugins::PluginManager>(this, m_config);
-	m_pluginManager->loadAllPlugins(processDirectoryPath);
+	m_pluginManager->LoadAllPlugins(processDirectoryPath);
 
 	UpdateMenuAcceleratorStrings(GetMenu(m_hwnd), m_acceleratorManager);
 }

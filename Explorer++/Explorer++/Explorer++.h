@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "AcceleratorUpdater.h"
 #include "ApplicationExecutorImpl.h"
 #include "BrowserCommandController.h"
 #include "BrowserPane.h"
@@ -256,7 +255,7 @@ private:
 	TabEvents *GetTabEvents() override;
 	TabContainer *GetTabContainer() override;
 	Plugins::PluginMenuManager *GetPluginMenuManager() override;
-	AcceleratorUpdater *GetAccleratorUpdater() override;
+	AcceleratorManager *GetAcceleratorManager() override;
 	Plugins::PluginCommandManager *GetPluginCommandManager() override;
 
 	/* Plugins. */
@@ -417,7 +416,6 @@ private:
 	/* Plugins. */
 	std::unique_ptr<Plugins::PluginManager> m_pluginManager;
 	Plugins::PluginMenuManager m_pluginMenuManager;
-	AcceleratorUpdater m_acceleratorUpdater;
 	Plugins::PluginCommandManager m_pluginCommandManager;
 
 	HWND m_hActiveListView;

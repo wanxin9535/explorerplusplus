@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "AcceleratorHelper.h"
+#include "Accelerator.h"
 #include "AcceleratorManager.h"
 #include "../Helper/Helper.h"
 #include <boost/algorithm/string/join.hpp>
@@ -185,4 +186,26 @@ wil::unique_haccel AcceleratorItemsToTable(std::span<const ACCEL> accelerators)
 		const_cast<ACCEL *>(accelerators.data()), static_cast<int>(accelerators.size())));
 	CHECK(acceleratorTable);
 	return acceleratorTable;
+}
+
+void ApplyShortcutKeysToAccelerators(std::vector<ACCEL> &accelerators,
+	const std::vector<ShortcutKey> &shortcutKeys)
+{
+	for (const auto &shortcutKey : shortcutKeys)
+	{
+		std::erase_if(accelerators,
+			[shortcutKey](const ACCEL &accel) { return accel.cmd == shortcutKey.command; });
+
+		for (const auto &key : shortcutKey.accelerators)
+		{
+			std::erase_if(accelerators, [key](const ACCEL &accel)
+				{ return (accel.fVirt & ~FNOINVERT) == key.modifiers && accel.key == key.key; });
+
+			ACCEL newAccel;
+			newAccel.fVirt = key.modifiers;
+			newAccel.key = key.key;
+			newAccel.cmd = static_cast<WORD>(shortcutKey.command);
+			accelerators.push_back(newAccel);
+		}
+	}
 }

@@ -4,7 +4,7 @@
 
 #pragma once
 
-class AcceleratorUpdater;
+class AcceleratorManager;
 class TabContainer;
 class TabEvents;
 
@@ -24,6 +24,6 @@ public:
 	virtual TabEvents *GetTabEvents() = 0;
 	virtual TabContainer *GetTabContainer() = 0;
 	virtual Plugins::PluginMenuManager *GetPluginMenuManager() = 0;
-	virtual AcceleratorUpdater *GetAccleratorUpdater() = 0;
+	virtual AcceleratorManager *GetAcceleratorManager() = 0;
 	virtual Plugins::PluginCommandManager *GetPluginCommandManager() = 0;
 };
