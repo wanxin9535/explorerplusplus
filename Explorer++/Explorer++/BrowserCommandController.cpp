@@ -8,6 +8,7 @@
 #include "AppController.h"
 #include "AppInfo.h"
 #include "AppServices.h"
+#include "BrowserCommands.h"
 #include "BrowserWindow.h"
 #include "Config.h"
 #include "CustomizeColorsDialog.h"
@@ -180,6 +181,10 @@ void BrowserCommandController::ExecuteCommand(int command, OpenFolderDisposition
 	{
 	case IDM_FILE_CLOSETAB:
 		OnCloseTab();
+		break;
+
+	case IDM_FILE_NEW_WINDOW:
+		BrowserCommands::NewWindow(m_browser, m_appServices->GetBrowserWindowFactory());
 		break;
 
 	case IDM_FILE_SAVEDIRECTORYLISTING:

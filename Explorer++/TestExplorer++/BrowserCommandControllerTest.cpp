@@ -62,6 +62,12 @@ TEST_F(BrowserCommandControllerTest, CloseTab)
 	EXPECT_EQ(tabContainer->MaybeGetTab(tabId2), nullptr);
 }
 
+TEST_F(BrowserCommandControllerTest, NewWindow)
+{
+	m_commandController.ExecuteCommand(IDM_FILE_NEW_WINDOW);
+	EXPECT_EQ(m_browserList.GetSize(), 2u);
+}
+
 TEST_F(BrowserCommandControllerTest, CopyFolderPath)
 {
 	std::wstring path = L"c:\\fake";

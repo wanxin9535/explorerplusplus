@@ -922,6 +922,9 @@
     <ClCompile Include="DarkModeManager.cpp">
       <Filter>Dark Mode Support</Filter>
     </ClCompile>
+    <ClCompile Include="BrowserCommands.cpp">
+      <Filter>Browser\Command Handling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bookmarks\BookmarkHelper.h">
@@ -1994,6 +1997,9 @@
     </ClInclude>
     <ClInclude Include="AppInfo.h">
       <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="BrowserCommands.h">
+      <Filter>Browser\Command Handling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

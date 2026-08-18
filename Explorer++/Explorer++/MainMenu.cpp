@@ -18,6 +18,7 @@
 #include "ResourceHelper.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "SortMenuBuilder.h"
+#include "TabContainer.h"
 #include "TabRestorerMenu.h"
 #include "ViewsMenuBuilder.h"
 #include "../Helper/DpiCompatibility.h"

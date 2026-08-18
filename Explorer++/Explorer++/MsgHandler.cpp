@@ -6,6 +6,7 @@
 #include "Explorer++.h"
 #include "AddressBar.h"
 #include "AppServices.h"
+#include "BrowserCommands.h"
 #include "BrowserList.h"
 #include "BrowserWindowFactory.h"
 #include "ColorRule.h"
@@ -223,7 +224,8 @@ void Explorerplusplus::OpenDirectoryInNewWindow(PCIDLIST_ABSOLUTE pidlDirectory)
 {
 	if (m_featureList->IsEnabled(Feature::MultipleWindowsPerSession))
 	{
-		CreateNewWindow({ { .pidl = pidlDirectory } });
+		BrowserCommands::NewWindow(this, m_appServices->GetBrowserWindowFactory(),
+			{ { .pidl = pidlDirectory } });
 	}
 	else
 	{
@@ -662,29 +664,6 @@ void Explorerplusplus::OnDirectoryContentsChanged(const ShellBrowser *shellBrows
 {
 	const auto *tab = shellBrowser->GetTab();
 	UpdateDisplayWindow(*tab);
-}
-
-void Explorerplusplus::CreateNewWindow(const std::vector<TabStorageData> &tabs)
-{
-	WINDOWPLACEMENT placement = {};
-	placement.length = sizeof(placement);
-	BOOL res = GetWindowPlacement(m_hwnd, &placement);
-	CHECK(res);
-
-	constexpr int windowOffsetInPixels = 10;
-
-	RECT bounds = placement.rcNormalPosition;
-	OffsetRect(&bounds, windowOffsetInPixels, windowOffsetInPixels);
-
-	WindowStorageData initialData;
-	initialData.bounds = bounds;
-	initialData.showState = NativeShowStateToShowState(placement.showCmd);
-	initialData.treeViewWidth = m_treeViewWidth;
-	initialData.displayWindowWidth = m_displayWindowWidth;
-	initialData.displayWindowHeight = m_displayWindowHeight;
-	initialData.tabs = tabs;
-
-	m_appServices->GetBrowserWindowFactory()->CreateBrowserWindow(&initialData);
 }
 
 void Explorerplusplus::OnCloneWindow()

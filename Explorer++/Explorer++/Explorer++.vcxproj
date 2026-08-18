@@ -1202,6 +1202,7 @@
     <ClCompile Include="Bookmarks\UI\BookmarkTreeViewContextMenu.cpp" />
     <ClCompile Include="Bookmarks\UI\BookmarkTreeViewNode.cpp" />
     <ClCompile Include="Bookmarks\UI\OrganizeBookmarksContextMenu.cpp" />
+    <ClCompile Include="BrowserCommands.cpp" />
     <ClCompile Include="BrowserCommandTargetManager.cpp" />
     <ClCompile Include="BrowserWindow.cpp" />
     <ClCompile Include="BrowserWindowFactoryImpl.cpp" />
@@ -1552,6 +1553,7 @@
     <ClInclude Include="Bookmarks\UI\BookmarkTreeViewNode.h" />
     <ClInclude Include="Bookmarks\UI\OrganizeBookmarksContextMenu.h" />
     <ClInclude Include="Bookmarks\UI\OrganizeBookmarksContextMenuDelegate.h" />
+    <ClInclude Include="BrowserCommands.h" />
     <ClInclude Include="BrowserWindowFactory.h" />
     <ClInclude Include="BrowserWindowFactoryImpl.h" />
     <ClInclude Include="ChangeNotifyMode.h" />

@@ -22,10 +22,10 @@
 #include "ShellBrowser/SortModes.h"
 #include "ShellIconLoaderImpl.h"
 #include "Tab.h"
-#include "TabStorage.h"
 #include "WindowStorage.h"
 #include "../Helper/ClipboardHelper.h"
 #include "../Helper/FileActionHandler.h"
+#include "../Helper/SortDirection.h"
 #include "../Helper/WeakPtr.h"
 #include "../Helper/WeakPtrFactory.h"
 #include <boost/signals2.hpp>
@@ -226,8 +226,6 @@ private:
 	void OnGoToOffset(int offset);
 
 	int HighlightSimilarFiles(HWND ListView) const;
-
-	void CreateNewWindow(const std::vector<TabStorageData> &tabs = {});
 
 	/* Main toolbar-specific handlers. */
 	void OnToolbarViews();
