@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "CrashHandlerHelper.h"
-#include "App.h"
+#include "AppInfo.h"
 #include "ApplicationCrashedDialog.h"
 #include "CommandLine.h"
 #include "Version.h"
@@ -175,7 +175,7 @@ std::optional<std::wstring> CreateMiniDumpForCrashedProcess(const CrashedData &c
 
 	TCHAR fileName[MAX_PATH];
 	HRESULT hr = StringCchPrintf(fileName, std::size(fileName),
-		_T("%s%s-%02d%02d%04d-%02d%02d%02d.dmp"), App::APP_NAME,
+		_T("%s%s-%02d%02d%04d-%02d%02d%02d.dmp"), AppInfo::NAME,
 		VersionHelper::GetVersion().GetString().c_str(), localTime.wDay, localTime.wMonth,
 		localTime.wYear, localTime.wHour, localTime.wMinute, localTime.wSecond);
 

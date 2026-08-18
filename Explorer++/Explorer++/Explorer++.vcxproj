@@ -1536,6 +1536,7 @@
     <ClInclude Include="AddressBarView.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="AppController.h" />
+    <ClInclude Include="AppInfo.h" />
     <ClInclude Include="AppServices.h" />
     <ClInclude Include="AppStorage.h" />
     <ClInclude Include="AsyncIconFetcher.h" />

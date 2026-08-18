@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "MergeFilesDialog.h"
-#include "App.h"
+#include "AppInfo.h"
 #include "MainResource.h"
 #include "ResourceLoader.h"
 #include "../Helper/FileOperations.h"
@@ -278,7 +278,7 @@ INT_PTR MergeFilesDialog::OnPrivateMessage(UINT uMsg, WPARAM wParam, LPARAM lPar
 	case NMergeFilesDialog::WM_APP_OUTPUTFILEINVALID:
 	{
 		auto errorMessage = m_resourceLoader->LoadString(IDS_MERGE_FILES_OUTPUTFILEINVALID);
-		MessageBox(m_hDlg, errorMessage.c_str(), App::APP_NAME, MB_ICONWARNING | MB_OK);
+		MessageBox(m_hDlg, errorMessage.c_str(), AppInfo::NAME, MB_ICONWARNING | MB_OK);
 
 		assert(m_pMergeFiles != nullptr);
 
@@ -311,7 +311,7 @@ void MergeFilesDialog::OnOk()
 		if (GetWindowTextLength(hOutputFileName) == 0)
 		{
 			auto errorMessage = m_resourceLoader->LoadString(IDS_MERGE_OUTPUTINVALID);
-			MessageBox(m_hDlg, errorMessage.c_str(), App::APP_NAME, MB_ICONWARNING | MB_OK);
+			MessageBox(m_hDlg, errorMessage.c_str(), AppInfo::NAME, MB_ICONWARNING | MB_OK);
 			return;
 		}
 

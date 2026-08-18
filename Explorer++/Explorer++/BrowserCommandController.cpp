@@ -6,6 +6,7 @@
 #include "BrowserCommandController.h"
 #include "AboutDialog.h"
 #include "AppController.h"
+#include "AppInfo.h"
 #include "AppServices.h"
 #include "BrowserWindow.h"
 #include "Config.h"
@@ -740,7 +741,7 @@ void BrowserCommandController::OnSearchTabs()
 
 void BrowserCommandController::OnOpenOnlineDocumentation()
 {
-	ShellExecute(nullptr, L"open", DOCUMENTATION_URL, nullptr, nullptr, SW_SHOWNORMAL);
+	ShellExecute(nullptr, L"open", AppInfo::DOCUMENTATION_URL, nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 void BrowserCommandController::OnCheckForUpdates()

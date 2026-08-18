@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "App.h"
+#include "AppInfo.h"
 #include "BrowserWindow.h"
 #include "ColorRuleModel.h"
 #include "ColorRuleModelFactory.h"
@@ -242,7 +243,7 @@ void App::SetUpLanguageResourceInstance()
 		{
 			std::wstring versionMismatchMessage = ResourceHelper::LoadString(
 				GetModuleHandle(nullptr), IDS_GENERAL_TRANSLATION_DLL_VERSION_MISMATCH);
-			MessageBox(nullptr, versionMismatchMessage.c_str(), App::APP_NAME, MB_ICONWARNING);
+			MessageBox(nullptr, versionMismatchMessage.c_str(), AppInfo::NAME, MB_ICONWARNING);
 		}
 
 		languageInfo = { LanguageHelper::DEFAULT_LANGUAGE, GetModuleHandle(nullptr) };
@@ -375,8 +376,8 @@ bool App::ConfirmExit()
 	std::wstring message =
 		fmt::format(fmt::runtime(m_resourceLoader->LoadString(IDS_CLOSE_ALL_WINDOWS)),
 			fmt::arg(L"num_windows", numWindows));
-	int response =
-		MessageBox(browser->GetHWND(), message.c_str(), APP_NAME, MB_ICONINFORMATION | MB_YESNO);
+	int response = MessageBox(browser->GetHWND(), message.c_str(), AppInfo::NAME,
+		MB_ICONINFORMATION | MB_YESNO);
 
 	if (response == IDNO)
 	{

@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "ApplicationContextMenuController.h"
-#include "App.h"
+#include "AppInfo.h"
 #include "Application.h"
 #include "ApplicationEditorDialog.h"
 #include "ApplicationExecutor.h"
@@ -72,7 +72,7 @@ void ApplicationContextMenuController::OnNew()
 void ApplicationContextMenuController::OnDelete()
 {
 	std::wstring message = m_resourceLoader->LoadString(IDS_APPLICATIONBUTTON_DELETE);
-	int messageBoxReturn = MessageBox(m_browser->GetHWND(), message.c_str(), App::APP_NAME,
+	int messageBoxReturn = MessageBox(m_browser->GetHWND(), message.c_str(), AppInfo::NAME,
 		MB_YESNO | MB_ICONINFORMATION | MB_DEFBUTTON2);
 
 	if (messageBoxReturn != IDYES)

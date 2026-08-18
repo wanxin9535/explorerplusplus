@@ -25,9 +25,6 @@ public:
 		OpenFolderDisposition disposition = OpenFolderDisposition::CurrentTab);
 
 private:
-	static constexpr wchar_t DOCUMENTATION_URL[] =
-		L"https://explorerplusplus.readthedocs.io/en/latest/";
-
 	// When changing the font size, it will be decreased/increased by this amount.
 	static constexpr int FONT_SIZE_CHANGE_DELTA = 1_pt;
 

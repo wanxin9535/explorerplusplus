@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "DestroyFilesDialog.h"
-#include "App.h"
+#include "AppInfo.h"
 #include "MainResource.h"
 #include "ResourceLoader.h"
 #include "../Helper/Helper.h"
@@ -192,7 +192,7 @@ void DestroyFilesDialog::OnOk()
 
 	/* The default button in this message box will be the second
 	button (i.e. the no button). */
-	int res = MessageBox(m_hDlg, confirmation.c_str(), App::APP_NAME,
+	int res = MessageBox(m_hDlg, confirmation.c_str(), AppInfo::NAME,
 		MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO | MB_DEFBUTTON2);
 
 	switch (res)

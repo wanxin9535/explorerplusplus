@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "BrowserView.h"
-#include "App.h"
+#include "AppInfo.h"
 #include "Config.h"
 #include "MainResource.h"
 #include "ResourceLoader.h"
@@ -154,7 +154,7 @@ void BrowserView::UpdateWindowText()
 		GetDisplayName(pidlDirectory.get(), SHGDN_NORMAL, folderDisplayName);
 	}
 
-	std::wstring title = std::format(L"{} - {}", folderDisplayName, App::APP_NAME);
+	std::wstring title = std::format(L"{} - {}", folderDisplayName, AppInfo::NAME);
 
 	if (m_config->showUserNameInTitleBar.get() || m_config->showPrivilegeLevelInTitleBar.get())
 	{

@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "ApplicationCrashedDialog.h"
-#include "App.h"
+#include "AppInfo.h"
 #include "../Helper/PidlHelper.h"
 #include "../Helper/ShellHelper.h"
 #include <format>
@@ -39,7 +39,7 @@ void ApplicationCrashedDialog::Show()
 	dialogConfig.hInstance = GetModuleHandle(nullptr);
 	dialogConfig.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_SIZE_TO_CONTENT;
 	dialogConfig.dwCommonButtons = TDCBF_CLOSE_BUTTON;
-	dialogConfig.pszWindowTitle = App::APP_NAME;
+	dialogConfig.pszWindowTitle = AppInfo::NAME;
 	dialogConfig.pszMainIcon = TD_ERROR_ICON;
 	dialogConfig.pszMainInstruction = L"Explorer++ has encountered an error.";
 	dialogConfig.pszContent = message.c_str();

@@ -4,8 +4,8 @@
 
 #include "stdafx.h"
 #include "GeneralOptionsPage.h"
-#include "App.h"
 #include "AppController.h"
+#include "AppInfo.h"
 #include "Config.h"
 #include "Explorer++_internal.h"
 #include "LanguageHelper.h"
@@ -383,7 +383,7 @@ bool GeneralOptionsPage::UpdateReplaceExplorerSetting(ReplaceExplorerMode update
 		std::wstring warningMessage =
 			m_resourceLoader->LoadString(IDS_OPTIONS_DIALOG_REPLACE_EXPLORER_WARNING);
 
-		int selectedButton = MessageBox(GetDialog(), warningMessage.c_str(), App::APP_NAME,
+		int selectedButton = MessageBox(GetDialog(), warningMessage.c_str(), AppInfo::NAME,
 			MB_ICONWARNING | MB_YESNO | MB_DEFBUTTON2);
 
 		if (selectedButton == IDNO)
@@ -458,7 +458,7 @@ bool GeneralOptionsPage::UpdateReplaceExplorerSetting(ReplaceExplorerMode update
 		std::wstring errorMessage = m_resourceLoader->LoadString(IDS_ERROR_REPLACE_EXPLORER_SETTING)
 			+ L"\n\n" + finalSystemErrorMessage;
 
-		MessageBox(GetDialog(), errorMessage.c_str(), App::APP_NAME, MB_ICONWARNING);
+		MessageBox(GetDialog(), errorMessage.c_str(), AppInfo::NAME, MB_ICONWARNING);
 
 		return false;
 	}

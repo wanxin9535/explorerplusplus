@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "Explorer++.h"
-#include "App.h"
+#include "AppInfo.h"
 #include "AppServices.h"
 #include "Application.h"
 #include "Bookmarks/BookmarkIconManager.h"
@@ -119,7 +119,7 @@ HWND Explorerplusplus::CreateMainWindow(const WindowStorageData *storageData)
 		mainWindowClassRegistered = true;
 	}
 
-	HWND hwnd = CreateWindow(WINDOW_CLASS_NAME, App::APP_NAME, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+	HWND hwnd = CreateWindow(WINDOW_CLASS_NAME, AppInfo::NAME, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, GetModuleHandle(nullptr),
 		nullptr);
 	CHECK(hwnd);
@@ -318,7 +318,7 @@ bool Explorerplusplus::ConfirmClose()
 		fmt::format(fmt::runtime(m_resourceLoader->LoadString(IDS_CLOSE_ALL_TABS)),
 			fmt::arg(L"num_tabs", numTabs));
 	int response =
-		MessageBox(m_hwnd, message.c_str(), App::APP_NAME, MB_ICONINFORMATION | MB_YESNO);
+		MessageBox(m_hwnd, message.c_str(), AppInfo::NAME, MB_ICONINFORMATION | MB_YESNO);
 
 	if (response == IDNO)
 	{

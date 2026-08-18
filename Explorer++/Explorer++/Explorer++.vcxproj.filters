@@ -1992,6 +1992,9 @@
     <ClInclude Include="ThemeManager.h">
       <Filter>Dark Mode Support</Filter>
     </ClInclude>
+    <ClInclude Include="AppInfo.h">
+      <Filter>App</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Explorer++.rc">

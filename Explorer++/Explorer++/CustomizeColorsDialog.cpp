@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "CustomizeColorsDialog.h"
-#include "App.h"
+#include "AppInfo.h"
 #include "ColorRuleEditorDialog.h"
 #include "ColorRuleListView.h"
 #include "ColorRuleModel.h"
@@ -199,7 +199,7 @@ void CustomizeColorsDialog::OnDelete()
 	}
 
 	std::wstring deleteMessage = m_resourceLoader->LoadString(IDS_COLOR_RULE_DELETE);
-	int confirmResult = MessageBox(m_hDlg, deleteMessage.c_str(), App::APP_NAME,
+	int confirmResult = MessageBox(m_hDlg, deleteMessage.c_str(), AppInfo::NAME,
 		MB_YESNO | MB_ICONINFORMATION | MB_DEFBUTTON2);
 
 	if (confirmResult != IDYES)
@@ -215,7 +215,7 @@ void CustomizeColorsDialog::OnDelete()
 void CustomizeColorsDialog::OnDeleteAll()
 {
 	std::wstring deleteAllMessage = m_resourceLoader->LoadString(IDS_COLOR_RULE_DELETE_ALL);
-	int confirmResult = MessageBox(m_hDlg, deleteAllMessage.c_str(), App::APP_NAME,
+	int confirmResult = MessageBox(m_hDlg, deleteAllMessage.c_str(), AppInfo::NAME,
 		MB_YESNO | MB_ICONINFORMATION | MB_DEFBUTTON2);
 
 	if (confirmResult != IDYES)
