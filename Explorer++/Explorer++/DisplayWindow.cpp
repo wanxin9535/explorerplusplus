@@ -42,12 +42,12 @@ void Explorerplusplus::UpdateDisplayWindowForZeroFiles(const Tab &tab)
 	DisplayWindow_SetThumbnailFile(m_displayWindow->GetHWND(), L"", FALSE);
 
 	std::wstring currentDirectory = tab.GetShellBrowserImpl()->GetDirectoryPath();
-	auto pidlDirectory = tab.GetShellBrowserImpl()->GetDirectoryIdl();
+	const auto &pidlDirectory = tab.GetShellBrowser()->GetDirectory();
 
 	unique_pidl_absolute pidlComputer;
 	SHGetFolderLocation(nullptr, CSIDL_DRIVES, nullptr, 0, wil::out_param(pidlComputer));
 
-	if (ArePidlsEquivalent(pidlDirectory.get(), pidlComputer.get()))
+	if (ArePidlsEquivalent(pidlDirectory.Raw(), pidlComputer.get()))
 	{
 		TCHAR szDisplay[512];
 		DWORD dwSize = std::size(szDisplay);
@@ -85,7 +85,7 @@ void Explorerplusplus::UpdateDisplayWindowForZeroFiles(const Tab &tab)
 
 		/* Folder type. */
 		SHFILEINFO shfi;
-		SHGetFileInfo(reinterpret_cast<LPCTSTR>(pidlDirectory.get()), 0, &shfi, sizeof(shfi),
+		SHGetFileInfo(reinterpret_cast<LPCTSTR>(pidlDirectory.Raw()), 0, &shfi, sizeof(shfi),
 			SHGFI_PIDL | SHGFI_TYPENAME);
 		DisplayWindow_BufferText(m_displayWindow->GetHWND(), shfi.szTypeName);
 	}

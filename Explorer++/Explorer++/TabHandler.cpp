@@ -232,8 +232,7 @@ void Explorerplusplus::CreateCommandLineTabs()
 		Tab &newTab =
 			GetActivePane()->GetTabContainer()->CreateNewTab(navigateParams, { .selected = true });
 
-		if (ArePidlsEquivalent(newTab.GetShellBrowserImpl()->GetDirectoryIdl().get(),
-				parentPidl.get()))
+		if (ArePidlsEquivalent(newTab.GetShellBrowser()->GetDirectory().Raw(), parentPidl.get()))
 		{
 			newTab.GetShellBrowserImpl()->SelectItems({ fullPidl.get() });
 		}

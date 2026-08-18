@@ -606,12 +606,6 @@ std::wstring ShellBrowserImpl::GetDirectoryPath() const
 	return m_directoryState.directory;
 }
 
-unique_pidl_absolute ShellBrowserImpl::GetDirectoryIdl() const
-{
-	unique_pidl_absolute pidlDirectory(ILCloneFull(m_directoryState.pidlDirectory.Raw()));
-	return pidlDirectory;
-}
-
 void ShellBrowserImpl::SelectItems(const std::vector<PidlAbsolute> &pidls)
 {
 	ListViewHelper::SelectAllItems(m_listView, false);

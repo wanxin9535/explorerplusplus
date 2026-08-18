@@ -223,12 +223,12 @@ IFACEMETHODIMP FolderView::GetFolder(REFIID riid, void **ppv)
 		return E_FAIL;
 	}
 
-	auto directory = m_shellBrowserWeak->GetDirectoryIdl();
+	const auto &directory = m_shellBrowserWeak->GetDirectory();
 
 	if (riid == IID_IShellItemArray)
 	{
 		wil::com_ptr_nothrow<IShellItemArray> shellItemArray;
-		PCIDLIST_ABSOLUTE item = directory.get();
+		PCIDLIST_ABSOLUTE item = directory.Raw();
 		RETURN_IF_FAILED(SHCreateShellItemArrayFromIDLists(1, &item, &shellItemArray));
 
 		*ppv = shellItemArray.detach();
@@ -236,7 +236,7 @@ IFACEMETHODIMP FolderView::GetFolder(REFIID riid, void **ppv)
 		return S_OK;
 	}
 
-	return SHBindToObject(nullptr, directory.get(), nullptr, riid, ppv);
+	return SHBindToObject(nullptr, directory.Raw(), nullptr, riid, ppv);
 }
 
 IFACEMETHODIMP FolderView::Item(int itemIndex, PITEMID_CHILD *child)
@@ -333,7 +333,7 @@ IFACEMETHODIMP FolderView::SelectAndPositionItems(UINT numItems, PCUITEMID_CHILD
 		for (UINT i = 0; i < numItems; i++)
 		{
 			unique_pidl_absolute pidl(
-				ILCombine(m_shellBrowserWeak->GetDirectoryIdl().get(), items[i]));
+				ILCombine(m_shellBrowserWeak->GetDirectory().Raw(), items[i]));
 			pidls.emplace_back(pidl.get());
 		}
 

@@ -90,7 +90,7 @@ IFACEMETHODIMP ShellView::SelectItem(PCUITEMID_CHILD pidlItem, SVSIF flags)
 	if (flags == SVSI_EDIT)
 	{
 		auto pidlComplete =
-			unique_pidl_absolute(ILCombine(m_shellBrowserWeak->GetDirectoryIdl().get(), pidlItem));
+			unique_pidl_absolute(ILCombine(m_shellBrowserWeak->GetDirectory().Raw(), pidlItem));
 		m_shellBrowserWeak->QueueRename(pidlComplete.get());
 		return S_OK;
 	}
@@ -103,7 +103,7 @@ IFACEMETHODIMP ShellView::SelectItem(PCUITEMID_CHILD pidlItem, SVSIF flags)
 		}
 
 		auto pidlComplete =
-			unique_pidl_absolute(ILCombine(m_shellBrowserWeak->GetDirectoryIdl().get(), pidlItem));
+			unique_pidl_absolute(ILCombine(m_shellBrowserWeak->GetDirectory().Raw(), pidlItem));
 		m_shellBrowserWeak->SelectItems({ pidlComplete.get() });
 
 		return S_OK;

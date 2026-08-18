@@ -63,15 +63,15 @@ void Explorerplusplus::OnListViewPaste()
 	}
 
 	const auto &selectedTab = GetActivePane()->GetTabContainer()->GetSelectedTab();
-	auto directory = selectedTab.GetShellBrowserImpl()->GetDirectoryIdl();
+	const auto &directory = selectedTab.GetShellBrowser()->GetDirectory();
 
-	if (CanShellPasteDataObject(directory.get(), clipboardObject.get(), PasteType::Normal))
+	if (CanShellPasteDataObject(directory.Raw(), clipboardObject.get(), PasteType::Normal))
 	{
 		auto serviceProvider = winrt::make_self<ServiceProvider>();
 		serviceProvider->RegisterService(IID_IFolderView,
 			winrt::make<FolderView>(selectedTab.GetShellBrowserImpl()->GetWeakPtr()));
 
-		ExecuteActionFromContextMenu(directory.get(), {},
+		ExecuteActionFromContextMenu(directory.Raw(), {},
 			selectedTab.GetShellBrowserImpl()->GetListView(), L"paste", 0, serviceProvider.get());
 	}
 	else

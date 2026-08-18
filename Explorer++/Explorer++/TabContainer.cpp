@@ -713,7 +713,7 @@ unique_pidl_absolute TabContainer::GetPidlForTargetItem(int targetItem)
 	}
 
 	const auto &tab = GetTabByIndex(targetItem);
-	return tab.GetShellBrowserImpl()->GetDirectoryIdl();
+	return unique_pidl_absolute(ILCloneFull(tab.GetShellBrowser()->GetDirectory().Raw()));
 }
 
 IUnknown *TabContainer::GetSiteForTargetItem(PCIDLIST_ABSOLUTE targetItemPidl)

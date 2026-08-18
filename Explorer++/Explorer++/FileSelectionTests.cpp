@@ -27,7 +27,7 @@ bool Explorerplusplus::CanPasteLink() const
 {
 	const auto *activeShellBrowser = GetActiveShellBrowserImpl();
 	return ClipboardOperations::CanPasteLinkInDirectory(m_platformContext->GetClipboardStore(),
-		activeShellBrowser->GetDirectoryIdl().get());
+		activeShellBrowser->GetDirectory().Raw());
 }
 
 PidlAbsolute Explorerplusplus::MaybeGetFocusedDirectory() const
@@ -39,18 +39,16 @@ PidlAbsolute Explorerplusplus::MaybeGetFocusedDirectory() const
 		return nullptr;
 	}
 
-	unique_pidl_absolute directory;
-
 	const auto *activeShellBrowser = GetActiveShellBrowserImpl();
 
 	if (focus == activeShellBrowser->GetListView())
 	{
-		directory = activeShellBrowser->GetDirectoryIdl();
+		return activeShellBrowser->GetDirectory();
 	}
 	else if (focus == m_shellTreeView->GetHWND())
 	{
-		directory = m_shellTreeView->GetSelectedNodePidl();
+		return m_shellTreeView->GetSelectedNodePidl().get();
 	}
 
-	return directory.get();
+	return nullptr;
 }

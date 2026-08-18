@@ -758,7 +758,7 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 		them as the default columns for the appropriate folder
 		type.. */
 		const auto &currentColumns = m_pActiveShellBrowser->GetCurrentColumnSet();
-		auto pidl = m_pActiveShellBrowser->GetDirectoryIdl();
+		const auto &pidl = m_pActiveShellBrowser->GetDirectory();
 
 		unique_pidl_absolute pidlDrives;
 		SHGetFolderLocation(nullptr, CSIDL_DRIVES, nullptr, 0, wil::out_param(pidlDrives));
@@ -782,31 +782,31 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 		IShellFolder *pShellFolder;
 		SHGetDesktopFolder(&pShellFolder);
 
-		if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.get(), pidlDrives.get()) == 0)
+		if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.Raw(), pidlDrives.get()) == 0)
 		{
 			m_config->globalFolderSettings.folderColumns.myComputerColumns = currentColumns;
 		}
-		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.get(), pidlControls.get())
+		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.Raw(), pidlControls.get())
 			== 0)
 		{
 			m_config->globalFolderSettings.folderColumns.controlPanelColumns = currentColumns;
 		}
-		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.get(), pidlBitBucket.get())
+		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.Raw(), pidlBitBucket.get())
 			== 0)
 		{
 			m_config->globalFolderSettings.folderColumns.recycleBinColumns = currentColumns;
 		}
-		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.get(), pidlPrinters.get())
+		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.Raw(), pidlPrinters.get())
 			== 0)
 		{
 			m_config->globalFolderSettings.folderColumns.printersColumns = currentColumns;
 		}
-		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.get(), pidlConnections.get())
+		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.Raw(), pidlConnections.get())
 			== 0)
 		{
 			m_config->globalFolderSettings.folderColumns.networkConnectionsColumns = currentColumns;
 		}
-		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.get(), pidlNetwork.get()) == 0)
+		else if (pShellFolder->CompareIDs(SHCIDS_CANONICALONLY, pidl.Raw(), pidlNetwork.get()) == 0)
 		{
 			m_config->globalFolderSettings.folderColumns.myNetworkPlacesColumns = currentColumns;
 		}

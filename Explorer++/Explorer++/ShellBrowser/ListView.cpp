@@ -1025,8 +1025,7 @@ void ShellBrowserImpl::ShowPropertiesForSelectedItems() const
 		pidls.push_back(std::move(pidl));
 	}
 
-	auto pidlDirectory = GetDirectoryIdl();
-	ShowMultipleFileProperties(pidlDirectory.get(), rawPidls, m_owner);
+	ShowMultipleFileProperties(m_directoryState.pidlDirectory.Raw(), rawPidls, m_owner);
 }
 
 void ShellBrowserImpl::OpenSelectedItems()

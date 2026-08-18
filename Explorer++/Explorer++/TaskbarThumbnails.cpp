@@ -661,12 +661,12 @@ void TaskbarThumbnails::SetTabProxyIcon(const Tab &tab)
 	{
 		if (tabProxyInfo.iTabId == tab.GetId())
 		{
-			auto pidlDirectory = tab.GetShellBrowserImpl()->GetDirectoryIdl();
+			const auto &pidlDirectory = tab.GetShellBrowser()->GetDirectory();
 
 			/* TODO: The proxy icon may also be the lock icon, if
 			the tab is locked. */
 			SHFILEINFO shfi;
-			DWORD_PTR res = SHGetFileInfo((LPCTSTR) pidlDirectory.get(), 0, &shfi, sizeof(shfi),
+			DWORD_PTR res = SHGetFileInfo((LPCTSTR) pidlDirectory.Raw(), 0, &shfi, sizeof(shfi),
 				SHGFI_PIDL | SHGFI_ICON | SHGFI_SMALLICON);
 
 			if (!res)

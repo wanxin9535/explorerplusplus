@@ -139,7 +139,7 @@ void BrowserView::UpdateWindowText()
 	}
 
 	const Tab &tab = m_browser->GetActiveTabContainer()->GetSelectedTab();
-	auto pidlDirectory = tab.GetShellBrowserImpl()->GetDirectoryIdl();
+	const auto &pidl = tab.GetShellBrowser()->GetDirectory();
 
 	std::wstring folderDisplayName;
 
@@ -147,11 +147,11 @@ void BrowserView::UpdateWindowText()
 	GUID will be shown). */
 	if (m_config->showFullTitlePath.get() && !tab.GetShellBrowserImpl()->InVirtualFolder())
 	{
-		GetDisplayName(pidlDirectory.get(), SHGDN_FORPARSING, folderDisplayName);
+		GetDisplayName(pidl.Raw(), SHGDN_FORPARSING, folderDisplayName);
 	}
 	else
 	{
-		GetDisplayName(pidlDirectory.get(), SHGDN_NORMAL, folderDisplayName);
+		GetDisplayName(pidl.Raw(), SHGDN_NORMAL, folderDisplayName);
 	}
 
 	std::wstring title = std::format(L"{} - {}", folderDisplayName, AppInfo::NAME);

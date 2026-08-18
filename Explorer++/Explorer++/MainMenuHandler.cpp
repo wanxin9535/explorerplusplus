@@ -100,7 +100,7 @@ void Explorerplusplus::OnResolveLink()
 			if (newTab.GetShellBrowserImpl()->GetDirectoryPath() == szPath)
 			{
 				wil::com_ptr_nothrow<IShellFolder> parent;
-				hr = SHBindToObject(nullptr, newTab.GetShellBrowserImpl()->GetDirectoryIdl().get(),
+				hr = SHBindToObject(nullptr, newTab.GetShellBrowser()->GetDirectory().Raw(),
 					nullptr, IID_PPV_ARGS(&parent));
 
 				if (hr == S_OK)

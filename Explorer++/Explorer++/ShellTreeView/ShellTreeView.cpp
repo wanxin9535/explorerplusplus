@@ -620,11 +620,9 @@ void ShellTreeView::OnSelectionChangedTimer()
 void ShellTreeView::HandleSelectionChanged(const NMTREEVIEW *eventInfo)
 {
 	auto *shellBrowser = GetSelectedShellBrowser();
-	auto pidlCurrentDirectory = shellBrowser->GetDirectoryIdl();
-
 	auto pidlDirectory = GetNodePidl(eventInfo->itemNew.hItem);
 
-	if (ArePidlsEquivalent(pidlDirectory.get(), pidlCurrentDirectory.get()))
+	if (pidlDirectory.get() == shellBrowser->GetDirectory())
 	{
 		return;
 	}
@@ -1467,7 +1465,7 @@ void ShellTreeView::UpdateSelection()
 		return;
 	}
 
-	HTREEITEM item = LocateItem(selectedShellBrowser->GetDirectoryIdl().get());
+	HTREEITEM item = LocateItem(selectedShellBrowser->GetDirectory().Raw());
 
 	if (!item)
 	{
