@@ -17,6 +17,7 @@
 #include "MainResource.h"
 #include "ModelessDialogHelper.h"
 #include "PlatformContext.h"
+#include "ScriptingDialog.h"
 #include "SearchTabsDialog.h"
 #include "SearchTabsModel.h"
 #include "ShellBrowser/ShellBrowser.h"
@@ -439,6 +440,10 @@ void BrowserCommandController::ExecuteCommand(int command, OpenFolderDisposition
 		OnCustomizeColors();
 		break;
 
+	case IDM_TOOLS_RUNSCRIPT:
+		OnRunScript();
+		break;
+
 	case IDM_WINDOW_SEARCH_TABS:
 		OnSearchTabs();
 		break;
@@ -736,6 +741,16 @@ void BrowserCommandController::OnCustomizeColors()
 	auto *customizeColorsDialog = CustomizeColorsDialog::Create(m_appServices->GetResourceLoader(),
 		m_browser->GetHWND(), m_appServices->GetColorRuleModel());
 	customizeColorsDialog->ShowModalDialog();
+}
+
+void BrowserCommandController::OnRunScript()
+{
+	CreateOrSwitchToModelessDialog(m_appServices->GetModelessDialogList(), L"ScriptingDialog",
+		[this]
+		{
+			return ScriptingDialog::Create(m_appServices->GetResourceLoader(), m_browser->GetHWND(),
+				m_appServices);
+		});
 }
 
 void BrowserCommandController::OnSearchTabs()

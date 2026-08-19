@@ -7,22 +7,14 @@
 #include "AppServices.h"
 #include "Config.h"
 #include "DestroyFilesDialog.h"
-#include "DisplayWindow/DisplayWindow.h"
-#include "FileProgressSink.h"
-#include "MainResource.h"
 #include "ModelessDialogHelper.h"
 #include "OptionsDialog.h"
-#include "ResourceLoader.h"
-#include "ScriptingDialog.h"
 #include "SearchDialog.h"
 #include "SelectColumnsDialog.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "ShellBrowser/ShellNavigationController.h"
 #include "TabContainer.h"
-#include "../Helper/Helper.h"
-#include "../Helper/ListViewHelper.h"
 #include "../Helper/PidlHelper.h"
-#include "../Helper/ProcessHelper.h"
 #include "../Helper/ShellHelper.h"
 #include <wil/com.h>
 #include <Shlwapi.h>
@@ -53,12 +45,6 @@ void Explorerplusplus::OnSearch()
 
 			return SearchDialog::Create(m_resourceLoader, m_hwnd, currentDirectory, m_browserList);
 		});
-}
-
-void Explorerplusplus::OnRunScript()
-{
-	CreateOrSwitchToModelessDialog(m_appServices->GetModelessDialogList(), L"ScriptingDialog",
-		[this] { return ScriptingDialog::Create(m_resourceLoader, m_hwnd, m_appServices); });
 }
 
 void Explorerplusplus::OnShowOptions()

@@ -206,7 +206,6 @@ private:
 	void OnSelectColumns();
 	void OnDestroyFiles();
 	void OnSearch();
-	void OnRunScript();
 	void OnShowOptions();
 
 	void OnGoToOffset(int offset);
