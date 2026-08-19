@@ -29,6 +29,7 @@
 #include "NoOpClipboardWatcher.h"
 #include "NoOpThemeManager.h"
 #include "PlatformContextFake.h"
+#include "Plugins/PluginMenuManager.h"
 #include "Runtime.h"
 #include "ShellBrowser/NavigationEvents.h"
 #include "ShellBrowser/ShellBrowserEvents.h"
@@ -98,6 +99,9 @@ protected:
 
 	DriveWatcherFake m_driveWatcher;
 	DriveModel m_driveModel;
+
+	// Plugins
+	Plugins::PluginMenuManager m_pluginMenuManager;
 
 private:
 	void SetUpAppServices();

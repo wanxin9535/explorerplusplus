@@ -18,7 +18,7 @@ TabList *Explorerplusplus::GetTabList()
 
 Plugins::PluginMenuManager *Explorerplusplus::GetPluginMenuManager()
 {
-	return &m_pluginMenuManager;
+	return m_appServices->GetPluginMenuManager();
 }
 
 AcceleratorManager *Explorerplusplus::GetAcceleratorManager()

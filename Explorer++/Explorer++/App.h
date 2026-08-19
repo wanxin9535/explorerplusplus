@@ -27,6 +27,7 @@
 #include "HistoryTracker.h"
 #include "ModelessDialogList.h"
 #include "PlatformContextImpl.h"
+#include "Plugins/PluginMenuManager.h"
 #include "ProcessManager.h"
 #include "Runtime.h"
 #include "ShellBrowser/NavigationEvents.h"
@@ -122,6 +123,9 @@ private:
 
 	DriveWatcherImpl m_driveWatcher;
 	DriveModel m_driveModel;
+
+	// Plugins
+	Plugins::PluginMenuManager m_pluginMenuManager;
 
 	concurrencpp::timer m_saveSettingsTimer;
 

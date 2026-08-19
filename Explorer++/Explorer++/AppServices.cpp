@@ -330,6 +330,21 @@ void AppServices::SetPlatformContext(PlatformContext *platformContext)
 	Set(platformContext);
 }
 
+Plugins::PluginMenuManager *AppServices::GetPluginMenuManager()
+{
+	return Get<Plugins::PluginMenuManager>();
+}
+
+const Plugins::PluginMenuManager *AppServices::GetPluginMenuManager() const
+{
+	return Get<Plugins::PluginMenuManager>();
+}
+
+void AppServices::SetPluginMenuManager(Plugins::PluginMenuManager *pluginMenuManager)
+{
+	Set(pluginMenuManager);
+}
+
 ResourceLoader *AppServices::GetResourceLoader()
 {
 	return Get<ResourceLoader>();

@@ -15,7 +15,6 @@
 #include "MainToolbarStorage.h"
 #include "PluginInterface.h"
 #include "Plugins/PluginCommandManager.h"
-#include "Plugins/PluginMenuManager.h"
 #include "RebarView.h"
 #include "ShellBrowser/ShellBrowserFactoryImpl.h"
 #include "ShellBrowser/SortModes.h"
@@ -416,7 +415,6 @@ private:
 
 	/* Plugins. */
 	std::unique_ptr<Plugins::PluginManager> m_pluginManager;
-	Plugins::PluginMenuManager m_pluginMenuManager;
 	Plugins::PluginCommandManager m_pluginCommandManager;
 
 	HWND m_hActiveListView;

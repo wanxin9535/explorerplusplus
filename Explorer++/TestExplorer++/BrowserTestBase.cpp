@@ -6,6 +6,7 @@
 #include "BrowserTestBase.h"
 #include "BrowserWindowFake.h"
 #include "DriveEnumeratorFake.h"
+#include "MenuRanges.h"
 #include "PidlTestHelper.h"
 #include "RuntimeTestHelper.h"
 #include "ShellBrowser/ShellBrowser.h"
@@ -24,7 +25,8 @@ BrowserTestBase::BrowserTestBase() :
 	m_browserWindowFactory([this](const WindowStorageData *storageData)
 		{ return AddBrowser(storageData ? *storageData : WindowStorageData{}); }),
 	m_tabRestorer(&m_tabEvents, &m_browserList),
-	m_driveModel(std::make_unique<DriveEnumeratorFake>(), &m_driveWatcher)
+	m_driveModel(std::make_unique<DriveEnumeratorFake>(), &m_driveWatcher),
+	m_pluginMenuManager(&m_browserList, MENU_PLUGIN_START_ID, MENU_PLUGIN_END_ID)
 {
 	SetUpAppServices();
 }
@@ -53,6 +55,7 @@ void BrowserTestBase::SetUpAppServices()
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);
 	m_appServices.SetNavigationEvents(&m_navigationEvents);
 	m_appServices.SetPlatformContext(&m_platformContext);
+	m_appServices.SetPluginMenuManager(&m_pluginMenuManager);
 	m_appServices.SetResourceLoader(&m_resourceLoader);
 	m_appServices.SetRuntime(&m_runtime);
 	m_appServices.SetShellBrowserEvents(&m_shellBrowserEvents);

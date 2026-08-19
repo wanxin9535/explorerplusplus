@@ -7,15 +7,21 @@
 #include <boost/signals2.hpp>
 #include <optional>
 #include <set>
+#include <unordered_map>
+#include <vector>
+
+class BrowserList;
+class BrowserWindow;
 
 namespace Plugins
 {
+
 class PluginMenuManager
 {
 public:
-	typedef boost::signals2::signal<void(int)> PluginMenuClickedSignal;
+	using PluginMenuClickedSignal = boost::signals2::signal<void(int)>;
 
-	PluginMenuManager(HWND mainWindow, int startId, int endId);
+	PluginMenuManager(BrowserList *browserList, int startId, int endId);
 
 	std::optional<int> AddItemToMainMenu(const std::wstring &text);
 	void RemoveItemFromMainMenu(int menuItemId);
@@ -26,15 +32,24 @@ public:
 	void OnMenuItemClicked(int menuItemId);
 
 private:
+	void OnBrowserAdded(BrowserWindow *browser);
+
+	void AddItemToBrowser(BrowserWindow *browser, int id, const std::wstring &text);
+	void RemoveItemFromBrowser(BrowserWindow *browser, int id);
+
 	std::optional<int> GeneratePluginMenuItemId();
 	void ReleasePluginMenuItemId(int id);
 
-	const HWND m_mainWindow;
+	BrowserList *const m_browserList;
 	const int m_startId;
 	const int m_endId;
 
+	std::unordered_map<int, std::wstring> m_menuItems;
 	std::set<int> m_freeMenuItemIds;
 
 	PluginMenuClickedSignal m_menuClickedSignal;
+
+	std::vector<boost::signals2::scoped_connection> m_connections;
 };
+
 }

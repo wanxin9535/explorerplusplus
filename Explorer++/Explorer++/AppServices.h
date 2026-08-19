@@ -48,6 +48,13 @@ struct Settings;
 
 }
 
+namespace Plugins
+{
+
+class PluginMenuManager;
+
+}
+
 // Provides access to various application services. A "service" here refers to an object instance
 // that will be available for the lifetime of the application.
 //
@@ -153,6 +160,10 @@ public:
 	const PlatformContext *GetPlatformContext() const;
 	void SetPlatformContext(PlatformContext *platformContext);
 
+	Plugins::PluginMenuManager *GetPluginMenuManager();
+	const Plugins::PluginMenuManager *GetPluginMenuManager() const;
+	void SetPluginMenuManager(Plugins::PluginMenuManager *pluginMenuManager);
+
 	ResourceLoader *GetResourceLoader();
 	const ResourceLoader *GetResourceLoader() const;
 	void SetResourceLoader(ResourceLoader *resourceLoader);
@@ -198,7 +209,7 @@ private:
 		ClipboardWatcher *, ColorRuleModel *, const CommandLine::Settings *, Config *,
 		DarkModeColorProvider *, DarkModeManager *, DirectoryWatcherFactory *, DriveModel *,
 		FeatureList *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
-		NavigationEvents *, PlatformContext *, ResourceLoader *, Runtime *, ShellBrowserEvents *,
-		TabEvents *, TabList *, TabRestorer *, ThemeManager *>
+		NavigationEvents *, PlatformContext *, Plugins::PluginMenuManager *, ResourceLoader *,
+		Runtime *, ShellBrowserEvents *, TabEvents *, TabList *, TabRestorer *, ThemeManager *>
 		m_services;
 };
