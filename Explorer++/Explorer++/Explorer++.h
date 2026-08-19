@@ -352,7 +352,6 @@ private:
 	/** Internal state. **/
 	HWND m_lastActiveWindow;
 	bool m_bShowTabBar;
-	ULONG m_SHChangeNotifyID;
 
 	// Undo support.
 	FileActionHandler m_fileActionHandler;

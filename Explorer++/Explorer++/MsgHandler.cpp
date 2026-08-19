@@ -507,11 +507,6 @@ std::optional<LRESULT> Explorerplusplus::OnCtlColorStatic(HWND hwnd, HDC hdc)
 
 int Explorerplusplus::OnDestroy()
 {
-	if (m_SHChangeNotifyID != 0)
-	{
-		SHChangeNotifyDeregister(m_SHChangeNotifyID);
-	}
-
 	// This class depends on the TabContainer instance and needs to be destroyed before the
 	// TabContainer instance is destroyed.
 	m_taskbarThumbnails.reset();
