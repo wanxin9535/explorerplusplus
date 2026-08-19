@@ -28,6 +28,7 @@ public:
 	TabList(TabEvents *tabEvents);
 
 	Tab *GetById(int id) const;
+	Tab *MaybeGetById(int id) const;
 	concurrencpp::generator<Tab *> GetAll() const;
 	concurrencpp::generator<Tab *> GetAllByLastActiveTime() const;
 	concurrencpp::generator<Tab *> GetForBrowser(const BrowserWindow *browser) const;

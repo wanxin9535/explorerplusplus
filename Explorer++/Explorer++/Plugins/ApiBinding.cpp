@@ -14,11 +14,10 @@
 #include "Plugins/TabsApi/TabsApi.h"
 #include "ShellBrowser/SortModes.h"
 #include "ShellBrowser/ViewModes.h"
-#include "TabContainer.h"
 #include <sol/sol.hpp>
 
-void BindTabsAPI(sol::state &state, TabEvents *tabEvents, TabContainer *tabContainer,
-	const Config *config);
+void BindTabsAPI(sol::state &state, TabEvents *tabEvents, BrowserList *browserList,
+	TabList *tabList, const Config *config);
 void BindMenuApi(sol::state &state, Plugins::PluginMenuManager *pluginMenuManager);
 void BindCommandApi(int pluginId, sol::state &state,
 	Plugins::PluginCommandManager *pluginCommandManager);
@@ -33,27 +32,28 @@ int deny(lua_State *state);
 void Plugins::BindAllApiMethods(int pluginId, sol::state &state, PluginInterface *pluginInterface,
 	const Config *config)
 {
-	BindTabsAPI(state, pluginInterface->GetTabEvents(), pluginInterface->GetTabContainer(), config);
+	BindTabsAPI(state, pluginInterface->GetTabEvents(), pluginInterface->GetBrowserList(),
+		pluginInterface->GetTabList(), config);
 	BindMenuApi(state, pluginInterface->GetPluginMenuManager());
 	BindCommandApi(pluginId, state, pluginInterface->GetPluginCommandManager());
 }
 
-void BindTabsAPI(sol::state &state, TabEvents *tabEvents, TabContainer *tabContainer,
-	const Config *config)
+void BindTabsAPI(sol::state &state, TabEvents *tabEvents, BrowserList *browserList,
+	TabList *tabList, const Config *config)
 {
 	std::shared_ptr<Plugins::TabsApi> tabsApi =
-		std::make_shared<Plugins::TabsApi>(tabContainer, config);
+		std::make_shared<Plugins::TabsApi>(browserList, tabList, config);
 
 	sol::table tabsTable = state.create_named_table("tabs");
 	sol::table tabsMetaTable = MarkTableReadOnly(state, tabsTable);
 
-	tabsMetaTable.set_function("getAll", &Plugins::TabsApi::getAll, tabsApi);
-	tabsMetaTable.set_function("get", &Plugins::TabsApi::get, tabsApi);
-	tabsMetaTable.set_function("create", &Plugins::TabsApi::create, tabsApi);
-	tabsMetaTable.set_function("update", &Plugins::TabsApi::update, tabsApi);
-	tabsMetaTable.set_function("refresh", &Plugins::TabsApi::refresh, tabsApi);
-	tabsMetaTable.set_function("move", &Plugins::TabsApi::move, tabsApi);
-	tabsMetaTable.set_function("close", &Plugins::TabsApi::close, tabsApi);
+	tabsMetaTable.set_function("getAll", &Plugins::TabsApi::GetAll, tabsApi);
+	tabsMetaTable.set_function("get", &Plugins::TabsApi::Get, tabsApi);
+	tabsMetaTable.set_function("create", &Plugins::TabsApi::Create, tabsApi);
+	tabsMetaTable.set_function("update", &Plugins::TabsApi::Update, tabsApi);
+	tabsMetaTable.set_function("refresh", &Plugins::TabsApi::Refresh, tabsApi);
+	tabsMetaTable.set_function("move", &Plugins::TabsApi::Move, tabsApi);
+	tabsMetaTable.set_function("close", &Plugins::TabsApi::Close, tabsApi);
 
 	std::shared_ptr<Plugins::TabCreated> tabCreated =
 		std::make_shared<Plugins::TabCreated>(tabEvents);
@@ -73,7 +73,7 @@ void BindTabsAPI(sol::state &state, TabEvents *tabEvents, TabContainer *tabConta
 	// clang-format off
 	tabsMetaTable.new_usertype<Plugins::TabsApi::FolderSettings>("FolderSettings",
 		"viewMode", &Plugins::TabsApi::FolderSettings::viewMode,
-		"__tostring", &Plugins::TabsApi::FolderSettings::toString);
+		"__tostring", &Plugins::TabsApi::FolderSettings::ToString);
 
 	tabsMetaTable.new_usertype<Plugins::TabsApi::Tab>("Tab",
 		"id", &Plugins::TabsApi::Tab::id,
@@ -82,7 +82,7 @@ void BindTabsAPI(sol::state &state, TabEvents *tabEvents, TabContainer *tabConta
 		"locked", &Plugins::TabsApi::Tab::locked,
 		"addressLocked", &Plugins::TabsApi::Tab::addressLocked,
 		"folderSettings", &Plugins::TabsApi::Tab::folderSettings,
-		"__tostring", &Plugins::TabsApi::Tab::toString);
+		"__tostring", &Plugins::TabsApi::Tab::ToString);
 	// clang-format on
 
 	AddEnum<ViewMode>(state, tabsMetaTable, "ViewMode");

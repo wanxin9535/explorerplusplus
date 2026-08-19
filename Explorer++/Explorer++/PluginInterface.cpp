@@ -4,10 +4,16 @@
 
 #include "stdafx.h"
 #include "Explorer++.h"
+#include "AppServices.h"
 
-TabContainer *Explorerplusplus::GetTabContainer()
+BrowserList *Explorerplusplus::GetBrowserList()
 {
-	return GetActivePane()->GetTabContainer();
+	return m_browserList;
+}
+
+TabList *Explorerplusplus::GetTabList()
+{
+	return m_appServices->GetTabList();
 }
 
 Plugins::PluginMenuManager *Explorerplusplus::GetPluginMenuManager()

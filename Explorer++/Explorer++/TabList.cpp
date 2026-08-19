@@ -23,9 +23,21 @@ TabList::TabList(TabEvents *tabEvents)
 
 Tab *TabList::GetById(int id) const
 {
+	auto *tab = MaybeGetById(id);
+	CHECK(tab);
+	return tab;
+}
+
+Tab *TabList::MaybeGetById(int id) const
+{
 	auto &idIndex = m_tabs.get<ById>();
 	auto itr = idIndex.find(id);
-	CHECK(itr != idIndex.end());
+
+	if (itr == idIndex.end())
+	{
+		return nullptr;
+	}
+
 	return itr->GetMutableTab();
 }
 

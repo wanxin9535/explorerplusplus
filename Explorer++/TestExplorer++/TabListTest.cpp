@@ -50,6 +50,14 @@ TEST_F(TabListTest, GetById)
 	EXPECT_EQ(m_tabList.GetById(m_tab3->GetId()), m_tab3);
 }
 
+TEST_F(TabListTest, MaybeGetById)
+{
+	EXPECT_EQ(m_tabList.MaybeGetById(m_tab1->GetId()), m_tab1);
+	EXPECT_EQ(m_tabList.MaybeGetById(m_tab2->GetId()), m_tab2);
+	EXPECT_EQ(m_tabList.MaybeGetById(m_tab3->GetId()), m_tab3);
+	EXPECT_EQ(m_tabList.MaybeGetById(1000), nullptr);
+}
+
 TEST_F(TabListTest, GetAllByLastActiveTime)
 {
 	EXPECT_THAT(GeneratorToVector(m_tabList.GetAllByLastActiveTime()),

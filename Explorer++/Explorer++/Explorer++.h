@@ -253,7 +253,8 @@ private:
 
 	/* PluginInterface. */
 	TabEvents *GetTabEvents() override;
-	TabContainer *GetTabContainer() override;
+	BrowserList *GetBrowserList() override;
+	TabList *GetTabList() override;
 	Plugins::PluginMenuManager *GetPluginMenuManager() override;
 	AcceleratorManager *GetAcceleratorManager() override;
 	Plugins::PluginCommandManager *GetPluginCommandManager() override;

@@ -4,6 +4,8 @@
 
 #include "stdafx.h"
 #include "Plugins/TabsApi/TabsApi.h"
+#include "BrowserList.h"
+#include "BrowserWindow.h"
 #include "Config.h"
 #include "Plugins/TabsApi/TabProperties.h"
 #include "ShellBrowser/FolderSettings.h"
@@ -12,6 +14,7 @@
 #include "ShellBrowser/ShellNavigationController.h"
 #include "ShellBrowser/SortModes.h"
 #include "TabContainer.h"
+#include "TabList.h"
 #include <sol/sol.hpp>
 
 Plugins::TabsApi::FolderSettings::FolderSettings(const ShellBrowserImpl &shellBrowser)
@@ -26,7 +29,7 @@ Plugins::TabsApi::FolderSettings::FolderSettings(const ShellBrowserImpl &shellBr
 	showHidden = shellBrowser.GetShowHidden();
 }
 
-std::wstring Plugins::TabsApi::FolderSettings::toString()
+std::wstring Plugins::TabsApi::FolderSettings::ToString()
 {
 	// clang-format off
 	return _T("sortMode = ") + utf8StrToWstr(sortMode._to_string())
@@ -50,7 +53,7 @@ Plugins::TabsApi::Tab::Tab(const ::Tab &tabInternal) :
 	addressLocked = (tabInternal.GetLockState() == ::Tab::LockState::AddressLocked);
 }
 
-std::wstring Plugins::TabsApi::Tab::toString()
+std::wstring Plugins::TabsApi::Tab::ToString()
 {
 	// clang-format off
 	return _T("id = ") + std::to_wstring(id)
@@ -58,32 +61,33 @@ std::wstring Plugins::TabsApi::Tab::toString()
 		+ _T(", name = ") + name
 		+ _T(", locked = ") + std::to_wstring(locked)
 		+ _T(", addressLocked = ") + std::to_wstring(addressLocked)
-		+ _T(", folderSettings = {") + folderSettings.toString() + _T("}");
+		+ _T(", folderSettings = {") + folderSettings.ToString() + _T("}");
 	// clang-format on
 }
 
-Plugins::TabsApi::TabsApi(TabContainer *tabContainer, const Config *config) :
-	m_tabContainer(tabContainer),
+Plugins::TabsApi::TabsApi(BrowserList *browserList, TabList *tabList, const Config *config) :
+	m_browserList(browserList),
+	m_tabList(tabList),
 	m_config(config)
 {
 }
 
-std::vector<Plugins::TabsApi::Tab> Plugins::TabsApi::getAll()
+std::vector<Plugins::TabsApi::Tab> Plugins::TabsApi::GetAll()
 {
 	std::vector<Tab> tabs;
 
-	for (auto &item : m_tabContainer->GetAllTabs())
+	for (auto *tabInternal : m_tabList->GetAll())
 	{
-		Tab tab(*item.second);
+		Tab tab(*tabInternal);
 		tabs.push_back(tab);
 	}
 
 	return tabs;
 }
 
-std::optional<Plugins::TabsApi::Tab> Plugins::TabsApi::get(int tabId)
+std::optional<Plugins::TabsApi::Tab> Plugins::TabsApi::Get(int tabId)
 {
-	auto tabInternal = m_tabContainer->MaybeGetTab(tabId);
+	auto tabInternal = m_tabList->MaybeGetById(tabId);
 
 	if (!tabInternal)
 	{
@@ -95,8 +99,15 @@ std::optional<Plugins::TabsApi::Tab> Plugins::TabsApi::get(int tabId)
 	return tab;
 }
 
-int Plugins::TabsApi::create(sol::table createProperties)
+int Plugins::TabsApi::Create(sol::table createProperties)
 {
+	auto *targetBrowser = m_browserList->GetLastActive();
+
+	if (!targetBrowser)
+	{
+		return -1;
+	}
+
 	sol::optional<std::wstring> location = createProperties[TabConstants::LOCATION];
 
 	if (!location || location->empty())
@@ -105,7 +116,7 @@ int Plugins::TabsApi::create(sol::table createProperties)
 	}
 
 	TabSettings tabSettings;
-	extractTabPropertiesForCreation(createProperties, tabSettings);
+	ExtractTabPropertiesForCreation(createProperties, tabSettings, targetBrowser);
 
 	unique_pidl_absolute pidlDirectory;
 	HRESULT hr = ParseDisplayNameForNavigation(location->c_str(), pidlDirectory);
@@ -121,17 +132,18 @@ int Plugins::TabsApi::create(sol::table createProperties)
 
 	if (folderSettingsTable)
 	{
-		extractFolderSettingsForCreation(*folderSettingsTable, folderSettings);
+		ExtractFolderSettingsForCreation(*folderSettingsTable, folderSettings);
 	}
 
 	auto navigateParams = NavigateParams::Normal(pidlDirectory.get());
-	auto &newTab = m_tabContainer->CreateNewTab(navigateParams, tabSettings, &folderSettings);
+	auto &newTab = targetBrowser->GetActiveTabContainer()->CreateNewTab(navigateParams, tabSettings,
+		&folderSettings);
 
 	return newTab.GetId();
 }
 
-void Plugins::TabsApi::extractTabPropertiesForCreation(sol::table createProperties,
-	TabSettings &tabSettings)
+void Plugins::TabsApi::ExtractTabPropertiesForCreation(sol::table createProperties,
+	TabSettings &tabSettings, BrowserWindow *targetBrowser)
 {
 	sol::optional<std::wstring> name = createProperties[TabConstants::NAME];
 
@@ -145,7 +157,7 @@ void Plugins::TabsApi::extractTabPropertiesForCreation(sol::table createProperti
 	if (index)
 	{
 		int finalIndex = *index;
-		int numTabs = m_tabContainer->GetNumTabs();
+		int numTabs = targetBrowser->GetActiveTabContainer()->GetNumTabs();
 
 		if (finalIndex < 0)
 		{
@@ -175,7 +187,7 @@ void Plugins::TabsApi::extractTabPropertiesForCreation(sol::table createProperti
 	}
 }
 
-void Plugins::TabsApi::extractFolderSettingsForCreation(sol::table folderSettingsTable,
+void Plugins::TabsApi::ExtractFolderSettingsForCreation(sol::table folderSettingsTable,
 	::FolderSettings &folderSettings)
 {
 	sol::optional<int> sortMode = folderSettingsTable[FolderSettingsConstants::SORT_MODE];
@@ -236,9 +248,9 @@ void Plugins::TabsApi::extractFolderSettingsForCreation(sol::table folderSetting
 	}
 }
 
-void Plugins::TabsApi::update(int tabId, sol::table properties)
+void Plugins::TabsApi::Update(int tabId, sol::table properties)
 {
-	auto tabInternal = m_tabContainer->MaybeGetTab(tabId);
+	auto tabInternal = m_tabList->MaybeGetById(tabId);
 
 	if (!tabInternal)
 	{
@@ -249,7 +261,7 @@ void Plugins::TabsApi::update(int tabId, sol::table properties)
 
 	if (location && !location->empty())
 	{
-		tabInternal->GetShellBrowserImpl()->GetNavigationController()->Navigate(*location);
+		tabInternal->GetShellBrowser()->GetNavigationController()->Navigate(*location);
 	}
 
 	sol::optional<std::wstring> name = properties[TabConstants::NAME];
@@ -278,47 +290,49 @@ void Plugins::TabsApi::update(int tabId, sol::table properties)
 
 	if (active && *active)
 	{
-		m_tabContainer->SelectTab(*tabInternal);
+		tabInternal->GetTabContainer()->SelectTab(*tabInternal);
 	}
 }
 
-void Plugins::TabsApi::refresh(int tabId)
+void Plugins::TabsApi::Refresh(int tabId)
 {
-	auto tabInternal = m_tabContainer->MaybeGetTab(tabId);
+	auto tabInternal = m_tabList->MaybeGetById(tabId);
 
 	if (!tabInternal)
 	{
 		return;
 	}
 
-	tabInternal->GetShellBrowserImpl()->GetNavigationController()->Refresh();
+	tabInternal->GetShellBrowser()->GetNavigationController()->Refresh();
 }
 
-int Plugins::TabsApi::move(int tabId, int newIndex)
+int Plugins::TabsApi::Move(int tabId, int newIndex)
 {
-	auto tabInternal = m_tabContainer->MaybeGetTab(tabId);
+	auto tabInternal = m_tabList->MaybeGetById(tabId);
 
 	if (!tabInternal)
 	{
 		return -1;
 	}
 
+	auto *tabContainer = tabInternal->GetTabContainer();
+
 	if (newIndex < 0)
 	{
-		newIndex = m_tabContainer->GetNumTabs();
+		newIndex = tabContainer->GetNumTabs();
 	}
 
-	return m_tabContainer->MoveTab(*tabInternal, newIndex);
+	return tabContainer->MoveTab(*tabInternal, newIndex);
 }
 
-bool Plugins::TabsApi::close(int tabId)
+bool Plugins::TabsApi::Close(int tabId)
 {
-	auto tabInternal = m_tabContainer->MaybeGetTab(tabId);
+	auto tabInternal = m_tabList->MaybeGetById(tabId);
 
 	if (!tabInternal)
 	{
 		return false;
 	}
 
-	return m_tabContainer->CloseTab(*tabInternal);
+	return tabInternal->GetTabContainer()->CloseTab(*tabInternal);
 }

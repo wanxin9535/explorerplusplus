@@ -5,8 +5,9 @@
 #pragma once
 
 class AcceleratorManager;
-class TabContainer;
+class BrowserList;
 class TabEvents;
+class TabList;
 
 namespace Plugins
 {
@@ -22,7 +23,8 @@ public:
 	virtual ~PluginInterface() = default;
 
 	virtual TabEvents *GetTabEvents() = 0;
-	virtual TabContainer *GetTabContainer() = 0;
+	virtual BrowserList *GetBrowserList() = 0;
+	virtual TabList *GetTabList() = 0;
 	virtual Plugins::PluginMenuManager *GetPluginMenuManager() = 0;
 	virtual AcceleratorManager *GetAcceleratorManager() = 0;
 	virtual Plugins::PluginCommandManager *GetPluginCommandManager() = 0;

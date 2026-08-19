@@ -11,14 +11,16 @@
 #include <sol/forward.hpp>
 #include <optional>
 
+class BrowserList;
 struct Config;
 struct FolderSettings;
 class ShellBrowserImpl;
-class TabContainer;
+class TabList;
 struct TabSettings;
 
 namespace Plugins
 {
+
 class TabsApi
 {
 public:
@@ -34,7 +36,7 @@ public:
 		bool showHidden;
 
 		FolderSettings(const ShellBrowserImpl &shellBrowser);
-		std::wstring toString();
+		std::wstring ToString();
 	};
 
 	struct Tab
@@ -50,25 +52,28 @@ public:
 		FolderSettings folderSettings;
 
 		Tab(const ::Tab &tabInternal);
-		std::wstring toString();
+		std::wstring ToString();
 	};
 
-	TabsApi(TabContainer *tabContainer, const Config *config);
+	TabsApi(BrowserList *browserList, TabList *tabList, const Config *config);
 
-	std::vector<Tab> getAll();
-	std::optional<Tab> get(int tabId);
-	int create(sol::table createProperties);
-	void update(int tabId, sol::table properties);
-	void refresh(int tabId);
-	int move(int tabId, int newIndex);
-	bool close(int tabId);
+	std::vector<Tab> GetAll();
+	std::optional<Tab> Get(int tabId);
+	int Create(sol::table createProperties);
+	void Update(int tabId, sol::table properties);
+	void Refresh(int tabId);
+	int Move(int tabId, int newIndex);
+	bool Close(int tabId);
 
 private:
-	void extractTabPropertiesForCreation(sol::table createProperties, TabSettings &tabSettings);
-	void extractFolderSettingsForCreation(sol::table folderSettingsTable,
+	void ExtractTabPropertiesForCreation(sol::table createProperties, TabSettings &tabSettings,
+		BrowserWindow *targetBrowser);
+	void ExtractFolderSettingsForCreation(sol::table folderSettingsTable,
 		::FolderSettings &folderSettings);
 
-	TabContainer *const m_tabContainer;
+	BrowserList *const m_browserList;
+	TabList *const m_tabList;
 	const Config *const m_config;
 };
+
 }
