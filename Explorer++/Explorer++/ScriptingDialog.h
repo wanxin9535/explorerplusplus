@@ -3,14 +3,13 @@
 #include "BaseDialog.h"
 #include "Plugins/LuaPlugin.h"
 
-struct Config;
-class PluginInterface;
+class AppServices;
 
 class ScriptingDialog : public BaseDialog
 {
 public:
 	static ScriptingDialog *Create(const ResourceLoader *resourceLoader, HWND hParent,
-		PluginInterface *pluginInterface, const Config *config);
+		AppServices *appServices);
 
 protected:
 	INT_PTR OnInitDialog() override;
@@ -19,8 +18,7 @@ protected:
 	INT_PTR OnClose() override;
 
 private:
-	ScriptingDialog(const ResourceLoader *resourceLoader, HWND hParent,
-		PluginInterface *pluginInterface, const Config *config);
+	ScriptingDialog(const ResourceLoader *resourceLoader, HWND hParent, AppServices *appServices);
 	~ScriptingDialog() = default;
 
 	std::vector<ResizableDialogControl> GetResizableControls() override;

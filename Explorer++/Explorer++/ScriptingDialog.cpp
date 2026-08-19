@@ -11,15 +11,15 @@
 #include <boost/algorithm/string.hpp>
 
 ScriptingDialog *ScriptingDialog::Create(const ResourceLoader *resourceLoader, HWND hParent,
-	PluginInterface *pluginInterface, const Config *config)
+	AppServices *appServices)
 {
-	return new ScriptingDialog(resourceLoader, hParent, pluginInterface, config);
+	return new ScriptingDialog(resourceLoader, hParent, appServices);
 }
 
 ScriptingDialog::ScriptingDialog(const ResourceLoader *resourceLoader, HWND hParent,
-	PluginInterface *pluginInterface, const Config *config) :
+	AppServices *appServices) :
 	BaseDialog(resourceLoader, IDD_SCRIPTING, hParent, DialogSizingType::Both),
-	m_luaPlugin(L"", Plugins::Manifest(), pluginInterface, config)
+	m_luaPlugin(L"", Plugins::Manifest(), appServices)
 {
 	m_luaPlugin.GetLuaState().open_libraries(sol::lib::base);
 }

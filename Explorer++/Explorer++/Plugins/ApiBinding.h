@@ -4,15 +4,13 @@
 
 #pragma once
 
-#include "PluginInterface.h"
 #include <sol/forward.hpp>
 
-struct Config;
+class AppServices;
 
 namespace Plugins
 {
 
-void BindAllApiMethods(int pluginId, sol::state &state, PluginInterface *pluginInterface,
-	const Config *config);
+void BindAllApiMethods(int pluginId, sol::state &state, AppServices *appServices);
 
 }

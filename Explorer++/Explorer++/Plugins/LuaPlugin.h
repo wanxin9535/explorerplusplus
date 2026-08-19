@@ -4,11 +4,10 @@
 
 #pragma once
 
-#include "PluginInterface.h"
 #include "Plugins/Manifest.h"
 #include <sol/forward.hpp>
 
-struct Config;
+class AppServices;
 
 namespace Plugins
 {
@@ -17,8 +16,7 @@ namespace Plugins
 class LuaPlugin
 {
 public:
-	LuaPlugin(const std::wstring &directory, const Manifest &manifest,
-		PluginInterface *pluginInterface, const Config *config);
+	LuaPlugin(const std::wstring &directory, const Manifest &manifest, AppServices *appServices);
 
 	int GetId() const;
 	std::wstring GetDirectory() const;

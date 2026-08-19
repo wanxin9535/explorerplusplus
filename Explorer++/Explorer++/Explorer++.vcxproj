@@ -1424,7 +1424,6 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="BrowserView.cpp" />
     <ClCompile Include="AcceleratorHelper.cpp" />
-    <ClCompile Include="PluginInterface.cpp" />
     <ClCompile Include="ServiceProvider.cpp" />
     <ClCompile Include="ListViewHandler.cpp" />
     <ClCompile Include="Plugins\LuaPlugin.cpp" />
@@ -1820,7 +1819,6 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="OptionsDialog.h" />
     <ClInclude Include="Plugins\PluginCommandManager.h" />
-    <ClInclude Include="PluginInterface.h" />
     <ClInclude Include="Plugins\PluginManager.h" />
     <ClInclude Include="Plugins\PluginMenuManager.h" />
     <ClInclude Include="FileProgressSink.h" />

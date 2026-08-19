@@ -737,11 +737,6 @@ ShellBrowserImpl *Explorerplusplus::GetActiveShellBrowserImpl() const
 	return m_pActiveShellBrowser;
 }
 
-TabEvents *Explorerplusplus::GetTabEvents()
-{
-	return m_tabEvents;
-}
-
 TabContainer *Explorerplusplus::GetTabContainer() const
 {
 	return GetActivePane()->GetTabContainer();

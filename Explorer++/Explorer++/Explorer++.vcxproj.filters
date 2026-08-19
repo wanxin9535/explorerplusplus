@@ -151,9 +151,6 @@
     <ClCompile Include="Plugins\PluginCommandManager.cpp">
       <Filter>Plugins</Filter>
     </ClCompile>
-    <ClCompile Include="PluginInterface.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="FileProgressSink.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -1042,9 +1039,6 @@
       <Filter>Plugins</Filter>
     </ClInclude>
     <ClInclude Include="MenuRanges.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="PluginInterface.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="FileProgressSink.h">

@@ -6,14 +6,13 @@
 #include "Plugins/PluginManager.h"
 #include "AcceleratorHelper.h"
 #include "AcceleratorManager.h"
+#include "AppServices.h"
 #include "Plugins/Manifest.h"
 #include "Plugins/PluginCommandManager.h"
 #include <sol/forward.hpp>
 #include <filesystem>
 
-Plugins::PluginManager::PluginManager(PluginInterface *pluginInterface, const Config *config) :
-	m_pluginInterface(pluginInterface),
-	m_config(config)
+Plugins::PluginManager::PluginManager(AppServices *appServices) : m_appServices(appServices)
 {
 }
 
@@ -52,8 +51,7 @@ bool Plugins::PluginManager::AttemptToLoadPlugin(const std::filesystem::path &di
 bool Plugins::PluginManager::RegisterPlugin(const std::filesystem::path &directory,
 	const Manifest &manifest)
 {
-	auto plugin =
-		std::make_unique<LuaPlugin>(directory.wstring(), manifest, m_pluginInterface, m_config);
+	auto plugin = std::make_unique<LuaPlugin>(directory.wstring(), manifest, m_appServices);
 
 	for (auto library : manifest.libraries)
 	{
@@ -98,7 +96,7 @@ bool Plugins::PluginManager::RegisterPlugin(const std::filesystem::path &directo
 	}
 
 	ApplyShortcutKeys(ConvertPluginShortcutKeys(manifest.shortcutKeys));
-	m_pluginInterface->GetPluginCommandManager()->addCommands(plugin->GetId(), manifest.commands);
+	m_appServices->GetPluginCommandManager()->addCommands(plugin->GetId(), manifest.commands);
 
 	m_plugins.push_back(std::move(plugin));
 
@@ -138,7 +136,7 @@ std::vector<ShortcutKey> Plugins::PluginManager::ConvertPluginShortcutKeys(
 
 void Plugins::PluginManager::ApplyShortcutKeys(const std::vector<ShortcutKey> &shortcutKeys)
 {
-	auto *acceleratorManager = m_pluginInterface->GetAcceleratorManager();
+	auto *acceleratorManager = m_appServices->GetAcceleratorManager();
 	auto accelerators = acceleratorManager->GetAccelerators();
 
 	ApplyShortcutKeysToAccelerators(accelerators, shortcutKeys);

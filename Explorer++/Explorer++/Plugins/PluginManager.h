@@ -4,25 +4,17 @@
 
 #pragma once
 
-#include "PluginInterface.h"
 #include "Plugins/LuaPlugin.h"
+#include <filesystem>
 
-struct Config;
-
-namespace std
-{
-namespace filesystem
-{
-class path;
-}
-}
+class AppServices;
 
 namespace Plugins
 {
 class PluginManager
 {
 public:
-	PluginManager(PluginInterface *pluginInterface, const Config *config);
+	PluginManager(AppServices *appServices);
 
 	void LoadAllPlugins(const std::filesystem::path &pluginDirectory);
 
@@ -35,8 +27,7 @@ private:
 		const std::vector<Plugins::PluginShortcutKey> &pluginShortcutKeys);
 	void ApplyShortcutKeys(const std::vector<ShortcutKey> &shortcutKeys);
 
-	PluginInterface *m_pluginInterface;
-	const Config *const m_config;
+	AppServices *const m_appServices;
 
 	std::vector<std::unique_ptr<Plugins::LuaPlugin>> m_plugins;
 };

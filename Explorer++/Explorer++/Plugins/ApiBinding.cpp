@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Plugins/ApiBinding.h"
+#include "AppServices.h"
 #include "Plugins/CommandApi/Events/CommandInvoked.h"
 #include "Plugins/MenuApi.h"
 #include "Plugins/PluginMenuManager.h"
@@ -29,13 +30,12 @@ void AddEnum(sol::state &state, sol::table &parentTable, const std::string &name
 sol::table MarkTableReadOnly(sol::state &state, sol::table &table);
 int deny(lua_State *state);
 
-void Plugins::BindAllApiMethods(int pluginId, sol::state &state, PluginInterface *pluginInterface,
-	const Config *config)
+void Plugins::BindAllApiMethods(int pluginId, sol::state &state, AppServices *appServices)
 {
-	BindTabsAPI(state, pluginInterface->GetTabEvents(), pluginInterface->GetBrowserList(),
-		pluginInterface->GetTabList(), config);
-	BindMenuApi(state, pluginInterface->GetPluginMenuManager());
-	BindCommandApi(pluginId, state, pluginInterface->GetPluginCommandManager());
+	BindTabsAPI(state, appServices->GetTabEvents(), appServices->GetBrowserList(),
+		appServices->GetTabList(), appServices->GetConfig());
+	BindMenuApi(state, appServices->GetPluginMenuManager());
+	BindCommandApi(pluginId, state, appServices->GetPluginCommandManager());
 }
 
 void BindTabsAPI(sol::state &state, TabEvents *tabEvents, BrowserList *browserList,

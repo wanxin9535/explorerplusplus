@@ -13,7 +13,6 @@
 #include "LayoutDefaults.h"
 #include "Literals.h"
 #include "MainToolbarStorage.h"
-#include "PluginInterface.h"
 #include "RebarView.h"
 #include "ShellBrowser/ShellBrowserFactoryImpl.h"
 #include "ShellBrowser/SortModes.h"
@@ -80,7 +79,7 @@ namespace Plugins
 class PluginManager;
 }
 
-class Explorerplusplus : public BrowserWindow, public CoreInterface, public PluginInterface
+class Explorerplusplus : public BrowserWindow, public CoreInterface
 {
 public:
 	static constexpr wchar_t WINDOW_CLASS_NAME[] = L"Explorer++";
@@ -248,14 +247,6 @@ private:
 	void OnTabListViewSelectionChanged(const ShellBrowser *shellBrowser);
 
 	void OnNavigationCommitted(const NavigationRequest *request);
-
-	/* PluginInterface. */
-	TabEvents *GetTabEvents() override;
-	BrowserList *GetBrowserList() override;
-	TabList *GetTabList() override;
-	Plugins::PluginMenuManager *GetPluginMenuManager() override;
-	AcceleratorManager *GetAcceleratorManager() override;
-	Plugins::PluginCommandManager *GetPluginCommandManager() override;
 
 	/* Plugins. */
 	void InitializePlugins();

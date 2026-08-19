@@ -58,7 +58,7 @@ void Explorerplusplus::OnSearch()
 void Explorerplusplus::OnRunScript()
 {
 	CreateOrSwitchToModelessDialog(m_appServices->GetModelessDialogList(), L"ScriptingDialog",
-		[this] { return ScriptingDialog::Create(m_resourceLoader, m_hwnd, this, m_config); });
+		[this] { return ScriptingDialog::Create(m_resourceLoader, m_hwnd, m_appServices); });
 }
 
 void Explorerplusplus::OnShowOptions()
