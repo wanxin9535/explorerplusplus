@@ -4,45 +4,34 @@
 
 #include "stdafx.h"
 #include "Explorer++.h"
-#include "AcceleratorHelper.h"
 #include "AppInfo.h"
 #include "AppServices.h"
-#include "Application.h"
-#include "Bookmarks/BookmarkIconManager.h"
 #include "Bookmarks/UI/BookmarksMainMenu.h"
 #include "BrowserList.h"
 #include "BrowserView.h"
 #include "Config.h"
 #include "DisplayWindow/DisplayWindow.h"
-#include "FeatureList.h"
-#include "FrequentLocationsMenu.h"
-#include "HistoryMenu.h"
 #include "HolderWindow.h"
-#include "MainFontSetter.h"
 #include "MainMenuSubMenuView.h"
 #include "MainRebarStorage.h"
 #include "MainRebarView.h"
 #include "MainResource.h"
 #include "MainToolbar.h"
 #include "MenuRanges.h"
-#include "Plugins/PluginManager.h"
 #include "ResourceLoader.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
 #include "ShellTreeView/ShellTreeView.h"
 #include "StatusBar.h"
 #include "StatusBarView.h"
 #include "TabRestorer.h"
-#include "TabRestorerMenu.h"
 #include "TabStorage.h"
 #include "TaskbarThumbnails.h"
 #include "ThemeWindowTracker.h"
 #include "WindowStorage.h"
-#include "../Helper/ProcessHelper.h"
 #include "../Helper/WindowHelper.h"
 #include "../Helper/WindowSubclass.h"
 #include <fmt/format.h>
 #include <fmt/xchar.h>
-#include <filesystem>
 
 Explorerplusplus *Explorerplusplus::Create(AppServices *appServices, HINSTANCE resourceInstance,
 	const WindowStorageData *storageData)
@@ -205,8 +194,6 @@ void Explorerplusplus::Initialize(const WindowStorageData *storageData)
 
 	SetFocus(m_hActiveListView);
 
-	InitializePlugins();
-
 	m_themeWindowTracker =
 		std::make_unique<ThemeWindowTracker>(m_hwnd, m_appServices->GetThemeManager());
 
@@ -248,26 +235,6 @@ void Explorerplusplus::OnTreeViewHolderResized(int newWidth)
 	m_treeViewWidth = newWidth;
 
 	UpdateLayout();
-}
-
-void Explorerplusplus::InitializePlugins()
-{
-	if (!m_featureList->IsEnabled(Feature::Plugins))
-	{
-		return;
-	}
-
-	TCHAR processImageName[MAX_PATH];
-	GetProcessImageName(GetCurrentProcessId(), processImageName, std::size(processImageName));
-
-	std::filesystem::path processDirectoryPath(processImageName);
-	processDirectoryPath.remove_filename();
-	processDirectoryPath.append(PLUGIN_FOLDER_NAME);
-
-	m_pluginManager = std::make_unique<Plugins::PluginManager>(m_appServices);
-	m_pluginManager->LoadAllPlugins(processDirectoryPath);
-
-	UpdateMenuAcceleratorStrings(GetMenu(m_hwnd), m_acceleratorManager);
 }
 
 Tab *Explorerplusplus::CreateTabFromPreservedTab(const PreservedTab *tab)

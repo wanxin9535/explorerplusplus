@@ -31,8 +31,10 @@
 #include "XmlAppStorageFactory.h"
 #include "../Helper/CachedIcons.h"
 #include "../Helper/Helper.h"
+#include "../Helper/ProcessHelper.h"
 #include <fmt/format.h>
 #include <fmt/xchar.h>
+#include <filesystem>
 
 using namespace std::chrono_literals;
 
@@ -60,6 +62,7 @@ App::App(const CommandLine::Settings *commandLineSettings) :
 	m_pluginMenuManager(&m_browserList, MENU_PLUGIN_START_ID, MENU_PLUGIN_END_ID),
 	m_pluginCommandManager(&m_acceleratorManager, ACCELERATOR_PLUGIN_START_ID,
 		ACCELERATOR_PLUGIN_END_ID),
+	m_pluginManager(&m_appServices),
 	m_uniqueGdiplusShutdown(CheckedGdiplusStartup()),
 	m_richEditLib(LoadSystemLibrary(
 		L"Msftedit.dll")), // This is needed for version 5 of the Rich Edit control.
@@ -144,6 +147,7 @@ void App::SetUpSession()
 
 	SetUpLanguageResourceInstance();
 	SetUpAppServices();
+	InitializePlugins();
 
 	SessionRestorer sessionRestorer(&m_config, &m_featureList, &m_browserList,
 		m_browserWindowFactory.get());
@@ -301,6 +305,23 @@ void App::SetUpAppServices()
 	m_appServices.SetTabRestorer(&m_tabRestorer);
 	m_appServices.SetThemeManager(&m_themeManager);
 	m_appServices.CheckFullyInitialized();
+}
+
+void App::InitializePlugins()
+{
+	if (!m_featureList.IsEnabled(Feature::Plugins))
+	{
+		return;
+	}
+
+	TCHAR processImageName[MAX_PATH];
+	GetProcessImageName(GetCurrentProcessId(), processImageName, std::size(processImageName));
+
+	std::filesystem::path processDirectoryPath(processImageName);
+	processDirectoryPath.remove_filename();
+	processDirectoryPath.append(PLUGIN_FOLDER_NAME);
+
+	m_pluginManager.LoadAllPlugins(processDirectoryPath);
 }
 
 bool App::IsModelessDialogMessage(MSG *msg)

@@ -512,16 +512,6 @@ int Explorerplusplus::OnDestroy()
 		SHChangeNotifyDeregister(m_SHChangeNotifyID);
 	}
 
-	// It's important that the plugins are destroyed before the main window is destroyed and before
-	// this class is destroyed.
-	// The first reason is that the API binding classes may interact with the UI on destruction
-	// (e.g. to remove menu entries they've added).
-	// The second reason is that the API bindings assume they can use the objects passed to them
-	// until their destruction. Those objects are destroyed automatically when this class is
-	// destroyed, so letting the plugins be destroyed automatically could result in objects being
-	// destroyed in the wrong order.
-	m_pluginManager.reset();
-
 	// This class depends on the TabContainer instance and needs to be destroyed before the
 	// TabContainer instance is destroyed.
 	m_taskbarThumbnails.reset();

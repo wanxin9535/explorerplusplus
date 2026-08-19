@@ -74,11 +74,6 @@ namespace Applications
 class ApplicationToolbar;
 }
 
-namespace Plugins
-{
-class PluginManager;
-}
-
 class Explorerplusplus : public BrowserWindow, public CoreInterface
 {
 public:
@@ -146,8 +141,6 @@ private:
 	static const UINT LISTVIEW_ITEM_CHANGED_TIMEOUT = 50;
 
 	static inline constexpr COLORREF TAB_BAR_DARK_MODE_BACKGROUND_COLOR = RGB(25, 25, 25);
-
-	static constexpr wchar_t PLUGIN_FOLDER_NAME[] = L"plugins";
 
 	struct DWFolderSizeCompletion
 	{
@@ -247,9 +240,6 @@ private:
 	void OnTabListViewSelectionChanged(const ShellBrowser *shellBrowser);
 
 	void OnNavigationCommitted(const NavigationRequest *request);
-
-	/* Plugins. */
-	void InitializePlugins();
 
 	// Main rebar
 	void CreateMainRebarAndChildren(const WindowStorageData *storageData);
@@ -402,9 +392,6 @@ private:
 
 	/* Theming. */
 	std::unique_ptr<ThemeWindowTracker> m_themeWindowTracker;
-
-	/* Plugins. */
-	std::unique_ptr<Plugins::PluginManager> m_pluginManager;
 
 	HWND m_hActiveListView;
 	ShellBrowserImpl *m_pActiveShellBrowser;

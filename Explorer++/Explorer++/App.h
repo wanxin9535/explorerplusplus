@@ -28,6 +28,7 @@
 #include "ModelessDialogList.h"
 #include "PlatformContextImpl.h"
 #include "Plugins/PluginCommandManager.h"
+#include "Plugins/PluginManager.h"
 #include "Plugins/PluginMenuManager.h"
 #include "ProcessManager.h"
 #include "Runtime.h"
@@ -65,12 +66,15 @@ private:
 
 	static constexpr int MIN_COM_STA_THREADPOOL_SIZE = 5;
 
+	static constexpr wchar_t PLUGIN_FOLDER_NAME[] = L"plugins";
+
 	void OnBrowserRemoved();
 	void SetUpSession();
 	void LoadSettings(std::vector<WindowStorageData> &windows);
 	void SaveSettings();
 	void SetUpLanguageResourceInstance();
 	void SetUpAppServices();
+	void InitializePlugins();
 	bool IsModelessDialogMessage(MSG *msg);
 	bool MaybeTranslateAccelerator(MSG *msg);
 
@@ -128,6 +132,7 @@ private:
 	// Plugins
 	Plugins::PluginMenuManager m_pluginMenuManager;
 	Plugins::PluginCommandManager m_pluginCommandManager;
+	Plugins::PluginManager m_pluginManager;
 
 	concurrencpp::timer m_saveSettingsTimer;
 
