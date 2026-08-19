@@ -51,6 +51,7 @@ struct Settings;
 namespace Plugins
 {
 
+class PluginCommandManager;
 class PluginMenuManager;
 
 }
@@ -160,6 +161,10 @@ public:
 	const PlatformContext *GetPlatformContext() const;
 	void SetPlatformContext(PlatformContext *platformContext);
 
+	Plugins::PluginCommandManager *GetPluginCommandManager();
+	const Plugins::PluginCommandManager *GetPluginCommandManager() const;
+	void SetPluginCommandManager(Plugins::PluginCommandManager *pluginCommandManager);
+
 	Plugins::PluginMenuManager *GetPluginMenuManager();
 	const Plugins::PluginMenuManager *GetPluginMenuManager() const;
 	void SetPluginMenuManager(Plugins::PluginMenuManager *pluginMenuManager);
@@ -209,7 +214,8 @@ private:
 		ClipboardWatcher *, ColorRuleModel *, const CommandLine::Settings *, Config *,
 		DarkModeColorProvider *, DarkModeManager *, DirectoryWatcherFactory *, DriveModel *,
 		FeatureList *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
-		NavigationEvents *, PlatformContext *, Plugins::PluginMenuManager *, ResourceLoader *,
-		Runtime *, ShellBrowserEvents *, TabEvents *, TabList *, TabRestorer *, ThemeManager *>
+		NavigationEvents *, PlatformContext *, Plugins::PluginCommandManager *,
+		Plugins::PluginMenuManager *, ResourceLoader *, Runtime *, ShellBrowserEvents *,
+		TabEvents *, TabList *, TabRestorer *, ThemeManager *>
 		m_services;
 };

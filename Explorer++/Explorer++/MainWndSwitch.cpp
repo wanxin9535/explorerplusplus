@@ -32,6 +32,7 @@
 #include "MainToolbarButtons.h"
 #include "MenuRanges.h"
 #include "ModelessDialogHelper.h"
+#include "Plugins/PluginCommandManager.h"
 #include "Plugins/PluginMenuManager.h"
 #include "ResourceLoader.h"
 #include "ShellBrowser/ShellBrowserImpl.h"
@@ -270,7 +271,7 @@ LRESULT Explorerplusplus::HandleMenuOrToolbarButtonOrAccelerator(HWND hwnd, UINT
 	else if (notificationCode == 1 && id >= ACCELERATOR_PLUGIN_START_ID
 		&& id < ACCELERATOR_PLUGIN_END_ID)
 	{
-		m_pluginCommandManager.onAcceleratorPressed(id);
+		m_appServices->GetPluginCommandManager()->onAcceleratorPressed(id);
 		return 0;
 	}
 	else if (notificationCode == 0 && MaybeHandleMainMenuItemSelection(id))

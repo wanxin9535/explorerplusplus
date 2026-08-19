@@ -58,6 +58,8 @@ App::App(const CommandLine::Settings *commandLineSettings) :
 	m_driveWatcher(&m_eventWindow),
 	m_driveModel(std::make_unique<DriveEnumeratorImpl>(), &m_driveWatcher),
 	m_pluginMenuManager(&m_browserList, MENU_PLUGIN_START_ID, MENU_PLUGIN_END_ID),
+	m_pluginCommandManager(&m_acceleratorManager, ACCELERATOR_PLUGIN_START_ID,
+		ACCELERATOR_PLUGIN_END_ID),
 	m_uniqueGdiplusShutdown(CheckedGdiplusStartup()),
 	m_richEditLib(LoadSystemLibrary(
 		L"Msftedit.dll")), // This is needed for version 5 of the Rich Edit control.
@@ -289,6 +291,7 @@ void App::SetUpAppServices()
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);
 	m_appServices.SetNavigationEvents(&m_navigationEvents);
 	m_appServices.SetPlatformContext(&m_platformContext);
+	m_appServices.SetPluginCommandManager(&m_pluginCommandManager);
 	m_appServices.SetPluginMenuManager(&m_pluginMenuManager);
 	m_appServices.SetResourceLoader(m_resourceLoader.get());
 	m_appServices.SetRuntime(&m_runtime);

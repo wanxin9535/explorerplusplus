@@ -29,6 +29,7 @@
 #include "NoOpClipboardWatcher.h"
 #include "NoOpThemeManager.h"
 #include "PlatformContextFake.h"
+#include "Plugins/PluginCommandManager.h"
 #include "Plugins/PluginMenuManager.h"
 #include "Runtime.h"
 #include "ShellBrowser/NavigationEvents.h"
@@ -102,6 +103,7 @@ protected:
 
 	// Plugins
 	Plugins::PluginMenuManager m_pluginMenuManager;
+	Plugins::PluginCommandManager m_pluginCommandManager;
 
 private:
 	void SetUpAppServices();

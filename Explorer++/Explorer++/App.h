@@ -27,6 +27,7 @@
 #include "HistoryTracker.h"
 #include "ModelessDialogList.h"
 #include "PlatformContextImpl.h"
+#include "Plugins/PluginCommandManager.h"
 #include "Plugins/PluginMenuManager.h"
 #include "ProcessManager.h"
 #include "Runtime.h"
@@ -126,6 +127,7 @@ private:
 
 	// Plugins
 	Plugins::PluginMenuManager m_pluginMenuManager;
+	Plugins::PluginCommandManager m_pluginCommandManager;
 
 	concurrencpp::timer m_saveSettingsTimer;
 

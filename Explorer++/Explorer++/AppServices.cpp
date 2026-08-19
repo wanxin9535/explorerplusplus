@@ -330,6 +330,21 @@ void AppServices::SetPlatformContext(PlatformContext *platformContext)
 	Set(platformContext);
 }
 
+Plugins::PluginCommandManager *AppServices::GetPluginCommandManager()
+{
+	return Get<Plugins::PluginCommandManager>();
+}
+
+const Plugins::PluginCommandManager *AppServices::GetPluginCommandManager() const
+{
+	return Get<Plugins::PluginCommandManager>();
+}
+
+void AppServices::SetPluginCommandManager(Plugins::PluginCommandManager *pluginCommandManager)
+{
+	Set(pluginCommandManager);
+}
+
 Plugins::PluginMenuManager *AppServices::GetPluginMenuManager()
 {
 	return Get<Plugins::PluginMenuManager>();

@@ -28,5 +28,5 @@ AcceleratorManager *Explorerplusplus::GetAcceleratorManager()
 
 Plugins::PluginCommandManager *Explorerplusplus::GetPluginCommandManager()
 {
-	return &m_pluginCommandManager;
+	return m_appServices->GetPluginCommandManager();
 }

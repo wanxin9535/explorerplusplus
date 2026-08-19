@@ -65,8 +65,6 @@ Explorerplusplus::Explorerplusplus(AppServices *appServices, HINSTANCE resourceI
 	m_hwnd(CreateMainWindow(storageData)),
 	m_commandController(this, appServices),
 	m_tabBarBackgroundBrush(CreateSolidBrush(TAB_BAR_DARK_MODE_BACKGROUND_COLOR)),
-	m_pluginCommandManager(appServices->GetAcceleratorManager(), ACCELERATOR_PLUGIN_START_ID,
-		ACCELERATOR_PLUGIN_END_ID),
 	m_shellBrowserFactory(this, appServices, resourceInstance, &m_fileActionHandler),
 	m_config(appServices->GetConfig()),
 	m_iconFetcher(m_hwnd, appServices->GetCachedIcons()),
