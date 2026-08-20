@@ -52,6 +52,7 @@ public:
 	boost::signals2::connection AddMenuHelpTextRequestObserver(
 		const MenuHelpTextRequestSignal::slot_type &observer) override;
 
+	void SetWorkspaceBounds(const RECT &bounds);
 	[[nodiscard]] int AddTabAndReturnId(const std::wstring &path,
 		const TabSettings &tabSettings = {}, PidlAbsolute *outputPidl = nullptr);
 	Tab *AddTab(const std::wstring &path, const TabSettings &tabSettings = {},

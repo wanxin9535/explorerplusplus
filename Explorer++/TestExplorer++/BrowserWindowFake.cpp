@@ -292,6 +292,19 @@ boost::signals2::connection BrowserWindowFake::AddMenuHelpTextRequestObserver(
 	return {};
 }
 
+void BrowserWindowFake::SetWorkspaceBounds(const RECT &bounds)
+{
+	WINDOWPLACEMENT placement = {};
+	placement.length = sizeof(placement);
+	BOOL res = GetWindowPlacement(m_window.get(), &placement);
+	CHECK(res);
+
+	placement.showCmd = SW_HIDE;
+	placement.rcNormalPosition = bounds;
+	res = SetWindowPlacement(m_window.get(), &placement);
+	CHECK(res);
+}
+
 int BrowserWindowFake::AddTabAndReturnId(const std::wstring &path, const TabSettings &tabSettings,
 	PidlAbsolute *outputPidl)
 {

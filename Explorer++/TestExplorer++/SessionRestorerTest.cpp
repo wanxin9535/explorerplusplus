@@ -103,23 +103,32 @@ TEST_F(SessionRestorerTest, RestoreCustomFoldersWithPreviousWindowState)
 	m_config.startupFolders = { L"c:\\", L"d:\\", L"e:\\" };
 
 	WindowStorageData sessionWindow;
-	sessionWindow.bounds = { 11, 246, 1847, 862 };
-	sessionWindow.tabs = { { .directory = L"c:\\previous" } };
+
+	{
+		auto *browser = AddBrowser();
+		browser->SetWorkspaceBounds({ 11, 246, 1847, 862 });
+
+		browser->AddTab(L"c:\\previous");
+
+		sessionWindow = browser->GetStorageData();
+
+		RemoveBrowser(browser);
+	}
 
 	m_sessionRestorer.Restore({ sessionWindow });
 	ASSERT_EQ(m_browserList.GetSize(), 1u);
 
-	auto *browser = m_browserList.GetLastActive();
-	ASSERT_NE(browser, nullptr);
+	auto *restoredBrowser = m_browserList.GetLastActive();
+	ASSERT_NE(restoredBrowser, nullptr);
 
 	// When a previous session window exists, its state information should be used when creating a
 	// new window on startup.
-	auto storageData = browser->GetStorageData();
+	auto storageData = restoredBrowser->GetStorageData();
 	EXPECT_EQ(storageData.bounds, sessionWindow.bounds);
 
 	// On the other hand, the tabs from the previous session window should be ignored, so the only
 	// tabs created should be for the configured startup folders.
-	VerifyTabs(browser, m_config.startupFolders);
+	VerifyTabs(restoredBrowser, m_config.startupFolders);
 }
 
 TEST_F(SessionRestorerTest, RestoreCustomFoldersWhenEmpty)
