@@ -60,6 +60,7 @@ static const Column_t REAL_FOLDER_DEFAULT_COLUMNS[] = {
 	{ ColumnType::MediaPublisher, FALSE, DEFAULT_COLUMN_WIDTH },
 	{ ColumnType::MediaWriter, FALSE, DEFAULT_COLUMN_WIDTH },
 	{ ColumnType::MediaYear, FALSE, DEFAULT_COLUMN_WIDTH },
+	{ ColumnType::CloudStatus, FALSE, DEFAULT_COLUMN_WIDTH },
 };
 
 static const Column_t MY_COMPUTER_DEFAULT_COLUMNS[] = {

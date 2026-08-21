@@ -66,6 +66,7 @@ enum class MediaMetadataType
 
 std::wstring GetColumnText(ColumnType columnType, const BasicItemInfo_t &basicItemInfo,
 	const GlobalFolderSettings &globalFolderSettings);
+std::wstring GetCloudStatusColumnText(const BasicItemInfo_t &itemInfo);
 std::wstring GetNameColumnText(const BasicItemInfo_t &itemInfo,
 	const GlobalFolderSettings &globalFolderSettings);
 std::wstring ProcessItemFileName(const BasicItemInfo_t &itemInfo,

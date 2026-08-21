@@ -91,6 +91,7 @@ const boost::bimap<ColumnType, std::wstring> COLUMN_TYPE_NAME_MAPPINGS =
 		{ ColumnType::MediaWriter, L"MediaWriter" },
 		{ ColumnType::MediaYear, L"MediaYear" },
 		{ ColumnType::PrinterModel, L"PrinterModel" },
+		{ ColumnType::CloudStatus, L"CloudStatus" },
 	});
 
 void LoadColumnSetFromXml(IXMLDOMNode *parentNode, const std::wstring &columnSetName,

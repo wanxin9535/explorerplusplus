@@ -90,7 +90,10 @@ BETTER_ENUM(ColumnType, unsigned int,
 	MediaYear = 63,
 
 	/* Printer columns. */
-	PrinterModel = 64
+	PrinterModel = 64,
+
+	/* Cloud / sync-engine (OneDrive) status. */
+	CloudStatus = 65
 )
 
 struct Column_t

@@ -14,10 +14,12 @@
 #include "../Helper/StringHelper.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <wil/com.h>
+#include <wil/resource.h>
 #include <IPHlpApi.h>
 #include <Shlwapi.h>
 #include <gdiplus.h>
 #include <propkey.h>
+#include <propsys.h>
 #include <wmsdk.h>
 #include <filesystem>
 
@@ -176,12 +178,49 @@ std::wstring GetColumnText(ColumnType columnType, const BasicItemInfo_t &basicIt
 	case ColumnType::MediaYear:
 		return GetMediaMetadataColumnText(basicItemInfo, MediaMetadataType::Year);
 
+	case ColumnType::CloudStatus:
+		return GetCloudStatusColumnText(basicItemInfo);
+
 	default:
 		assert(false);
 		break;
 	}
 
 	return L"";
+}
+
+// Retrieves the cloud storage (e.g. OneDrive) sync status of an item, as shown in the "Status"
+// column in Windows File Explorer. The value comes from the System.StorageProviderState shell
+// property and is formatted into a friendly, localized string (e.g. "Available"/"Available when
+// online"). Items that aren't backed by a cloud sync engine have no value and return an empty
+// string.
+std::wstring GetCloudStatusColumnText(const BasicItemInfo_t &itemInfo)
+{
+	wil::com_ptr_nothrow<IShellItem2> shellItem;
+	HRESULT hr = SHCreateItemFromIDList(itemInfo.pidlComplete.get(), IID_PPV_ARGS(&shellItem));
+
+	if (FAILED(hr))
+	{
+		return L"";
+	}
+
+	wil::unique_prop_variant value;
+	hr = shellItem->GetProperty(PKEY_StorageProviderState, &value);
+
+	if (FAILED(hr) || value.vt == VT_EMPTY)
+	{
+		return L"";
+	}
+
+	wil::unique_cotaskmem_string displayValue;
+	hr = PSFormatForDisplayAlloc(PKEY_StorageProviderState, value, PDFF_DEFAULT, &displayValue);
+
+	if (FAILED(hr) || !displayValue)
+	{
+		return L"";
+	}
+
+	return displayValue.get();
 }
 
 std::wstring GetNameColumnText(const BasicItemInfo_t &itemInfo,

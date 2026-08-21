@@ -265,6 +265,10 @@ std::wstring GetColumnName(const ResourceLoader *resourceLoader, ColumnType colu
 	case ColumnType::MediaYear:
 		stringId = IDS_COLUMN_NAME_YEAR;
 		break;
+
+	case ColumnType::CloudStatus:
+		stringId = IDS_COLUMN_NAME_CLOUDSTATUS;
+		break;
 	}
 
 	CHECK(stringId);
@@ -448,6 +452,7 @@ std::wstring GetColumnDescription(const ResourceLoader *resourceLoader, ColumnTy
 	case ColumnType::MediaWriter:
 	case ColumnType::MediaYear:
 	case ColumnType::PrinterModel:
+	case ColumnType::CloudStatus:
 		break;
 	}
 
