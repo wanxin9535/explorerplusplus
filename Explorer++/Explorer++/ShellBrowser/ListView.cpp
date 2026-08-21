@@ -8,6 +8,7 @@
 #include "BackgroundContextMenuDelegate.h"
 #include "BrowserWindow.h"
 #include "ColorRuleModel.h"
+#include "ColumnDataRetrieval.h"
 #include "ColumnHelper.h"
 #include "Config.h"
 #include "FolderView.h"
@@ -1585,9 +1586,61 @@ LRESULT ShellBrowserImpl::OnListViewCustomDraw(NMLVCUSTOMDRAW *listViewCustomDra
 			if (matchedFileName && matchedAttributes)
 			{
 				listViewCustomDraw->clrText = colorRule->GetColor();
-				return CDRF_NEWFONT;
+				return CDRF_NEWFONT | CDRF_NOTIFYSUBITEMDRAW;
 			}
 		}
+
+		return CDRF_NOTIFYSUBITEMDRAW;
+	}
+
+	case CDDS_ITEMPREPAINT | CDDS_SUBITEM:
+	{
+		auto columnType = GetColumnTypeByIndex(listViewCustomDraw->iSubItem);
+
+		if (!columnType || *columnType != +ColumnType::CloudStatus)
+		{
+			return CDRF_DODEFAULT;
+		}
+
+		int itemIndex = static_cast<int>(listViewCustomDraw->nmcd.dwItemSpec);
+		BasicItemInfo_t basicItemInfo = getBasicItemInfo(GetItemInternalIndex(itemIndex));
+
+		auto stateValue = GetCloudStatusValue(basicItemInfo);
+
+		if (!stateValue)
+		{
+			return CDRF_DODEFAULT;
+		}
+
+		int cx = 16;
+		int cy = 16;
+		HIMAGELIST smallImageList = ListView_GetImageList(m_listView, LVSIL_SMALL);
+
+		if (smallImageList)
+		{
+			ImageList_GetIconSize(smallImageList, &cx, &cy);
+		}
+
+		HICON icon = GetCloudStatusIcon(*stateValue, cx);
+
+		if (!icon)
+		{
+			return CDRF_DODEFAULT;
+		}
+
+		RECT subItemRect;
+
+		if (!ListView_GetSubItemRect(m_listView, itemIndex, listViewCustomDraw->iSubItem,
+				LVIR_BOUNDS, &subItemRect))
+		{
+			return CDRF_DODEFAULT;
+		}
+
+		int iconX = subItemRect.left + 4;
+		int iconY = subItemRect.top + (subItemRect.bottom - subItemRect.top - cy) / 2;
+		DrawIconEx(listViewCustomDraw->nmcd.hdc, iconX, iconY, icon, cx, cy, 0, nullptr, DI_NORMAL);
+
+		return CDRF_SKIPDEFAULT;
 	}
 	break;
 	}

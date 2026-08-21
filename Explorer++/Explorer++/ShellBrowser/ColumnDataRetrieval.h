@@ -67,6 +67,8 @@ enum class MediaMetadataType
 std::wstring GetColumnText(ColumnType columnType, const BasicItemInfo_t &basicItemInfo,
 	const GlobalFolderSettings &globalFolderSettings);
 std::wstring GetCloudStatusColumnText(const BasicItemInfo_t &itemInfo);
+std::optional<ULONG> GetCloudStatusValue(const BasicItemInfo_t &itemInfo);
+HICON GetCloudStatusIcon(ULONG stateValue, int iconSize);
 std::wstring GetNameColumnText(const BasicItemInfo_t &itemInfo,
 	const GlobalFolderSettings &globalFolderSettings);
 std::wstring ProcessItemFileName(const BasicItemInfo_t &itemInfo,

@@ -20,8 +20,11 @@
 #include <gdiplus.h>
 #include <propkey.h>
 #include <propsys.h>
+#include <propvarutil.h>
+#include <shlobj.h>
 #include <wmsdk.h>
 #include <filesystem>
+#include <unordered_map>
 
 BOOL GetPrinterStatusDescription(DWORD dwStatus, TCHAR *szStatus, size_t cchMax);
 
@@ -221,6 +224,153 @@ std::wstring GetCloudStatusColumnText(const BasicItemInfo_t &itemInfo)
 	}
 
 	return displayValue.get();
+}
+
+std::optional<ULONG> GetCloudStatusValue(const BasicItemInfo_t &itemInfo)
+{
+	wil::com_ptr_nothrow<IShellItem2> shellItem;
+	HRESULT hr = SHCreateItemFromIDList(itemInfo.pidlComplete.get(), IID_PPV_ARGS(&shellItem));
+
+	if (FAILED(hr))
+	{
+		return std::nullopt;
+	}
+
+	wil::unique_prop_variant value;
+	hr = shellItem->GetProperty(PKEY_StorageProviderState, &value);
+
+	if (FAILED(hr) || value.vt == VT_EMPTY)
+	{
+		return std::nullopt;
+	}
+
+	ULONG state;
+	hr = PropVariantToUInt32(value, &state);
+
+	if (FAILED(hr))
+	{
+		return std::nullopt;
+	}
+
+	return state;
+}
+
+// Extracts the status icon Windows associates with a given System.StorageProviderState value, via
+// the property description's enum image reference. This reproduces the icons shown in the Windows
+// File Explorer "Status" column. Returns null if no icon reference is available.
+static wil::unique_hicon ResolveCloudStatusIcon(ULONG stateValue, int iconSize)
+{
+	wil::com_ptr_nothrow<IPropertyDescription> propertyDescription;
+	HRESULT hr =
+		PSGetPropertyDescription(PKEY_StorageProviderState, IID_PPV_ARGS(&propertyDescription));
+
+	if (FAILED(hr))
+	{
+		return nullptr;
+	}
+
+	wil::com_ptr_nothrow<IPropertyEnumTypeList> enumTypeList;
+	hr = propertyDescription->GetEnumTypeList(IID_PPV_ARGS(&enumTypeList));
+
+	if (FAILED(hr))
+	{
+		return nullptr;
+	}
+
+	UINT count = 0;
+	hr = enumTypeList->GetCount(&count);
+
+	if (FAILED(hr))
+	{
+		return nullptr;
+	}
+
+	for (UINT i = 0; i < count; i++)
+	{
+		wil::com_ptr_nothrow<IPropertyEnumType> enumType;
+
+		if (FAILED(enumTypeList->GetAt(i, IID_PPV_ARGS(&enumType))))
+		{
+			continue;
+		}
+
+		wil::unique_prop_variant enumValue;
+
+		if (FAILED(enumType->GetValue(&enumValue)))
+		{
+			continue;
+		}
+
+		ULONG value;
+
+		if (FAILED(PropVariantToUInt32(enumValue, &value)) || value != stateValue)
+		{
+			continue;
+		}
+
+		auto enumType2 = enumType.try_query<IPropertyEnumType2>();
+
+		if (!enumType2)
+		{
+			return nullptr;
+		}
+
+		wil::unique_cotaskmem_string imageReference;
+
+		if (FAILED(enumType2->GetImageReference(&imageReference)) || !imageReference)
+		{
+			return nullptr;
+		}
+
+		// The image reference has the form "<module path>,-<resource id>".
+		std::wstring reference = imageReference.get();
+		auto separatorPos = reference.find_last_of(L',');
+
+		if (separatorPos == std::wstring::npos)
+		{
+			return nullptr;
+		}
+
+		std::wstring modulePath = reference.substr(0, separatorPos);
+		int resourceId = _wtoi(reference.c_str() + separatorPos + 1);
+
+		HICON largeIcon = nullptr;
+		HICON smallIcon = nullptr;
+		SHDefExtractIcon(modulePath.c_str(), resourceId, 0, &largeIcon, &smallIcon,
+			MAKELONG(iconSize, iconSize));
+
+		if (smallIcon)
+		{
+			if (largeIcon)
+			{
+				DestroyIcon(largeIcon);
+			}
+
+			return wil::unique_hicon(smallIcon);
+		}
+
+		return wil::unique_hicon(largeIcon);
+	}
+
+	return nullptr;
+}
+
+HICON GetCloudStatusIcon(ULONG stateValue, int iconSize)
+{
+	// Icons are cached for the lifetime of the process, keyed by the state value. This is only ever
+	// called on the UI thread (from custom draw), so no synchronization is needed.
+	static std::unordered_map<ULONG, wil::unique_hicon> iconCache;
+
+	auto itr = iconCache.find(stateValue);
+
+	if (itr != iconCache.end())
+	{
+		return itr->second.get();
+	}
+
+	auto insertedItr =
+		iconCache.emplace(stateValue, ResolveCloudStatusIcon(stateValue, iconSize)).first;
+	return insertedItr->second.get();
 }
 
 std::wstring GetNameColumnText(const BasicItemInfo_t &itemInfo,
