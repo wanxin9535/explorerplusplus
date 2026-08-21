@@ -23,14 +23,29 @@ Win32ResourceLoader::Win32ResourceLoader(HINSTANCE resourceInstance, IconSet ico
 
 std::wstring Win32ResourceLoader::LoadString(UINT stringId) const
 {
-	// TODO: The implementation for ResourceHelper::LoadString should be moved into this method,
-	// once all calls to it have been migrated to this method.
-	return ResourceHelper::LoadString(m_resourceInstance, stringId);
+	auto string = ResourceHelper::MaybeLoadString(m_resourceInstance, stringId);
+
+	if (string)
+	{
+		return *string;
+	}
+
+	// Fall back to the base (English) resources compiled into the executable when the active
+	// translation DLL doesn't contain this string. ResourceHelper::LoadString will raise if the
+	// string is missing from the executable as well (a genuine bug).
+	return ResourceHelper::LoadString(GetModuleHandle(nullptr), stringId);
 }
 
 std::optional<std::wstring> Win32ResourceLoader::MaybeLoadString(UINT stringId) const
 {
-	return ResourceHelper::MaybeLoadString(m_resourceInstance, stringId);
+	auto string = ResourceHelper::MaybeLoadString(m_resourceInstance, stringId);
+
+	if (!string && m_resourceInstance != GetModuleHandle(nullptr))
+	{
+		string = ResourceHelper::MaybeLoadString(GetModuleHandle(nullptr), stringId);
+	}
+
+	return string;
 }
 
 wil::unique_hbitmap Win32ResourceLoader::LoadBitmapFromPNGForDpi(Icon icon, int iconWidth,

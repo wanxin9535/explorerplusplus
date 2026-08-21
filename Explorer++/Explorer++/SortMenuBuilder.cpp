@@ -298,6 +298,9 @@ UINT SortMenuBuilder::GetSortMenuItemStringIndex(UINT uItemId)
 	case IDM_SORTBY_MEDIA_YEAR:
 		return IDS_COLUMN_NAME_YEAR;
 
+	case IDM_SORTBY_CLOUDSTATUS:
+		return IDS_COLUMN_NAME_CLOUDSTATUS;
+
 	default:
 		assert(false);
 		break;
@@ -495,6 +498,9 @@ int SortMenuBuilder::DetermineGroupModeMenuId(SortMode sortMode)
 
 	case SortMode::MediaYear:
 		return IDM_GROUPBY_MEDIA_YEAR;
+
+	case SortMode::CloudStatus:
+		return IDM_GROUPBY_CLOUDSTATUS;
 
 	default:
 		assert(false);

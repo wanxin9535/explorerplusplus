@@ -78,6 +78,7 @@ constexpr MenuItemIdToSortModePair MENU_ITEM_SORT_MODE_MAPPINGS[] = {
 	{ IDM_SORTBY_MEDIA_PUBLISHER, SortMode::MediaPublisher },
 	{ IDM_SORTBY_MEDIA_WRITER, SortMode::MediaWriter },
 	{ IDM_SORTBY_MEDIA_YEAR, SortMode::MediaYear },
+	{ IDM_SORTBY_CLOUDSTATUS, SortMode::CloudStatus },
 };
 
 constexpr bool VerifyMappings(std::span<const MenuItemIdToSortModePair> mappings)

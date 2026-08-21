@@ -464,7 +464,7 @@ SortMode ShellBrowserImpl::DetermineColumnSortMode(ColumnType columnType)
 		return SortMode::MediaYear;
 
 	case ColumnType::CloudStatus:
-		return SortMode::Name;
+		return SortMode::CloudStatus;
 
 	default:
 		assert(false);

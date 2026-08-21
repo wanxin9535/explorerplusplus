@@ -352,6 +352,10 @@ int CALLBACK ShellBrowserImpl::Sort(int InternalIndex1, int InternalIndex2) cons
 				SortByMediaMetadata(basicItemInfo1, basicItemInfo2, MediaMetadataType::Year);
 			break;
 
+		case SortMode::CloudStatus:
+			comparisonResult = SortByCloudStatus(basicItemInfo1, basicItemInfo2);
+			break;
+
 		default:
 			assert(false);
 			break;

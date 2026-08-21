@@ -376,6 +376,14 @@ int SortByNetworkAdapterStatus(const BasicItemInfo_t &itemInfo1, const BasicItem
 	return StrCmpLogicalW(status1.c_str(), status2.c_str());
 }
 
+int SortByCloudStatus(const BasicItemInfo_t &itemInfo1, const BasicItemInfo_t &itemInfo2)
+{
+	std::wstring status1 = GetCloudStatusColumnText(itemInfo1);
+	std::wstring status2 = GetCloudStatusColumnText(itemInfo2);
+
+	return StrCmpLogicalW(status1.c_str(), status2.c_str());
+}
+
 int SortByMediaMetadata(const BasicItemInfo_t &itemInfo1, const BasicItemInfo_t &itemInfo2,
 	MediaMetadataType mediaMetadataType)
 {

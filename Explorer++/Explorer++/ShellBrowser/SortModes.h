@@ -79,5 +79,8 @@ BETTER_ENUM(SortMode, int,
 	MediaProducer = 61,
 	MediaPublisher = 62,
 	MediaWriter = 63,
-	MediaYear = 64
+	MediaYear = 64,
+
+	// Cloud / sync-engine (OneDrive) status.
+	CloudStatus = 65
 )

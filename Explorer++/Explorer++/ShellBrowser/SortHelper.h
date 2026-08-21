@@ -42,5 +42,6 @@ int SortByFileSystem(const BasicItemInfo_t &itemInfo1, const BasicItemInfo_t &it
 int SortByPrinterProperty(const BasicItemInfo_t &itemInfo1, const BasicItemInfo_t &itemInfo2,
 	PrinterInformationType printerInformationType);
 int SortByNetworkAdapterStatus(const BasicItemInfo_t &itemInfo1, const BasicItemInfo_t &itemInfo2);
+int SortByCloudStatus(const BasicItemInfo_t &itemInfo1, const BasicItemInfo_t &itemInfo2);
 int SortByMediaMetadata(const BasicItemInfo_t &itemInfo1, const BasicItemInfo_t &itemInfo2,
 	MediaMetadataType mediaMetadataType);

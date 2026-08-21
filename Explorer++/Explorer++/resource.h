@@ -971,6 +971,7 @@
 #define IDM_SORTBY_MEDIA_PUBLISHER      50061
 #define IDM_SORTBY_MEDIA_WRITER         50062
 #define IDM_SORTBY_MEDIA_YEAR           50063
+#define IDM_SORTBY_CLOUDSTATUS          50064
 #define IDM_GROUPBY_NAME                50100
 #define IDM_GROUPBY_SIZE                50101
 #define IDM_GROUPBY_TYPE                50102
@@ -1033,6 +1034,7 @@
 #define IDM_GROUPBY_MEDIA_PUBLISHER     50161
 #define IDM_GROUPBY_MEDIA_WRITER        50162
 #define IDM_GROUPBY_MEDIA_YEAR          50163
+#define IDM_GROUPBY_CLOUDSTATUS         50164
 #define IDM_VIEW_EXTRALARGEICONS        60000
 #define IDM_VIEW_LARGEICONS             60001
 #define IDM_VIEW_ICONS                  60002

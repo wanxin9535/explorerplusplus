@@ -297,6 +297,17 @@ int ShellBrowserImpl::DetermineItemGroup(int iItemInternal)
 		groupInfo = DetermineItemNetworkStatus(basicItemInfo);
 		break;
 
+	case SortMode::CloudStatus:
+	{
+		std::wstring cloudStatus = GetCloudStatusColumnText(basicItemInfo);
+
+		if (!cloudStatus.empty())
+		{
+			groupInfo = GroupInfo(cloudStatus);
+		}
+	}
+	break;
+
 	default:
 		assert(false);
 		break;
