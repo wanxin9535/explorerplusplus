@@ -140,7 +140,11 @@ std::optional<ColumnType> ShellBrowserImpl::GetColumnTypeByIndex(int index) cons
 
 	auto columnType =
 		ColumnType::_from_integral_nothrow(static_cast<ColumnType::_integral>(hdItem.lParam));
-	CHECK(columnType);
+
+	if (!columnType)
+	{
+		return std::nullopt;
+	}
 
 	return *columnType;
 }

@@ -1595,6 +1595,11 @@ LRESULT ShellBrowserImpl::OnListViewCustomDraw(NMLVCUSTOMDRAW *listViewCustomDra
 
 	case CDDS_ITEMPREPAINT | CDDS_SUBITEM:
 	{
+		if (m_folderSettings.viewMode != +ViewMode::Details)
+		{
+			return CDRF_DODEFAULT;
+		}
+
 		auto columnType = GetColumnTypeByIndex(listViewCustomDraw->iSubItem);
 
 		if (!columnType || *columnType != +ColumnType::CloudStatus)
