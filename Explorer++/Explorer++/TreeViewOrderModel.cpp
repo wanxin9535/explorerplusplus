@@ -88,7 +88,7 @@ void TreeViewOrderModel::SetItemOrders(const std::vector<TreeViewItemOrder> &ite
 		}
 
 		auto existingOrder = std::find_if(m_itemOrders.begin(), m_itemOrders.end(),
-			[this, &itemOrder](const auto &currentOrder)
+			[&itemOrder](const auto &currentOrder)
 			{ return AreParentsEqual(currentOrder.parent, itemOrder.parent); });
 
 		if (existingOrder == m_itemOrders.end())
@@ -110,7 +110,7 @@ std::vector<TreeViewItemOrder> TreeViewOrderModel::GetItemOrders() const
 bool TreeViewOrderModel::HasOrder(const PidlAbsolute &parent) const
 {
 	return std::any_of(m_itemOrders.begin(), m_itemOrders.end(),
-		[this, &parent](const auto &itemOrder)
+		[&parent](const auto &itemOrder)
 		{ return AreParentsEqual(itemOrder.parent, parent); });
 }
 
@@ -118,7 +118,7 @@ std::optional<size_t> TreeViewOrderModel::GetItemIndex(const PidlAbsolute &paren
 	const PidlAbsolute &item) const
 {
 	auto order = std::find_if(m_itemOrders.begin(), m_itemOrders.end(),
-		[this, &parent](const auto &currentOrder)
+		[&parent](const auto &currentOrder)
 		{ return AreParentsEqual(currentOrder.parent, parent); });
 
 	if (order == m_itemOrders.end())
@@ -254,7 +254,7 @@ void TreeViewOrderModel::RenameItem(const PidlAbsolute &parent, const PidlAbsolu
 	for (auto &itemOrder : updatedOrders)
 	{
 		auto existingOrder = std::find_if(mergedOrders.begin(), mergedOrders.end(),
-			[this, &itemOrder](const auto &currentOrder)
+			[&itemOrder](const auto &currentOrder)
 			{ return AreParentsEqual(currentOrder.parent, itemOrder.parent); });
 
 		if (existingOrder == mergedOrders.end())
@@ -363,7 +363,7 @@ void TreeViewOrderModel::SetItemOrder(const PidlAbsolute &parent,
 	}
 
 	auto order = std::find_if(m_itemOrders.begin(), m_itemOrders.end(),
-		[this, &parent](const auto &currentOrder)
+		[&parent](const auto &currentOrder)
 		{ return AreParentsEqual(currentOrder.parent, parent); });
 
 	if (validItems.empty())
