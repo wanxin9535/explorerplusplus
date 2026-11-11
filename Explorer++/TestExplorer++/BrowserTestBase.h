@@ -22,6 +22,7 @@
 #include "FeatureList.h"
 #include "FrequentLocationsModel.h"
 #include "PinnedItemsModel.h"
+#include "TreeViewOrderModel.h"
 #include "FrequentLocationsTracker.h"
 #include "HistoryModel.h"
 #include "HistoryTracker.h"
@@ -96,6 +97,7 @@ protected:
 	FrequentLocationsModel m_frequentLocationsModel;
 	FrequentLocationsTracker m_frequentLocationsTracker;
 	PinnedItemsModel m_pinnedItemsModel;
+	TreeViewOrderModel m_treeViewOrderModel;
 	BrowserList m_browserList;
 	BrowserWindowFactoryFake m_browserWindowFactory;
 	TabRestorer m_tabRestorer;
