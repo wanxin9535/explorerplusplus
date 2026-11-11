@@ -10,6 +10,7 @@
  *
  * Notes:
  *  - All items are sorted alphabetically, except for:
+ *     - Pinned child items
  *     - Items on the desktop
  *     - Items in My Computer
  */
@@ -25,6 +26,7 @@
 #include "LabelEditHandler.h"
 #include "MainResource.h"
 #include "OpenItemsContextMenuDelegate.h"
+#include "PinnedItemsModel.h"
 #include "PlatformContext.h"
 #include "ResourceLoader.h"
 #include "Runtime.h"
@@ -135,6 +137,10 @@ ShellTreeView::ShellTreeView(HWND parent, BrowserWindow *browser, AppServices *a
 
 	m_connections.push_back(m_cutCopiedItemManager.cutItemChangedSignal.AddObserver(
 		std::bind_front(&ShellTreeView::OnCutItemChanged, this)));
+	auto *pinnedItemsModel = m_appServices->GetPinnedItemsModel();
+	m_connections.push_back(pinnedItemsModel->AddPinnedItemsChangedObserver(
+		std::bind_front(&ShellTreeView::OnPinnedItemsChanged, this)));
+
 	m_connections.push_back(m_config->showQuickAccessInTreeView.addObserver(
 		std::bind_front(&ShellTreeView::OnShowQuickAccessUpdated, this)));
 }
@@ -757,6 +763,25 @@ int CALLBACK ShellTreeView::CompareItems(LPARAM lParam1, LPARAM lParam2)
 	auto pidl1 = node1->GetFullPidl();
 	auto pidl2 = node2->GetFullPidl();
 
+	auto *parentNode = node1->GetParent();
+
+	if (parentNode && parentNode == node2->GetParent())
+	{
+		auto parentPidl = parentNode->GetFullPidl();
+		PidlAbsolute parentDirectory(parentPidl.get());
+		PidlAbsolute item1(pidl1.get());
+		PidlAbsolute item2(pidl2.get());
+
+		const auto *pinnedItemsModel = m_appServices->GetPinnedItemsModel();
+		bool isPinned1 = pinnedItemsModel->IsPinned(parentDirectory, item1);
+		bool isPinned2 = pinnedItemsModel->IsPinned(parentDirectory, item2);
+
+		if (isPinned1 != isPinned2)
+		{
+			return isPinned1 ? -1 : 1;
+		}
+	}
+
 	std::wstring displayName1;
 	GetDisplayName(pidl1.get(), SHGDN_FORPARSING, displayName1);
 
@@ -958,6 +983,16 @@ void ShellTreeView::SortChildren(HTREEITEM parent)
 	tvSort.lpfnCompare = ShellTreeView::CompareItemsStub;
 	tvSort.lParam = reinterpret_cast<LPARAM>(this);
 	TreeView_SortChildrenCB(m_hTreeView, &tvSort, 0);
+}
+
+void ShellTreeView::OnPinnedItemsChanged(const PidlAbsolute &parentDirectory)
+{
+	auto parentItem = LocateExistingItem(parentDirectory.Raw());
+
+	if (parentItem)
+	{
+		SortChildren(parentItem);
+	}
 }
 
 ShellTreeNode *ShellTreeView::GetSelectedNode() const

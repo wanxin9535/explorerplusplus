@@ -41,6 +41,7 @@ public:
 	void SetDirectoryWatcher(std::unique_ptr<DirectoryWatcher> directoryWatcher);
 
 	ShellTreeNode *GetParent();
+	const ShellTreeNode *GetParent() const;
 
 	ShellTreeNode *AddChild(std::unique_ptr<ShellTreeNode> node);
 	std::unique_ptr<ShellTreeNode> RemoveChild(ShellTreeNode *child);

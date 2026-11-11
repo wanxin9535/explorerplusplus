@@ -147,6 +147,11 @@ ShellTreeNode *ShellTreeNode::GetParent()
 	return m_parent;
 }
 
+const ShellTreeNode *ShellTreeNode::GetParent() const
+{
+	return m_parent;
+}
+
 ShellTreeNode *ShellTreeNode::AddChild(std::unique_ptr<ShellTreeNode> node)
 {
 	node->m_parent = this;

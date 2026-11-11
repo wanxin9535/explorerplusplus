@@ -131,6 +131,7 @@ private:
 	HRESULT ExpandDirectory(HTREEITEM hParent);
 	HTREEITEM AddItem(HTREEITEM parent, PCIDLIST_ABSOLUTE pidl, HTREEITEM insertAfter = TVI_LAST);
 	void SortChildren(HTREEITEM parent);
+	void OnPinnedItemsChanged(const PidlAbsolute &parentDirectory);
 	void OnGetDisplayInfo(NMTVDISPINFO *pnmtvdi);
 	void OnSelectionChanged(const NMTREEVIEW *eventInfo);
 	void OnSelectionChangedTimer();
