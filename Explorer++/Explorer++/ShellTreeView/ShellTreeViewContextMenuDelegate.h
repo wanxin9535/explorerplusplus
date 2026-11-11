@@ -6,6 +6,7 @@
 
 #include "../Helper/ShellItemContextMenuDelegate.h"
 
+class ResourceLoader;
 class ShellTreeView;
 
 // When the shell context menu is being shown for an item in a ShellTreeView instance, this class
@@ -13,7 +14,8 @@ class ShellTreeView;
 class ShellTreeViewContextMenuDelegate : public ShellItemContextMenuDelegate
 {
 public:
-	ShellTreeViewContextMenuDelegate(ShellTreeView *shellTreeView);
+	ShellTreeViewContextMenuDelegate(ShellTreeView *shellTreeView,
+		const ResourceLoader *resourceLoader);
 
 	void UpdateMenuEntries(PCIDLIST_ABSOLUTE directory, const std::vector<PidlChild> &items,
 		ShellContextMenuBuilder *builder) override;
@@ -25,4 +27,5 @@ public:
 
 private:
 	ShellTreeView *const m_shellTreeView;
+	const ResourceLoader *const m_resourceLoader;
 };

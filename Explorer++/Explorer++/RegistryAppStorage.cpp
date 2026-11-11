@@ -12,6 +12,7 @@
 #include "DialogStorageHelper.h"
 #include "FrequentLocationsRegistryStorage.h"
 #include "PinnedItemsRegistryStorage.h"
+#include "TreeViewOrderRegistryStorage.h"
 #include "MainRebarStorage.h"
 #include "TabStorage.h"
 #include "WindowRegistryStorage.h"
@@ -67,6 +68,11 @@ void RegistryAppStorage::LoadPinnedItems(PinnedItemsModel *pinnedItemsModel)
 	PinnedItemsRegistryStorage::Load(m_applicationKey.get(), pinnedItemsModel);
 }
 
+void RegistryAppStorage::LoadTreeViewOrder(TreeViewOrderModel *treeViewOrderModel)
+{
+	TreeViewOrderRegistryStorage::Load(m_applicationKey.get(), treeViewOrderModel);
+}
+
 void RegistryAppStorage::SaveConfig(const Config &config)
 {
 	ConfigRegistryStorage::Save(m_applicationKey.get(), config);
@@ -110,6 +116,11 @@ void RegistryAppStorage::SaveFrequentLocations(const FrequentLocationsModel *fre
 void RegistryAppStorage::SavePinnedItems(const PinnedItemsModel *pinnedItemsModel)
 {
 	PinnedItemsRegistryStorage::Save(m_applicationKey.get(), pinnedItemsModel);
+}
+
+void RegistryAppStorage::SaveTreeViewOrder(const TreeViewOrderModel *treeViewOrderModel)
+{
+	TreeViewOrderRegistryStorage::Save(m_applicationKey.get(), treeViewOrderModel);
 }
 
 void RegistryAppStorage::Commit()

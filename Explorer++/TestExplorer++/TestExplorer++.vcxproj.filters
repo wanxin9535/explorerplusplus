@@ -170,6 +170,12 @@
     <ClCompile Include="PinnedItemsStorageTest.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
+    <ClCompile Include="TreeViewOrderModelTest.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeViewOrderStorageTest.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
     <ClCompile Include="DragDropHelperTest.cpp">
       <Filter>Helper\Data Exchange\Drag and Drop</Filter>
     </ClCompile>

@@ -12,6 +12,7 @@
 #include "DialogStorageHelper.h"
 #include "FrequentLocationsXmlStorage.h"
 #include "PinnedItemsXmlStorage.h"
+#include "TreeViewOrderXmlStorage.h"
 #include "MainRebarStorage.h"
 #include "TabStorage.h"
 #include "WindowStorage.h"
@@ -73,6 +74,11 @@ void XmlAppStorage::LoadPinnedItems(PinnedItemsModel *pinnedItemsModel)
 	PinnedItemsXmlStorage::Load(m_rootNode.get(), pinnedItemsModel);
 }
 
+void XmlAppStorage::LoadTreeViewOrder(TreeViewOrderModel *treeViewOrderModel)
+{
+	TreeViewOrderXmlStorage::Load(m_rootNode.get(), treeViewOrderModel);
+}
+
 void XmlAppStorage::SaveConfig(const Config &config)
 {
 	ConfigXmlStorage::Save(m_xmlDocument.get(), m_rootNode.get(), config);
@@ -117,6 +123,11 @@ void XmlAppStorage::SaveFrequentLocations(const FrequentLocationsModel *frequent
 void XmlAppStorage::SavePinnedItems(const PinnedItemsModel *pinnedItemsModel)
 {
 	PinnedItemsXmlStorage::Save(m_xmlDocument.get(), m_rootNode.get(), pinnedItemsModel);
+}
+
+void XmlAppStorage::SaveTreeViewOrder(const TreeViewOrderModel *treeViewOrderModel)
+{
+	TreeViewOrderXmlStorage::Save(m_xmlDocument.get(), m_rootNode.get(), treeViewOrderModel);
 }
 
 void XmlAppStorage::Commit()

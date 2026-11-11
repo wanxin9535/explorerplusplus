@@ -28,6 +28,7 @@
 #include "OpenItemsContextMenuDelegate.h"
 #include "PinnedItemsModel.h"
 #include "PlatformContext.h"
+#include "TreeViewOrderModel.h"
 #include "ResourceLoader.h"
 #include "Runtime.h"
 #include "ShellBrowser/NavigateParams.h"
@@ -140,6 +141,10 @@ ShellTreeView::ShellTreeView(HWND parent, BrowserWindow *browser, AppServices *a
 	auto *pinnedItemsModel = m_appServices->GetPinnedItemsModel();
 	m_connections.push_back(pinnedItemsModel->AddPinnedItemsChangedObserver(
 		std::bind_front(&ShellTreeView::OnPinnedItemsChanged, this)));
+
+	auto *treeViewOrderModel = m_appServices->GetTreeViewOrderModel();
+	m_connections.push_back(treeViewOrderModel->AddOrderChangedObserver(
+		std::bind_front(&ShellTreeView::OnTreeViewOrderChanged, this)));
 
 	m_connections.push_back(m_config->showQuickAccessInTreeView.addObserver(
 		std::bind_front(&ShellTreeView::OnShowQuickAccessUpdated, this)));
@@ -277,6 +282,11 @@ void ShellTreeView::AddRootItems()
 
 	AddShellNamespaceRootItem();
 
+	if (m_appServices->GetTreeViewOrderModel()->HasOrder(PidlAbsolute()))
+	{
+		SortChildren(nullptr);
+	}
+
 	// This will ensure that the treeview always has a selected item.
 	TreeView_SelectItem(m_hTreeView, TreeView_GetRoot(m_hTreeView));
 }
@@ -355,6 +365,11 @@ void ShellTreeView::OnShowQuickAccessUpdated(bool newValue)
 			RemoveItem(m_quickAccessRootItem);
 			m_quickAccessRootItem = nullptr;
 		}
+	}
+
+	if (m_appServices->GetTreeViewOrderModel()->HasOrder(PidlAbsolute()))
+	{
+		SortChildren(nullptr);
 	}
 }
 
@@ -763,22 +778,49 @@ int CALLBACK ShellTreeView::CompareItems(LPARAM lParam1, LPARAM lParam2)
 	auto pidl1 = node1->GetFullPidl();
 	auto pidl2 = node2->GetFullPidl();
 
-	auto *parentNode = node1->GetParent();
+	const auto *parentNode = node1->GetParent();
 
-	if (parentNode && parentNode == node2->GetParent())
+	if (parentNode == node2->GetParent())
 	{
-		auto parentPidl = parentNode->GetFullPidl();
-		PidlAbsolute parentDirectory(parentPidl.get());
+		PidlAbsolute parentDirectory;
+
+		if (parentNode)
+		{
+			auto parentPidl = parentNode->GetFullPidl();
+			parentDirectory = parentPidl.get();
+		}
+
 		PidlAbsolute item1(pidl1.get());
 		PidlAbsolute item2(pidl2.get());
+		const auto *treeViewOrderModel = m_appServices->GetTreeViewOrderModel();
+		auto orderIndex1 = treeViewOrderModel->GetItemIndex(parentDirectory, item1);
+		auto orderIndex2 = treeViewOrderModel->GetItemIndex(parentDirectory, item2);
 
-		const auto *pinnedItemsModel = m_appServices->GetPinnedItemsModel();
-		bool isPinned1 = pinnedItemsModel->IsPinned(parentDirectory, item1);
-		bool isPinned2 = pinnedItemsModel->IsPinned(parentDirectory, item2);
-
-		if (isPinned1 != isPinned2)
+		if (orderIndex1 && orderIndex2 && *orderIndex1 != *orderIndex2)
 		{
-			return isPinned1 ? -1 : 1;
+			return *orderIndex1 < *orderIndex2 ? -1 : 1;
+		}
+
+		if (orderIndex1 && !orderIndex2)
+		{
+			return -1;
+		}
+
+		if (!orderIndex1 && orderIndex2)
+		{
+			return 1;
+		}
+
+		if (parentNode)
+		{
+			const auto *pinnedItemsModel = m_appServices->GetPinnedItemsModel();
+			bool isPinned1 = pinnedItemsModel->IsPinned(parentDirectory, item1);
+			bool isPinned2 = pinnedItemsModel->IsPinned(parentDirectory, item2);
+
+			if (isPinned1 != isPinned2)
+			{
+				return isPinned1 ? -1 : 1;
+			}
 		}
 	}
 
@@ -995,6 +1037,22 @@ void ShellTreeView::OnPinnedItemsChanged(const PidlAbsolute &parentDirectory)
 	}
 }
 
+void ShellTreeView::OnTreeViewOrderChanged(const PidlAbsolute &parentDirectory)
+{
+	if (!parentDirectory.HasValue())
+	{
+		SortChildren(nullptr);
+		return;
+	}
+
+	auto parentItem = LocateExistingItem(parentDirectory.Raw());
+
+	if (parentItem)
+	{
+		SortChildren(parentItem);
+	}
+}
+
 ShellTreeNode *ShellTreeView::GetSelectedNode() const
 {
 	auto selectedItem = TreeView_GetSelection(m_hTreeView);
@@ -1179,6 +1237,66 @@ void ShellTreeView::SetShowHidden(BOOL bShowHidden)
 	m_bShowHidden = bShowHidden;
 }
 
+bool ShellTreeView::CanMoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection direction)
+{
+	auto item = LocateExistingItem(pidl);
+
+	if (!item)
+	{
+		return false;
+	}
+
+	switch (direction)
+	{
+	case MoveDirection::Up:
+		return TreeView_GetPrevSibling(m_hTreeView, item) != nullptr;
+
+	case MoveDirection::Down:
+		return TreeView_GetNextSibling(m_hTreeView, item) != nullptr;
+
+	default:
+		assert(false);
+		return false;
+	}
+}
+
+void ShellTreeView::MoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection direction)
+{
+	if (!CanMoveItemOneStep(pidl, direction))
+	{
+		return;
+	}
+
+	auto item = LocateExistingItem(pidl);
+	assert(item);
+	HTREEITEM parentItem = TreeView_GetParent(m_hTreeView, item);
+	PidlAbsolute parentDirectory;
+
+	if (parentItem)
+	{
+		auto parentPidl = GetNodePidl(parentItem);
+		parentDirectory = parentPidl.get();
+	}
+
+	std::vector<PidlAbsolute> currentOrder;
+	HTREEITEM sibling = parentItem ? TreeView_GetChild(m_hTreeView, parentItem)
+									: TreeView_GetRoot(m_hTreeView);
+
+	while (sibling)
+	{
+		auto siblingPidl = GetNodePidl(sibling);
+		currentOrder.emplace_back(siblingPidl.get());
+		sibling = TreeView_GetNextSibling(m_hTreeView, sibling);
+	}
+
+	PidlAbsolute itemPidl(pidl);
+	TreeViewOrderModel::Direction modelDirection = direction == MoveDirection::Up
+		? TreeViewOrderModel::Direction::Up
+		: TreeViewOrderModel::Direction::Down;
+	m_appServices->GetTreeViewOrderModel()->MoveItem(parentDirectory, itemPidl, modelDirection,
+		currentOrder);
+}
+
 void ShellTreeView::OnBeginDrag(const ShellTreeNode *node)
 {
 	auto pidl = node->GetFullPidl();
@@ -1357,7 +1475,7 @@ void ShellTreeView::OnShowContextMenu(const POINT &ptScreen)
 	OpenItemsContextMenuDelegate openItemsDelegate(m_browser, m_appServices->GetResourceLoader());
 	contextMenu.AddDelegate(&openItemsDelegate);
 
-	ShellTreeViewContextMenuDelegate treeViewDelegate(this);
+	ShellTreeViewContextMenuDelegate treeViewDelegate(this, m_appServices->GetResourceLoader());
 	contextMenu.AddDelegate(&treeViewDelegate);
 
 	contextMenu.ShowMenu(m_hTreeView, &finalPoint, nullptr, flags);

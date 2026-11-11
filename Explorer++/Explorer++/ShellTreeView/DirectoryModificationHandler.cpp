@@ -8,6 +8,7 @@
 #include "DirectoryWatcherFactory.h"
 #include "FeatureList.h"
 #include "ShellTreeNode.h"
+#include "TreeViewOrderModel.h"
 #include "../Helper/ScopedRedrawDisabler.h"
 
 void ShellTreeView::StartDirectoryMonitoringForNode(ShellTreeNode *node)
@@ -173,6 +174,21 @@ void ShellTreeView::OnItemUpdated(PCIDLIST_ABSOLUTE simplePidl, PCIDLIST_ABSOLUT
 	}
 
 	ShellTreeNode *node = GetNodeFromTreeViewItem(item);
+	auto oldPidl = simpleUpdatedPidl ? node->GetFullPidl() : unique_pidl_absolute();
+	PidlAbsolute parentDirectory;
+	bool isDirectory = false;
+
+	if (simpleUpdatedPidl)
+	{
+		if (auto *parentNode = node->GetParent())
+		{
+			auto parentPidl = parentNode->GetFullPidl();
+			parentDirectory = parentPidl.get();
+		}
+
+		isDirectory = TestItemAttributes(node, SFGAO_FOLDER);
+	}
+
 	node->UpdateItemDetails(currentPidl);
 
 	// Directory monitoring only needs to be restarted if the parsing name changed. Updates to the
@@ -180,6 +196,10 @@ void ShellTreeView::OnItemUpdated(PCIDLIST_ABSOLUTE simplePidl, PCIDLIST_ABSOLUT
 	if (simpleUpdatedPidl)
 	{
 		RestartDirectoryMonitoringForNodeAndChildren(node);
+
+		auto newPidl = node->GetFullPidl();
+		m_appServices->GetTreeViewOrderModel()->RenameItem(parentDirectory,
+			PidlAbsolute(oldPidl.get()), PidlAbsolute(newPidl.get()), isDirectory);
 	}
 
 	// The display name might have changed, even if the item wasn't renamed, so the updated display
@@ -231,6 +251,17 @@ void ShellTreeView::OnItemRemoved(PCIDLIST_ABSOLUTE simplePidl)
 void ShellTreeView::RemoveItem(HTREEITEM item)
 {
 	auto *node = GetNodeFromTreeViewItem(item);
+	auto itemPidl = node->GetFullPidl();
+	auto *parentNode = node->GetParent();
+	PidlAbsolute parentDirectory;
+
+	if (parentNode)
+	{
+		auto parentPidl = parentNode->GetFullPidl();
+		parentDirectory = parentPidl.get();
+	}
+
+	bool isDirectory = TestItemAttributes(node, SFGAO_FOLDER);
 	StopDirectoryMonitoringForNodeAndChildren(node);
 
 	auto parent = TreeView_GetParent(m_hTreeView, item);
@@ -240,7 +271,6 @@ void ShellTreeView::RemoveItem(HTREEITEM item)
 
 	if (parent)
 	{
-		auto *parentNode = node->GetParent();
 		parentNode->RemoveChild(node);
 
 		if (parentNode->GetChildren().empty())
@@ -262,6 +292,9 @@ void ShellTreeView::RemoveItem(HTREEITEM item)
 			std::erase_if(m_nodes, [node](const auto &rootNode) { return rootNode.get() == node; });
 		assert(numErased == 1);
 	}
+
+	m_appServices->GetTreeViewOrderModel()->RemoveItem(parentDirectory,
+		PidlAbsolute(itemPidl.get()), isDirectory);
 }
 
 // This notification will also be generated for other directories. However, it's difficult to

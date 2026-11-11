@@ -285,6 +285,21 @@ void AppServices::SetPinnedItemsModel(PinnedItemsModel *pinnedItemsModel)
 	Set(pinnedItemsModel);
 }
 
+TreeViewOrderModel *AppServices::GetTreeViewOrderModel()
+{
+	return Get<TreeViewOrderModel>();
+}
+
+const TreeViewOrderModel *AppServices::GetTreeViewOrderModel() const
+{
+	return Get<TreeViewOrderModel>();
+}
+
+void AppServices::SetTreeViewOrderModel(TreeViewOrderModel *treeViewOrderModel)
+{
+	Set(treeViewOrderModel);
+}
+
 HistoryModel *AppServices::GetHistoryModel()
 {
 	return Get<HistoryModel>();

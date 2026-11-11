@@ -23,6 +23,7 @@ class DriveModel;
 class FeatureList;
 class FrequentLocationsModel;
 class PinnedItemsModel;
+class TreeViewOrderModel;
 class HistoryModel;
 class ModelessDialogList;
 class NavigationEvents;
@@ -148,6 +149,9 @@ public:
 	PinnedItemsModel *GetPinnedItemsModel();
 	const PinnedItemsModel *GetPinnedItemsModel() const;
 	void SetPinnedItemsModel(PinnedItemsModel *pinnedItemsModel);
+	TreeViewOrderModel *GetTreeViewOrderModel();
+	const TreeViewOrderModel *GetTreeViewOrderModel() const;
+	void SetTreeViewOrderModel(TreeViewOrderModel *treeViewOrderModel);
 
 	HistoryModel *GetHistoryModel();
 	const HistoryModel *GetHistoryModel() const;
@@ -217,7 +221,7 @@ private:
 		AsyncIconFetcher *, BookmarkTree *, BrowserList *, BrowserWindowFactory *, CachedIcons *,
 		ClipboardWatcher *, ColorRuleModel *, const CommandLine::Settings *, Config *,
 		DarkModeColorProvider *, DarkModeManager *, DirectoryWatcherFactory *, DriveModel *,
-		FeatureList *, FrequentLocationsModel *, PinnedItemsModel *, HistoryModel *,
+		FeatureList *, FrequentLocationsModel *, PinnedItemsModel *, TreeViewOrderModel *, HistoryModel *,
 		ModelessDialogList *,
 		NavigationEvents *, PlatformContext *, Plugins::PluginCommandManager *,
 		Plugins::PluginMenuManager *, ResourceLoader *, Runtime *, ShellBrowserEvents *,

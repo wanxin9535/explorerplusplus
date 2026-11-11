@@ -185,6 +185,7 @@ void App::LoadSettings(std::vector<WindowStorageData> &windows)
 	appStorage->LoadDefaultColumns(m_config.globalFolderSettings.folderColumns);
 	appStorage->LoadFrequentLocations(&m_frequentLocationsModel);
 	appStorage->LoadPinnedItems(&m_pinnedItemsModel);
+	appStorage->LoadTreeViewOrder(&m_treeViewOrderModel);
 
 	ValidateColumns(m_config.globalFolderSettings.folderColumns);
 }
@@ -232,6 +233,7 @@ void App::SaveSettings()
 	appStorage->SaveDefaultColumns(m_config.globalFolderSettings.folderColumns);
 	appStorage->SaveFrequentLocations(&m_frequentLocationsModel);
 	appStorage->SavePinnedItems(&m_pinnedItemsModel);
+	appStorage->SaveTreeViewOrder(&m_treeViewOrderModel);
 
 	appStorage->Commit();
 }
@@ -294,6 +296,7 @@ void App::SetUpAppServices()
 	m_appServices.SetFeatureList(&m_featureList);
 	m_appServices.SetFrequentLocationsModel(&m_frequentLocationsModel);
 	m_appServices.SetPinnedItemsModel(&m_pinnedItemsModel);
+	m_appServices.SetTreeViewOrderModel(&m_treeViewOrderModel);
 	m_appServices.SetHistoryModel(&m_historyModel);
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);
 	m_appServices.SetNavigationEvents(&m_navigationEvents);

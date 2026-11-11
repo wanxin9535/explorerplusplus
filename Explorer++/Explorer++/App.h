@@ -28,6 +28,7 @@
 #include "ModelessDialogList.h"
 #include "PlatformContextImpl.h"
 #include "PinnedItemsModel.h"
+#include "TreeViewOrderModel.h"
 #include "Plugins/PluginCommandManager.h"
 #include "Plugins/PluginManager.h"
 #include "Plugins/PluginMenuManager.h"
@@ -127,6 +128,7 @@ private:
 	FrequentLocationsModel m_frequentLocationsModel;
 	FrequentLocationsTracker m_frequentLocationsTracker;
 	PinnedItemsModel m_pinnedItemsModel;
+	TreeViewOrderModel m_treeViewOrderModel;
 
 	DriveWatcherImpl m_driveWatcher;
 	DriveModel m_driveModel;

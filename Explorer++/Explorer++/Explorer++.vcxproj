@@ -1286,6 +1286,9 @@
     <ClCompile Include="PinnedItemsModel.cpp" />
     <ClCompile Include="PinnedItemsRegistryStorage.cpp" />
     <ClCompile Include="PinnedItemsXmlStorage.cpp" />
+    <ClCompile Include="TreeViewOrderModel.cpp" />
+    <ClCompile Include="TreeViewOrderRegistryStorage.cpp" />
+    <ClCompile Include="TreeViewOrderXmlStorage.cpp" />
     <ClCompile Include="HistoryMenu.cpp" />
     <ClCompile Include="AsyncIconFetcherImpl.cpp" />
     <ClCompile Include="HistoryTracker.cpp" />
@@ -1662,6 +1665,9 @@
     <ClInclude Include="PinnedItemsModel.h" />
     <ClInclude Include="PinnedItemsRegistryStorage.h" />
     <ClInclude Include="PinnedItemsXmlStorage.h" />
+    <ClInclude Include="TreeViewOrderModel.h" />
+    <ClInclude Include="TreeViewOrderRegistryStorage.h" />
+    <ClInclude Include="TreeViewOrderXmlStorage.h" />
     <ClInclude Include="HistoryMenu.h" />
     <ClInclude Include="AsyncIconFetcherImpl.h" />
     <ClInclude Include="HistoryTracker.h" />

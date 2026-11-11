@@ -37,8 +37,16 @@ public:
 		FileActionHandler *fileActionHandler);
 
 	/* User functions. */
+	enum class MoveDirection
+	{
+		Up,
+		Down
+	};
+
 	unique_pidl_absolute GetSelectedNodePidl() const;
 	void SetShowHidden(BOOL bShowHidden);
+	bool CanMoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection direction);
+	void MoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection direction);
 
 	/* Sorting. */
 	int CALLBACK CompareItems(LPARAM lParam1, LPARAM lParam2);
@@ -132,6 +140,7 @@ private:
 	HTREEITEM AddItem(HTREEITEM parent, PCIDLIST_ABSOLUTE pidl, HTREEITEM insertAfter = TVI_LAST);
 	void SortChildren(HTREEITEM parent);
 	void OnPinnedItemsChanged(const PidlAbsolute &parentDirectory);
+	void OnTreeViewOrderChanged(const PidlAbsolute &parentDirectory);
 	void OnGetDisplayInfo(NMTVDISPINFO *pnmtvdi);
 	void OnSelectionChanged(const NMTREEVIEW *eventInfo);
 	void OnSelectionChangedTimer();

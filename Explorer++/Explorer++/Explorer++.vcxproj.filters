@@ -514,6 +514,9 @@
     <ClCompile Include="PinnedItemsModel.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="TreeViewOrderModel.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="LocationVisitInfo.cpp">
       <Filter>Frequent Locations</Filter>
     </ClCompile>
@@ -647,6 +650,12 @@
       <Filter>Storage</Filter>
     </ClCompile>
     <ClCompile Include="PinnedItemsXmlStorage.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeViewOrderRegistryStorage.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeViewOrderXmlStorage.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
     <ClCompile Include="HistoryMenu.cpp">
@@ -1473,6 +1482,9 @@
     <ClInclude Include="PinnedItemsModel.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="TreeViewOrderModel.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="LocationVisitInfo.h">
       <Filter>Frequent Locations</Filter>
     </ClInclude>
@@ -1636,6 +1648,12 @@
       <Filter>Storage</Filter>
     </ClInclude>
     <ClInclude Include="PinnedItemsXmlStorage.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeViewOrderRegistryStorage.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeViewOrderXmlStorage.h">
       <Filter>Storage</Filter>
     </ClInclude>
     <ClInclude Include="FrequentLocationsStorageHelper.h">

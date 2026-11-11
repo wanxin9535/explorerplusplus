@@ -330,6 +330,8 @@
     <ClCompile Include="FrequentLocationsModelTest.cpp" />
     <ClCompile Include="PinnedItemsModelTest.cpp" />
     <ClCompile Include="PinnedItemsStorageTest.cpp" />
+    <ClCompile Include="TreeViewOrderModelTest.cpp" />
+    <ClCompile Include="TreeViewOrderStorageTest.cpp" />
     <ClCompile Include="FrequentLocationsRegistryStorageTest.cpp" />
     <ClCompile Include="FrequentLocationsStorageTestHelper.cpp" />
     <ClCompile Include="FrequentLocationsTrackerTest.cpp" />

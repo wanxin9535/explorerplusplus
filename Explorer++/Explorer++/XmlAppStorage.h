@@ -27,6 +27,7 @@ public:
 	void LoadDefaultColumns(FolderColumns &defaultColumns) override;
 	void LoadFrequentLocations(FrequentLocationsModel *frequentLocationsModel) override;
 	void LoadPinnedItems(PinnedItemsModel *pinnedItemsModel) override;
+	void LoadTreeViewOrder(TreeViewOrderModel *treeViewOrderModel) override;
 
 	void SaveConfig(const Config &config) override;
 	void SaveWindows(const std::vector<WindowStorageData> &windows) override;
@@ -37,6 +38,7 @@ public:
 	void SaveDefaultColumns(const FolderColumns &defaultColumns) override;
 	void SaveFrequentLocations(const FrequentLocationsModel *frequentLocationsModel) override;
 	void SavePinnedItems(const PinnedItemsModel *pinnedItemsModel) override;
+	void SaveTreeViewOrder(const TreeViewOrderModel *treeViewOrderModel) override;
 	void Commit() override;
 
 private:
