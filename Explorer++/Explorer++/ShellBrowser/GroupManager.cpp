@@ -323,7 +323,7 @@ int ShellBrowserImpl::DetermineItemGroup(int iItemInternal)
 
 	if (!m_directoryState.virtualFolder
 		&& m_appServices->GetPinnedItemsModel()->IsPinned(m_directoryState.pidlDirectory,
-			basicItemInfo.pidlComplete))
+			PidlAbsolute(basicItemInfo.pidlComplete.get())))
 	{
 		groupInfo = GroupInfo(m_resourceLoader->LoadString(IDS_PINNED_ITEMS_GROUP_NAME), 0, true);
 	}
