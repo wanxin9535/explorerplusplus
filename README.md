@@ -18,6 +18,8 @@ Explorer++ is a lightweight and fast file manager for Windows.
 * Change file dates and attributes
 * Save a directory listing
 * Bookmark tabs
+* Pin selected files and folders to the top of their parent directory in the main list
+* Move navigation-tree items up or down within the same parent without moving the underlying item
 * __Search__ for files using their name and attributes
 * Switch between icon, list, detail, thumbnail and tile view
 * Filter files
