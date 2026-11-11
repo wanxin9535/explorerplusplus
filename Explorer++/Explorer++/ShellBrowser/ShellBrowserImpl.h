@@ -25,6 +25,8 @@
 #include "../Helper/WinRTBaseWrapper.h"
 #include "../ThirdParty/CTPL/cpl_stl.h"
 #include <boost/core/noncopyable.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/multi_index/composite_key.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index_container.hpp>
@@ -33,6 +35,7 @@
 #include <wil/com.h>
 #include <wil/resource.h>
 #include <thumbcache.h>
+#include <functional>
 #include <future>
 #include <memory>
 #include <optional>
@@ -248,14 +251,16 @@ private:
 	{
 		std::wstring name;
 		int relativeSortPosition;
+		bool isPinned = false;
 
 		explicit GroupInfo(const std::wstring &name) : name(name), relativeSortPosition(0)
 		{
 		}
 
-		GroupInfo(const std::wstring &name, int relativeSortPosition) :
+		GroupInfo(const std::wstring &name, int relativeSortPosition, bool isPinned = false) :
 			name(name),
-			relativeSortPosition(relativeSortPosition)
+			relativeSortPosition(relativeSortPosition),
+			isPinned(isPinned)
 		{
 		}
 	};
@@ -266,12 +271,14 @@ private:
 		int id;
 		std::wstring name;
 		int relativeSortPosition;
+		bool isPinned;
 		int numItems;
 
 		ListViewGroup(const GroupInfo &groupInfo) :
 			id(idCounter++),
 			name(groupInfo.name),
 			relativeSortPosition(groupInfo.relativeSortPosition),
+			isPinned(groupInfo.isPinned),
 			numItems(0)
 		{
 		}
@@ -294,7 +301,12 @@ private:
 				boost::multi_index::member<ListViewGroup, int, &ListViewGroup::id>
 			>,
 			boost::multi_index::hashed_unique<
-				boost::multi_index::member<ListViewGroup, std::wstring, &ListViewGroup::name>
+				boost::multi_index::composite_key<ListViewGroup,
+					boost::multi_index::member<ListViewGroup, std::wstring, &ListViewGroup::name>,
+					boost::multi_index::member<ListViewGroup, bool, &ListViewGroup::isPinned>>,
+				boost::multi_index::composite_key_hash<boost::hash<std::wstring>, boost::hash<bool>>,
+				boost::multi_index::composite_key_equal_to<std::equal_to<std::wstring>,
+					std::equal_to<bool>>
 			>
 		>
 	>;
@@ -485,6 +497,7 @@ private:
 	/* Sorting. */
 	void SortFolder();
 	int CALLBACK Sort(int InternalIndex1, int InternalIndex2) const;
+	void OnPinnedItemsChanged(const PidlAbsolute &parentDirectory);
 
 	/* Listview column support. */
 	void AddFirstColumn();
@@ -653,6 +666,7 @@ private:
 	/* Stores various extra information on files, such
 	as display name. */
 	std::unordered_map<int, ItemInfo_t> m_itemInfoMap;
+	std::unordered_set<int> m_pinnedItemInternalIndices;
 
 	ctpl::thread_pool m_columnThreadPool;
 	std::unordered_map<int, std::future<ColumnResult_t>> m_columnResults;

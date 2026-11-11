@@ -21,6 +21,7 @@
 #include "DriveWatcherFake.h"
 #include "FeatureList.h"
 #include "FrequentLocationsModel.h"
+#include "PinnedItemsModel.h"
 #include "FrequentLocationsTracker.h"
 #include "HistoryModel.h"
 #include "HistoryTracker.h"
@@ -94,6 +95,7 @@ protected:
 	HistoryTracker m_historyTracker;
 	FrequentLocationsModel m_frequentLocationsModel;
 	FrequentLocationsTracker m_frequentLocationsTracker;
+	PinnedItemsModel m_pinnedItemsModel;
 	BrowserList m_browserList;
 	BrowserWindowFactoryFake m_browserWindowFactory;
 	TabRestorer m_tabRestorer;

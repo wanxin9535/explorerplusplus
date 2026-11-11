@@ -53,6 +53,7 @@ void BrowserTestBase::SetUpAppServices()
 	m_appServices.SetDriveModel(&m_driveModel);
 	m_appServices.SetFeatureList(&m_featureList);
 	m_appServices.SetFrequentLocationsModel(&m_frequentLocationsModel);
+	m_appServices.SetPinnedItemsModel(&m_pinnedItemsModel);
 	m_appServices.SetHistoryModel(&m_historyModel);
 	m_appServices.SetModelessDialogList(&m_modelessDialogList);
 	m_appServices.SetNavigationEvents(&m_navigationEvents);

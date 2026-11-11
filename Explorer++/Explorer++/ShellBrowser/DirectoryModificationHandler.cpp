@@ -9,6 +9,7 @@
 #include "Config.h"
 #include "DirectoryWatcherFactory.h"
 #include "ItemData.h"
+#include "PinnedItemsModel.h"
 #include "NavigateParams.h"
 #include "Runtime.h"
 #include "RuntimeHelper.h"
@@ -211,6 +212,16 @@ void ShellBrowserImpl::AddItem(PCIDLIST_ABSOLUTE pidl)
 void ShellBrowserImpl::OnItemRemoved(PCIDLIST_ABSOLUTE simplePidl)
 {
 	auto internalIndex = GetItemInternalIndexForPidl(simplePidl);
+	bool isDirectory = false;
+
+	if (internalIndex)
+	{
+		isDirectory = (m_itemInfoMap.at(*internalIndex).wfd.dwFileAttributes
+			& FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
+	}
+
+	m_appServices->GetPinnedItemsModel()->RemoveItem(m_directoryState.pidlDirectory,
+		m_directoryState.pidlDirectory + simplePidl, isDirectory);
 
 	if (internalIndex)
 	{
@@ -289,6 +300,17 @@ void ShellBrowserImpl::UpdateItem(PCIDLIST_ABSOLUTE pidl, PCIDLIST_ABSOLUTE upda
 	m_itemInfoMap[*internalIndex] = *itemInfo;
 	const ItemInfo_t &updatedItemInfo = m_itemInfoMap[*internalIndex];
 
+	if (!m_directoryState.virtualFolder
+		&& m_appServices->GetPinnedItemsModel()->IsPinned(m_directoryState.pidlDirectory,
+			updatedItemInfo.pidlComplete))
+	{
+		m_pinnedItemInternalIndices.insert(*internalIndex);
+	}
+	else
+	{
+		m_pinnedItemInternalIndices.erase(*internalIndex);
+	}
+
 	auto itemIndex = LocateItemByInternalIndex(*internalIndex);
 
 	// Items may be filtered out of the listview, so it's valid for an item not to be found.
@@ -353,6 +375,11 @@ void ShellBrowserImpl::UpdateItem(PCIDLIST_ABSOLUTE pidl, PCIDLIST_ABSOLUTE upda
 void ShellBrowserImpl::OnItemRenamed(PCIDLIST_ABSOLUTE simplePidlOld,
 	PCIDLIST_ABSOLUTE simplePidlNew)
 {
+	auto oldItemIndex = GetItemInternalIndexForPidl(simplePidlOld);
+	bool isDirectory = oldItemIndex
+		&& (m_itemInfoMap.at(*oldItemIndex).wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			== FILE_ATTRIBUTE_DIRECTORY;
+
 	// When an item is updated, the WIN32_FIND_DATA information cached in the pidl will be
 	// retrieved. As the simple pidl won't contain this information, it's important to convert the
 	// pidl to a full pidl here.
@@ -381,6 +408,10 @@ void ShellBrowserImpl::OnItemRenamed(PCIDLIST_ABSOLUTE simplePidlOld,
 	}
 
 	UpdateItem(simplePidlOld, pidlNew);
+
+	PidlAbsolute parentDirectory = m_directoryState.pidlDirectory;
+	m_appServices->GetPinnedItemsModel()->RenameItem(parentDirectory,
+		parentDirectory + simplePidlOld, parentDirectory + simplePidlNew, isDirectory);
 }
 
 void ShellBrowserImpl::InvalidateAllColumnsForItem(int itemIndex)

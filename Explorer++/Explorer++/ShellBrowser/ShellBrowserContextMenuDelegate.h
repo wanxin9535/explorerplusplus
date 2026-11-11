@@ -7,6 +7,8 @@
 #include "../Helper/ShellItemContextMenuDelegate.h"
 #include "../Helper/WeakPtr.h"
 
+class PinnedItemsModel;
+class ResourceLoader;
 class ShellBrowserImpl;
 
 // When the shell context menu is being shown for one or more items in a ShellBrowserImpl instance,
@@ -15,7 +17,8 @@ class ShellBrowserImpl;
 class ShellBrowserContextMenuDelegate : public ShellItemContextMenuDelegate
 {
 public:
-	ShellBrowserContextMenuDelegate(WeakPtr<ShellBrowserImpl> shellBrowserWeak);
+	ShellBrowserContextMenuDelegate(WeakPtr<ShellBrowserImpl> shellBrowserWeak,
+		PinnedItemsModel *pinnedItemsModel, const ResourceLoader *resourceLoader);
 
 	void UpdateMenuEntries(PCIDLIST_ABSOLUTE directory, const std::vector<PidlChild> &items,
 		ShellContextMenuBuilder *builder) override;
@@ -26,8 +29,13 @@ public:
 	std::wstring GetHelpTextForCustomItem(UINT menuItemId) override;
 
 private:
+	static constexpr UINT PIN_TO_TOP_MENU_ITEM_ID = 1;
+	static constexpr UINT UNPIN_FROM_TOP_MENU_ITEM_ID = 2;
+
 	std::vector<PidlAbsolute> BuildItemList(PCIDLIST_ABSOLUTE pidlParent,
 		const std::vector<PidlChild> &pidlItems) const;
 
 	const WeakPtr<ShellBrowserImpl> m_shellBrowserWeak;
+	PinnedItemsModel *const m_pinnedItemsModel;
+	const ResourceLoader *const m_resourceLoader;
 };

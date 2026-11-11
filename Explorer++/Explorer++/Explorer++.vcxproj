@@ -1283,6 +1283,9 @@
     <ClCompile Include="FrequentLocationsRegistryStorage.cpp" />
     <ClCompile Include="FrequentLocationsTracker.cpp" />
     <ClCompile Include="FrequentLocationsXmlStorage.cpp" />
+    <ClCompile Include="PinnedItemsModel.cpp" />
+    <ClCompile Include="PinnedItemsRegistryStorage.cpp" />
+    <ClCompile Include="PinnedItemsXmlStorage.cpp" />
     <ClCompile Include="HistoryMenu.cpp" />
     <ClCompile Include="AsyncIconFetcherImpl.cpp" />
     <ClCompile Include="HistoryTracker.cpp" />
@@ -1656,6 +1659,9 @@
     <ClInclude Include="FrequentLocationsStorageHelper.h" />
     <ClInclude Include="FrequentLocationsTracker.h" />
     <ClInclude Include="FrequentLocationsXmlStorage.h" />
+    <ClInclude Include="PinnedItemsModel.h" />
+    <ClInclude Include="PinnedItemsRegistryStorage.h" />
+    <ClInclude Include="PinnedItemsXmlStorage.h" />
     <ClInclude Include="HistoryMenu.h" />
     <ClInclude Include="AsyncIconFetcherImpl.h" />
     <ClInclude Include="HistoryTracker.h" />

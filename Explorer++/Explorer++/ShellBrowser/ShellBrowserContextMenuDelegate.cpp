@@ -5,19 +5,65 @@
 #include "stdafx.h"
 #include "ShellBrowserContextMenuDelegate.h"
 #include "ShellBrowserImpl.h"
+#include "DirectoryOperationsHelper.h"
+#include "MainResource.h"
+#include "PinnedItemsModel.h"
+#include "ResourceLoader.h"
+#include "../Helper/ShellHelper.h"
 
 ShellBrowserContextMenuDelegate::ShellBrowserContextMenuDelegate(
-	WeakPtr<ShellBrowserImpl> shellBrowserWeak) :
-	m_shellBrowserWeak(shellBrowserWeak)
+	WeakPtr<ShellBrowserImpl> shellBrowserWeak, PinnedItemsModel *pinnedItemsModel,
+	const ResourceLoader *resourceLoader) :
+	m_shellBrowserWeak(shellBrowserWeak),
+	m_pinnedItemsModel(pinnedItemsModel),
+	m_resourceLoader(resourceLoader)
 {
 }
 
 void ShellBrowserContextMenuDelegate::UpdateMenuEntries(PCIDLIST_ABSOLUTE directory,
 	const std::vector<PidlChild> &items, ShellContextMenuBuilder *builder)
 {
-	UNREFERENCED_PARAMETER(directory);
-	UNREFERENCED_PARAMETER(items);
-	UNREFERENCED_PARAMETER(builder);
+	if (!m_shellBrowserWeak || !m_pinnedItemsModel || !m_resourceLoader || items.empty()
+		|| !IsFilesystemFolder(directory))
+	{
+		return;
+	}
+
+	PidlAbsolute parentDirectory(directory);
+	auto fullItems = BuildItemList(directory, items);
+	bool hasPinnedItems = false;
+	bool hasUnpinnedItems = false;
+
+	for (const auto &item : fullItems)
+	{
+		if (!DoesItemHaveAttributes(item.Raw(), SFGAO_FILESYSTEM))
+		{
+			return;
+		}
+
+		if (m_pinnedItemsModel->IsPinned(parentDirectory, item))
+		{
+			hasPinnedItems = true;
+		}
+		else
+		{
+			hasUnpinnedItems = true;
+		}
+	}
+
+	UINT position = 0;
+
+	if (hasUnpinnedItems)
+	{
+		builder->AddStringItem(PIN_TO_TOP_MENU_ITEM_ID,
+			m_resourceLoader->LoadString(IDS_PINNED_ITEMS_PIN_TO_TOP), position++, true);
+	}
+
+	if (hasPinnedItems)
+	{
+		builder->AddStringItem(UNPIN_FROM_TOP_MENU_ITEM_ID,
+			m_resourceLoader->LoadString(IDS_PINNED_ITEMS_UNPIN_FROM_TOP), position, true);
+	}
 }
 
 bool ShellBrowserContextMenuDelegate::MaybeHandleShellMenuItem(PCIDLIST_ABSOLUTE directory,
@@ -68,14 +114,29 @@ std::vector<PidlAbsolute> ShellBrowserContextMenuDelegate::BuildItemList(
 void ShellBrowserContextMenuDelegate::HandleCustomMenuItem(PCIDLIST_ABSOLUTE directory,
 	const std::vector<PidlChild> &items, UINT menuItemId)
 {
-	UNREFERENCED_PARAMETER(directory);
-	UNREFERENCED_PARAMETER(items);
-	UNREFERENCED_PARAMETER(menuItemId);
+	if (!m_pinnedItemsModel || (menuItemId != PIN_TO_TOP_MENU_ITEM_ID
+			&& menuItemId != UNPIN_FROM_TOP_MENU_ITEM_ID))
+	{
+		DCHECK(false);
+		return;
+	}
+
+	bool pinned = (menuItemId == PIN_TO_TOP_MENU_ITEM_ID);
+	m_pinnedItemsModel->SetItemsPinned(PidlAbsolute(directory), BuildItemList(directory, items), pinned);
 }
 
 std::wstring ShellBrowserContextMenuDelegate::GetHelpTextForCustomItem(UINT menuItemId)
 {
-	UNREFERENCED_PARAMETER(menuItemId);
+	switch (menuItemId)
+	{
+	case PIN_TO_TOP_MENU_ITEM_ID:
+		return m_resourceLoader->LoadString(IDS_PINNED_ITEMS_PIN_TO_TOP_HELP_TEXT);
 
-	return L"";
+	case UNPIN_FROM_TOP_MENU_ITEM_ID:
+		return m_resourceLoader->LoadString(IDS_PINNED_ITEMS_UNPIN_FROM_TOP_HELP_TEXT);
+
+	default:
+		DCHECK(false);
+		return L"";
+	}
 }

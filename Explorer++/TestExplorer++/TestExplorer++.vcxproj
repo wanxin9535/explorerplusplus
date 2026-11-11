@@ -328,6 +328,8 @@
     <ClCompile Include="FileSystemWatcherTest.cpp" />
     <ClCompile Include="FrequentLocationsMenuTest.cpp" />
     <ClCompile Include="FrequentLocationsModelTest.cpp" />
+    <ClCompile Include="PinnedItemsModelTest.cpp" />
+    <ClCompile Include="PinnedItemsStorageTest.cpp" />
     <ClCompile Include="FrequentLocationsRegistryStorageTest.cpp" />
     <ClCompile Include="FrequentLocationsStorageTestHelper.cpp" />
     <ClCompile Include="FrequentLocationsTrackerTest.cpp" />

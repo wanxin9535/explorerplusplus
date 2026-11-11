@@ -4,8 +4,10 @@
 
 #include "stdafx.h"
 #include "ShellBrowserImpl.h"
+#include "AppServices.h"
 #include "Config.h"
 #include "ItemData.h"
+#include "PinnedItemsModel.h"
 #include "SortHelper.h"
 #include "SortModes.h"
 #include "ViewModes.h"
@@ -16,6 +18,21 @@
 
 void ShellBrowserImpl::SortFolder()
 {
+	m_pinnedItemInternalIndices.clear();
+
+	if (!m_directoryState.virtualFolder)
+	{
+		const auto *pinnedItemsModel = m_appServices->GetPinnedItemsModel();
+
+		for (const auto &[itemInternalIndex, itemInfo] : m_itemInfoMap)
+		{
+			if (pinnedItemsModel->IsPinned(m_directoryState.pidlDirectory, itemInfo.pidlComplete))
+			{
+				m_pinnedItemInternalIndices.insert(itemInternalIndex);
+			}
+		}
+	}
+
 	SendMessage(m_listView, LVM_SORTITEMS, reinterpret_cast<WPARAM>(this),
 		reinterpret_cast<LPARAM>(SortStub));
 
@@ -38,6 +55,15 @@ int CALLBACK ShellBrowserImpl::Sort(int InternalIndex1, int InternalIndex2) cons
 
 	BasicItemInfo_t basicItemInfo1 = getBasicItemInfo(InternalIndex1);
 	BasicItemInfo_t basicItemInfo2 = getBasicItemInfo(InternalIndex2);
+
+	bool isPinned1 = m_pinnedItemInternalIndices.contains(InternalIndex1);
+	bool isPinned2 = m_pinnedItemInternalIndices.contains(InternalIndex2);
+
+	if (isPinned1 != isPinned2)
+	{
+		// Pinned priority is independent of the current sort direction and folder/file ordering.
+		return isPinned1 ? -1 : 1;
+	}
 
 	bool isFolder1 = ((basicItemInfo1.wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 						 == FILE_ATTRIBUTE_DIRECTORY)
@@ -383,4 +409,17 @@ int CALLBACK ShellBrowserImpl::Sort(int InternalIndex1, int InternalIndex2) cons
 	}
 
 	return comparisonResult;
+}
+
+void ShellBrowserImpl::OnPinnedItemsChanged(const PidlAbsolute &parentDirectory)
+{
+	if (m_directoryState.pidlDirectory == parentDirectory)
+	{
+		if (m_folderSettings.showInGroups)
+		{
+			MoveItemsIntoGroups();
+		}
+
+		SortFolder();
+	}
 }

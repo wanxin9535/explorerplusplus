@@ -22,6 +22,7 @@ class DirectoryWatcherFactory;
 class DriveModel;
 class FeatureList;
 class FrequentLocationsModel;
+class PinnedItemsModel;
 class HistoryModel;
 class ModelessDialogList;
 class NavigationEvents;
@@ -144,6 +145,9 @@ public:
 	FrequentLocationsModel *GetFrequentLocationsModel();
 	const FrequentLocationsModel *GetFrequentLocationsModel() const;
 	void SetFrequentLocationsModel(FrequentLocationsModel *frequentLocationsModel);
+	PinnedItemsModel *GetPinnedItemsModel();
+	const PinnedItemsModel *GetPinnedItemsModel() const;
+	void SetPinnedItemsModel(PinnedItemsModel *pinnedItemsModel);
 
 	HistoryModel *GetHistoryModel();
 	const HistoryModel *GetHistoryModel() const;
@@ -213,7 +217,8 @@ private:
 		AsyncIconFetcher *, BookmarkTree *, BrowserList *, BrowserWindowFactory *, CachedIcons *,
 		ClipboardWatcher *, ColorRuleModel *, const CommandLine::Settings *, Config *,
 		DarkModeColorProvider *, DarkModeManager *, DirectoryWatcherFactory *, DriveModel *,
-		FeatureList *, FrequentLocationsModel *, HistoryModel *, ModelessDialogList *,
+		FeatureList *, FrequentLocationsModel *, PinnedItemsModel *, HistoryModel *,
+		ModelessDialogList *,
 		NavigationEvents *, PlatformContext *, Plugins::PluginCommandManager *,
 		Plugins::PluginMenuManager *, ResourceLoader *, Runtime *, ShellBrowserEvents *,
 		TabEvents *, TabList *, TabRestorer *, ThemeManager *>

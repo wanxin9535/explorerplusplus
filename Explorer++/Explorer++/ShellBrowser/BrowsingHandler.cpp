@@ -11,6 +11,7 @@
 #include "HistoryEntry.h"
 #include "IconFetcher.h"
 #include "ItemData.h"
+#include "PinnedItemsModel.h"
 #include "MainResource.h"
 #include "NavigationRequest.h"
 #include "RuntimeHelper.h"
@@ -67,6 +68,7 @@ void ShellBrowserImpl::PrepareToChangeFolders()
 	ClearPendingResults();
 
 	ListView_DeleteAllItems(m_listView);
+	m_pinnedItemInternalIndices.clear();
 
 	if (m_folderVisited)
 	{
@@ -265,6 +267,13 @@ int ShellBrowserImpl::AddItemInternal(int itemIndex, const ItemInfo_t &itemInfo,
 {
 	int itemId = GenerateUniqueItemId();
 	m_itemInfoMap.insert({ itemId, itemInfo });
+
+	if (!m_directoryState.virtualFolder
+		&& m_appServices->GetPinnedItemsModel()->IsPinned(m_directoryState.pidlDirectory,
+			itemInfo.pidlComplete))
+	{
+		m_pinnedItemInternalIndices.insert(itemId);
+	}
 
 	AwaitingAdd_t awaitingAdd;
 
@@ -744,6 +753,7 @@ void ShellBrowserImpl::RemoveItem(int iItemInternal)
 	}
 
 	m_directoryState.filteredItemsList.erase(iItemInternal);
+	m_pinnedItemInternalIndices.erase(iItemInternal);
 	m_itemInfoMap.erase(iItemInternal);
 
 	m_directoryState.numItems--;

@@ -270,6 +270,21 @@ void AppServices::SetFrequentLocationsModel(FrequentLocationsModel *frequentLoca
 	Set(frequentLocationsModel);
 }
 
+PinnedItemsModel *AppServices::GetPinnedItemsModel()
+{
+	return Get<PinnedItemsModel>();
+}
+
+const PinnedItemsModel *AppServices::GetPinnedItemsModel() const
+{
+	return Get<PinnedItemsModel>();
+}
+
+void AppServices::SetPinnedItemsModel(PinnedItemsModel *pinnedItemsModel)
+{
+	Set(pinnedItemsModel);
+}
+
 HistoryModel *AppServices::GetHistoryModel()
 {
 	return Get<HistoryModel>();

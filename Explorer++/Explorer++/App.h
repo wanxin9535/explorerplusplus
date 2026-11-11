@@ -27,6 +27,7 @@
 #include "HistoryTracker.h"
 #include "ModelessDialogList.h"
 #include "PlatformContextImpl.h"
+#include "PinnedItemsModel.h"
 #include "Plugins/PluginCommandManager.h"
 #include "Plugins/PluginManager.h"
 #include "Plugins/PluginMenuManager.h"
@@ -125,6 +126,7 @@ private:
 
 	FrequentLocationsModel m_frequentLocationsModel;
 	FrequentLocationsTracker m_frequentLocationsTracker;
+	PinnedItemsModel m_pinnedItemsModel;
 
 	DriveWatcherImpl m_driveWatcher;
 	DriveModel m_driveModel;

@@ -515,7 +515,8 @@ void ShellBrowserImpl::ShowItemContextMenu(const POINT &pt)
 	OpenItemsContextMenuDelegate openItemsDelegate(m_browser, m_resourceLoader);
 	contextMenu.AddDelegate(&openItemsDelegate);
 
-	ShellBrowserContextMenuDelegate shellBrowserDelegate(m_weakPtrFactory.GetWeakPtr());
+	ShellBrowserContextMenuDelegate shellBrowserDelegate(m_weakPtrFactory.GetWeakPtr(),
+		m_appServices->GetPinnedItemsModel(), m_resourceLoader);
 	contextMenu.AddDelegate(&shellBrowserDelegate);
 
 	ShellItemContextMenu::Flags flags = ShellItemContextMenu::Flags::Rename;

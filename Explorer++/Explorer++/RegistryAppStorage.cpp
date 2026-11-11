@@ -11,6 +11,7 @@
 #include "DefaultColumnRegistryStorage.h"
 #include "DialogStorageHelper.h"
 #include "FrequentLocationsRegistryStorage.h"
+#include "PinnedItemsRegistryStorage.h"
 #include "MainRebarStorage.h"
 #include "TabStorage.h"
 #include "WindowRegistryStorage.h"
@@ -61,6 +62,11 @@ void RegistryAppStorage::LoadFrequentLocations(FrequentLocationsModel *frequentL
 	FrequentLocationsRegistryStorage::Load(m_applicationKey.get(), frequentLocationsModel);
 }
 
+void RegistryAppStorage::LoadPinnedItems(PinnedItemsModel *pinnedItemsModel)
+{
+	PinnedItemsRegistryStorage::Load(m_applicationKey.get(), pinnedItemsModel);
+}
+
 void RegistryAppStorage::SaveConfig(const Config &config)
 {
 	ConfigRegistryStorage::Save(m_applicationKey.get(), config);
@@ -99,6 +105,11 @@ void RegistryAppStorage::SaveDefaultColumns(const FolderColumns &defaultColumns)
 void RegistryAppStorage::SaveFrequentLocations(const FrequentLocationsModel *frequentLocationsModel)
 {
 	FrequentLocationsRegistryStorage::Save(m_applicationKey.get(), frequentLocationsModel);
+}
+
+void RegistryAppStorage::SavePinnedItems(const PinnedItemsModel *pinnedItemsModel)
+{
+	PinnedItemsRegistryStorage::Save(m_applicationKey.get(), pinnedItemsModel);
 }
 
 void RegistryAppStorage::Commit()

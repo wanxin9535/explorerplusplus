@@ -18,6 +18,7 @@
 #include "FolderView.h"
 #include "IconFetcherImpl.h"
 #include "ItemData.h"
+#include "PinnedItemsModel.h"
 #include "MainResource.h"
 #include "MassRenameDialog.h"
 #include "MergeFilesDialog.h"
@@ -229,6 +230,10 @@ void ShellBrowserImpl::InitializeListView()
 		std::bind_front(&ShellBrowserImpl::ListViewProc, this)));
 	m_windowSubclasses.push_back(std::make_unique<WindowSubclass>(GetParent(m_listView),
 		std::bind_front(&ShellBrowserImpl::ListViewParentProc, this)));
+
+	auto *pinnedItemsModel = m_appServices->GetPinnedItemsModel();
+	m_connections.push_back(pinnedItemsModel->AddPinnedItemsChangedObserver(
+		std::bind_front(&ShellBrowserImpl::OnPinnedItemsChanged, this)));
 
 	auto *colorRuleModel = m_appServices->GetColorRuleModel();
 	m_connections.push_back(colorRuleModel->AddItemAddedObserver(

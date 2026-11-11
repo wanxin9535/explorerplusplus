@@ -4,10 +4,12 @@
 
 #include "stdafx.h"
 #include "ShellBrowserImpl.h"
+#include "AppServices.h"
 #include "ColumnDataRetrieval.h"
 #include "Config.h"
 #include "ItemData.h"
 #include "MainResource.h"
+#include "PinnedItemsModel.h"
 #include "ResourceLoader.h"
 #include "SortModes.h"
 #include "../Helper/Helper.h"
@@ -69,6 +71,12 @@ int ShellBrowserImpl::GroupComparison(int id1, int id2)
 {
 	const auto &group1 = GetListViewGroupById(id1);
 	const auto &group2 = GetListViewGroupById(id2);
+
+	if (group1.isPinned != group2.isPinned)
+	{
+		return group1.isPinned ? -1 : 1;
+	}
+
 	int comparisonResult = 0;
 
 	if (group1.relativeSortPosition == INT_MIN && group2.relativeSortPosition != INT_MIN)
@@ -311,6 +319,13 @@ int ShellBrowserImpl::DetermineItemGroup(int iItemInternal)
 	default:
 		assert(false);
 		break;
+	}
+
+	if (!m_directoryState.virtualFolder
+		&& m_appServices->GetPinnedItemsModel()->IsPinned(m_directoryState.pidlDirectory,
+			basicItemInfo.pidlComplete))
+	{
+		groupInfo = GroupInfo(m_resourceLoader->LoadString(IDS_PINNED_ITEMS_GROUP_NAME), 0, true);
 	}
 
 	if (!groupInfo)
