@@ -221,7 +221,7 @@ void ShellBrowserImpl::OnItemRemoved(PCIDLIST_ABSOLUTE simplePidl)
 	}
 
 	m_appServices->GetPinnedItemsModel()->RemoveItem(m_directoryState.pidlDirectory,
-		m_directoryState.pidlDirectory + simplePidl, isDirectory);
+		PidlAbsolute(simplePidl), isDirectory);
 
 	if (internalIndex)
 	{
@@ -411,7 +411,7 @@ void ShellBrowserImpl::OnItemRenamed(PCIDLIST_ABSOLUTE simplePidlOld,
 
 	PidlAbsolute parentDirectory = m_directoryState.pidlDirectory;
 	m_appServices->GetPinnedItemsModel()->RenameItem(parentDirectory,
-		parentDirectory + simplePidlOld, parentDirectory + simplePidlNew, isDirectory);
+		PidlAbsolute(simplePidlOld), PidlAbsolute(simplePidlNew), isDirectory);
 }
 
 void ShellBrowserImpl::InvalidateAllColumnsForItem(int itemIndex)

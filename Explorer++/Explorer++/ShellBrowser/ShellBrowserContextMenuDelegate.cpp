@@ -6,6 +6,7 @@
 #include "ShellBrowserContextMenuDelegate.h"
 #include "ShellBrowserImpl.h"
 #include "DirectoryOperationsHelper.h"
+#include "../Helper/ShellContextMenuBuilder.h"
 #include "MainResource.h"
 #include "PinnedItemsModel.h"
 #include "ResourceLoader.h"
