@@ -52,6 +52,7 @@
 #include "../Helper/ShellHelper.h"
 #include "../Helper/ShellItemContextMenu.h"
 #include <wil/common.h>
+#include <algorithm>
 #include <Shlwapi.h>
 #include <propkey.h>
 #include <windowsx.h>
@@ -282,7 +283,7 @@ void ShellTreeView::AddRootItems()
 
 	AddShellNamespaceRootItem();
 
-	if (m_appServices->GetTreeViewOrderModel()->HasOrder(PidlAbsolute()))
+	if (m_appServices->GetTreeViewOrderModel()->HasOrder(TreeViewPath()))
 	{
 		SortChildren(nullptr);
 	}
@@ -367,7 +368,7 @@ void ShellTreeView::OnShowQuickAccessUpdated(bool newValue)
 		}
 	}
 
-	if (m_appServices->GetTreeViewOrderModel()->HasOrder(PidlAbsolute()))
+	if (m_appServices->GetTreeViewOrderModel()->HasOrder(TreeViewPath()))
 	{
 		SortChildren(nullptr);
 	}
@@ -782,19 +783,19 @@ int CALLBACK ShellTreeView::CompareItems(LPARAM lParam1, LPARAM lParam2)
 
 	if (parentNode == node2->GetParent())
 	{
+		auto parentPath = GetParentPath(parentNode);
 		PidlAbsolute parentDirectory;
 
-		if (parentNode)
+		if (!parentPath.empty())
 		{
-			auto parentPidl = parentNode->GetFullPidl();
-			parentDirectory = parentPidl.get();
+			parentDirectory = parentPath.back();
 		}
 
 		PidlAbsolute item1(pidl1.get());
 		PidlAbsolute item2(pidl2.get());
 		const auto *treeViewOrderModel = m_appServices->GetTreeViewOrderModel();
-		auto orderIndex1 = treeViewOrderModel->GetItemIndex(parentDirectory, item1);
-		auto orderIndex2 = treeViewOrderModel->GetItemIndex(parentDirectory, item2);
+		auto orderIndex1 = treeViewOrderModel->GetItemIndex(parentPath, item1);
+		auto orderIndex2 = treeViewOrderModel->GetItemIndex(parentPath, item2);
 
 		if (orderIndex1 && orderIndex2 && *orderIndex1 != *orderIndex2)
 		{
@@ -1037,20 +1038,72 @@ void ShellTreeView::OnPinnedItemsChanged(const PidlAbsolute &parentDirectory)
 	}
 }
 
-void ShellTreeView::OnTreeViewOrderChanged(const PidlAbsolute &parentDirectory)
+void ShellTreeView::OnTreeViewOrderChanged(const TreeViewPath &parentPath)
 {
-	if (!parentDirectory.HasValue())
+	if (parentPath.empty())
 	{
 		SortChildren(nullptr);
 		return;
 	}
 
-	auto parentItem = LocateExistingItem(parentDirectory.Raw());
+	auto parentItem = FindTreeViewItemByPath(parentPath);
 
 	if (parentItem)
 	{
 		SortChildren(parentItem);
 	}
+}
+
+TreeViewPath ShellTreeView::GetParentPath(const ShellTreeNode *parentNode) const
+{
+	TreeViewPath path;
+
+	for (auto *node = parentNode; node; node = node->GetParent())
+	{
+		auto pidl = node->GetFullPidl();
+		path.emplace_back(pidl.get());
+	}
+
+	std::ranges::reverse(path);
+	return path;
+}
+
+HTREEITEM ShellTreeView::FindTreeViewItemByPath(const TreeViewPath &path) const
+{
+	if (path.empty())
+	{
+		return nullptr;
+	}
+
+	HTREEITEM item = TreeView_GetRoot(m_hTreeView);
+
+	for (size_t index = 0; index < path.size(); index++)
+	{
+		while (item)
+		{
+			auto currentPidl = GetNodePidl(item);
+			PidlAbsolute currentItem(currentPidl.get());
+
+			if (currentItem == path[index])
+			{
+				break;
+			}
+
+			item = TreeView_GetNextSibling(m_hTreeView, item);
+		}
+
+		if (!item)
+		{
+			return nullptr;
+		}
+
+		if (index + 1 < path.size())
+		{
+			item = TreeView_GetChild(m_hTreeView, item);
+		}
+	}
+
+	return item;
 }
 
 ShellTreeNode *ShellTreeView::GetSelectedNode() const
@@ -1237,11 +1290,20 @@ void ShellTreeView::SetShowHidden(BOOL bShowHidden)
 	m_bShowHidden = bShowHidden;
 }
 
-bool ShellTreeView::CanMoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection direction)
+bool ShellTreeView::CanMoveItemOneStep(HTREEITEM item, int nodeId, MoveDirection direction) const
 {
-	auto item = LocateExistingItem(pidl);
+	TVITEMEX tvItem = {};
+	tvItem.mask = TVIF_HANDLE | TVIF_PARAM;
+	tvItem.hItem = item;
 
-	if (!item)
+	if (!TreeView_GetItem(m_hTreeView, &tvItem))
+	{
+		return false;
+	}
+
+	auto *node = reinterpret_cast<ShellTreeNode *>(tvItem.lParam);
+
+	if (!node || node->GetId() != nodeId)
 	{
 		return false;
 	}
@@ -1260,40 +1322,47 @@ bool ShellTreeView::CanMoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection dir
 	}
 }
 
-void ShellTreeView::MoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection direction)
+void ShellTreeView::MoveItemOneStep(HTREEITEM item, int nodeId, MoveDirection direction)
 {
-	if (!CanMoveItemOneStep(pidl, direction))
+	if (!CanMoveItemOneStep(item, nodeId, direction))
 	{
 		return;
 	}
 
-	auto item = LocateExistingItem(pidl);
-	assert(item);
+	auto *node = GetNodeFromTreeViewItem(item);
 	HTREEITEM parentItem = TreeView_GetParent(m_hTreeView, item);
-	PidlAbsolute parentDirectory;
-
-	if (parentItem)
-	{
-		auto parentPidl = GetNodePidl(parentItem);
-		parentDirectory = parentPidl.get();
-	}
+	auto parentPath = GetParentPath(node->GetParent());
 
 	std::vector<PidlAbsolute> currentOrder;
+	size_t itemIndex = 0;
+	size_t currentIndex = 0;
+	bool targetFound = false;
 	HTREEITEM sibling = parentItem ? TreeView_GetChild(m_hTreeView, parentItem)
 									: TreeView_GetRoot(m_hTreeView);
 
 	while (sibling)
 	{
+		if (sibling == item)
+		{
+			itemIndex = currentIndex;
+			targetFound = true;
+		}
+
 		auto siblingPidl = GetNodePidl(sibling);
 		currentOrder.emplace_back(siblingPidl.get());
 		sibling = TreeView_GetNextSibling(m_hTreeView, sibling);
+		currentIndex++;
 	}
 
-	PidlAbsolute itemPidl(pidl);
+	if (!targetFound)
+	{
+		return;
+	}
+
 	TreeViewOrderModel::Direction modelDirection = direction == MoveDirection::Up
 		? TreeViewOrderModel::Direction::Up
 		: TreeViewOrderModel::Direction::Down;
-	m_appServices->GetTreeViewOrderModel()->MoveItem(parentDirectory, itemPidl, modelDirection,
+	m_appServices->GetTreeViewOrderModel()->MoveItem(parentPath, itemIndex, modelDirection,
 		currentOrder);
 }
 
@@ -1475,7 +1544,9 @@ void ShellTreeView::OnShowContextMenu(const POINT &ptScreen)
 	OpenItemsContextMenuDelegate openItemsDelegate(m_browser, m_appServices->GetResourceLoader());
 	contextMenu.AddDelegate(&openItemsDelegate);
 
-	ShellTreeViewContextMenuDelegate treeViewDelegate(this, m_appServices->GetResourceLoader());
+	const int targetNodeId = GetNodeFromTreeViewItem(targetItem)->GetId();
+	ShellTreeViewContextMenuDelegate treeViewDelegate(this, m_appServices->GetResourceLoader(),
+		targetItem, targetNodeId);
 	contextMenu.AddDelegate(&treeViewDelegate);
 
 	contextMenu.ShowMenu(m_hTreeView, &finalPoint, nullptr, flags);

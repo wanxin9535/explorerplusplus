@@ -21,30 +21,35 @@ constexpr UINT MOVE_ITEM_DOWN_MENU_ITEM_ID = 2;
 }
 
 ShellTreeViewContextMenuDelegate::ShellTreeViewContextMenuDelegate(ShellTreeView *shellTreeView,
-	const ResourceLoader *resourceLoader) :
+	const ResourceLoader *resourceLoader, HTREEITEM targetItem, int targetNodeId) :
 	m_shellTreeView(shellTreeView),
-	m_resourceLoader(resourceLoader)
+	m_resourceLoader(resourceLoader),
+	m_targetItem(targetItem),
+	m_targetNodeId(targetNodeId)
 {
 }
 
 void ShellTreeViewContextMenuDelegate::UpdateMenuEntries(PCIDLIST_ABSOLUTE directory,
 	const std::vector<PidlChild> &items, ShellContextMenuBuilder *builder)
 {
+	UNREFERENCED_PARAMETER(directory);
+
 	if (items.size() != 1)
 	{
 		return;
 	}
 
-	PidlAbsolute item = directory + items[0];
 	std::wstring text = m_resourceLoader->LoadString(IDS_SHELL_TREE_VIEW_MOVE_UP);
 	builder->AddStringItem(MOVE_ITEM_UP_MENU_ITEM_ID, text, 0, true);
 	builder->EnableItem(MOVE_ITEM_UP_MENU_ITEM_ID,
-		m_shellTreeView->CanMoveItemOneStep(item.Raw(), ShellTreeView::MoveDirection::Up));
+		m_shellTreeView->CanMoveItemOneStep(m_targetItem, m_targetNodeId,
+			ShellTreeView::MoveDirection::Up));
 
 	text = m_resourceLoader->LoadString(IDS_SHELL_TREE_VIEW_MOVE_DOWN);
 	builder->AddStringItem(MOVE_ITEM_DOWN_MENU_ITEM_ID, text, 1, true);
 	builder->EnableItem(MOVE_ITEM_DOWN_MENU_ITEM_ID,
-		m_shellTreeView->CanMoveItemOneStep(item.Raw(), ShellTreeView::MoveDirection::Down));
+		m_shellTreeView->CanMoveItemOneStep(m_targetItem, m_targetNodeId,
+			ShellTreeView::MoveDirection::Down));
 
 	builder->AddSeparator(2, true);
 }
@@ -84,16 +89,18 @@ void ShellTreeViewContextMenuDelegate::HandleCustomMenuItem(PCIDLIST_ABSOLUTE di
 {
 	CHECK_EQ(items.size(), 1u);
 
-	PidlAbsolute item = directory + items[0];
+	UNREFERENCED_PARAMETER(directory);
 
 	switch (menuItemId)
 	{
 	case MOVE_ITEM_UP_MENU_ITEM_ID:
-		m_shellTreeView->MoveItemOneStep(item.Raw(), ShellTreeView::MoveDirection::Up);
+		m_shellTreeView->MoveItemOneStep(m_targetItem, m_targetNodeId,
+			ShellTreeView::MoveDirection::Up);
 		break;
 
 	case MOVE_ITEM_DOWN_MENU_ITEM_ID:
-		m_shellTreeView->MoveItemOneStep(item.Raw(), ShellTreeView::MoveDirection::Down);
+		m_shellTreeView->MoveItemOneStep(m_targetItem, m_targetNodeId,
+			ShellTreeView::MoveDirection::Down);
 		break;
 
 	default:

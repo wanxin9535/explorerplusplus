@@ -15,17 +15,24 @@
 namespace
 {
 
-constexpr wchar_t TREE_VIEW_ORDERS_NODE_NAME[] = L"TreeViewOrders";
+constexpr wchar_t TREE_VIEW_ORDERS_NODE_NAME[] = L"TreeViewOrdersV2";
 constexpr wchar_t TREE_VIEW_ORDER_NODE_NAME[] = L"TreeViewOrder";
+constexpr wchar_t PARENT_NODE_NAME[] = L"Parent";
 constexpr wchar_t ITEM_NODE_NAME[] = L"Item";
-constexpr wchar_t ROOT_ATTRIBUTE[] = L"Root";
-constexpr wchar_t PARENT_DIRECTORY_ATTRIBUTE[] = L"ParentDirectory";
-constexpr wchar_t ITEM_ATTRIBUTE[] = L"Pidl";
+constexpr wchar_t PIDL_ATTRIBUTE[] = L"Pidl";
 
-std::optional<PidlAbsolute> LoadPidl(IXMLDOMNamedNodeMap *attributeMap, const wchar_t *attributeName)
+std::optional<PidlAbsolute> LoadPidl(IXMLDOMNode *node, const wchar_t *attributeName)
 {
+	wil::com_ptr_nothrow<IXMLDOMNamedNodeMap> attributeMap;
+	HRESULT hr = node->get_attributes(&attributeMap);
+
+	if (hr != S_OK)
+	{
+		return std::nullopt;
+	}
+
 	std::wstring encodedPidl;
-	HRESULT hr = XMLSettings::GetStringFromMap(attributeMap, attributeName, encodedPidl);
+	hr = XMLSettings::GetStringFromMap(attributeMap.get(), attributeName, encodedPidl);
 
 	if (hr != S_OK)
 	{
@@ -49,66 +56,38 @@ std::optional<PidlAbsolute> LoadPidl(IXMLDOMNamedNodeMap *attributeMap, const wc
 	return pidl;
 }
 
-std::optional<PidlAbsolute> LoadItem(IXMLDOMNode *itemNode)
+std::vector<PidlAbsolute> LoadPidls(IXMLDOMNode *node, const wchar_t *childNodeName)
 {
-	wil::com_ptr_nothrow<IXMLDOMNamedNodeMap> attributeMap;
-	HRESULT hr = itemNode->get_attributes(&attributeMap);
+	wil::com_ptr_nothrow<IXMLDOMNodeList> childNodes;
+	auto queryString = wil::make_bstr_nothrow(childNodeName);
+	HRESULT hr = node->selectNodes(queryString.get(), &childNodes);
 
 	if (hr != S_OK)
 	{
-		return std::nullopt;
+		return {};
 	}
 
-	return LoadPidl(attributeMap.get(), ITEM_ATTRIBUTE);
+	std::vector<PidlAbsolute> pidls;
+	wil::com_ptr_nothrow<IXMLDOMNode> childNode;
+
+	while (childNodes->nextNode(&childNode) == S_OK)
+	{
+		auto pidl = LoadPidl(childNode.get(), PIDL_ATTRIBUTE);
+
+		if (pidl)
+		{
+			pidls.push_back(std::move(*pidl));
+		}
+	}
+
+	return pidls;
 }
 
 std::optional<TreeViewItemOrder> LoadOrder(IXMLDOMNode *orderNode)
 {
-	wil::com_ptr_nothrow<IXMLDOMNamedNodeMap> attributeMap;
-	HRESULT hr = orderNode->get_attributes(&attributeMap);
-
-	if (hr != S_OK)
-	{
-		return std::nullopt;
-	}
-
-	std::wstring rootValue;
-	hr = XMLSettings::GetStringFromMap(attributeMap.get(), ROOT_ATTRIBUTE, rootValue);
-
 	TreeViewItemOrder itemOrder;
-
-	if (hr != S_OK || rootValue != L"true")
-	{
-		auto parentDirectory = LoadPidl(attributeMap.get(), PARENT_DIRECTORY_ATTRIBUTE);
-
-		if (!parentDirectory)
-		{
-			return std::nullopt;
-		}
-
-		itemOrder.parent = *parentDirectory;
-	}
-
-	wil::com_ptr_nothrow<IXMLDOMNodeList> itemNodes;
-	auto queryString = wil::make_bstr_nothrow(ITEM_NODE_NAME);
-	hr = orderNode->selectNodes(queryString.get(), &itemNodes);
-
-	if (hr != S_OK)
-	{
-		return std::nullopt;
-	}
-
-	wil::com_ptr_nothrow<IXMLDOMNode> itemNode;
-
-	while (itemNodes->nextNode(&itemNode) == S_OK)
-	{
-		auto item = LoadItem(itemNode.get());
-
-		if (item)
-		{
-			itemOrder.items.push_back(*item);
-		}
-	}
+	itemOrder.parentPath = LoadPidls(orderNode, PARENT_NODE_NAME);
+	itemOrder.items = LoadPidls(orderNode, ITEM_NODE_NAME);
 
 	if (itemOrder.items.empty())
 	{
@@ -147,7 +126,7 @@ void LoadFromNode(IXMLDOMNode *ordersNode, TreeViewOrderModel *model)
 }
 
 bool AddPidlAttribute(IXMLDOMDocument *xmlDocument, IXMLDOMElement *node,
-	const wchar_t *attributeName, const PidlAbsolute &pidl)
+	const PidlAbsolute &pidl)
 {
 	auto encodedPidl = EncodePidlToBase64(pidl);
 	auto encodedPidlWide = StrToWstr(encodedPidl);
@@ -157,7 +136,23 @@ bool AddPidlAttribute(IXMLDOMDocument *xmlDocument, IXMLDOMElement *node,
 		return false;
 	}
 
-	XMLSettings::AddAttributeToNode(xmlDocument, node, attributeName, *encodedPidlWide);
+	XMLSettings::AddAttributeToNode(xmlDocument, node, PIDL_ATTRIBUTE, *encodedPidlWide);
+	return true;
+}
+
+bool AppendPidlNode(IXMLDOMDocument *xmlDocument, IXMLDOMElement *parentNode,
+	const wchar_t *nodeName, const PidlAbsolute &pidl)
+{
+	wil::com_ptr_nothrow<IXMLDOMElement> node;
+	auto name = wil::make_bstr_nothrow(nodeName);
+	HRESULT hr = xmlDocument->createElement(name.get(), &node);
+
+	if (hr != S_OK || !AddPidlAttribute(xmlDocument, node.get(), pidl))
+	{
+		return false;
+	}
+
+	XMLSettings::AppendChildToParent(node.get(), parentNode);
 	return true;
 }
 
@@ -173,28 +168,20 @@ void SaveOrder(IXMLDOMDocument *xmlDocument, IXMLDOMElement *ordersNode,
 		return;
 	}
 
-	if (!itemOrder.parent.HasValue())
+	for (const auto &parent : itemOrder.parentPath)
 	{
-		XMLSettings::AddAttributeToNode(xmlDocument, orderNode.get(), ROOT_ATTRIBUTE, L"true");
-	}
-	else if (!AddPidlAttribute(xmlDocument, orderNode.get(), PARENT_DIRECTORY_ATTRIBUTE,
-			itemOrder.parent))
-	{
-		return;
+		if (!AppendPidlNode(xmlDocument, orderNode.get(), PARENT_NODE_NAME, parent))
+		{
+			return;
+		}
 	}
 
 	for (const auto &item : itemOrder.items)
 	{
-		wil::com_ptr_nothrow<IXMLDOMElement> itemNode;
-		auto itemNodeName = wil::make_bstr_nothrow(ITEM_NODE_NAME);
-		hr = xmlDocument->createElement(itemNodeName.get(), &itemNode);
-
-		if (hr != S_OK || !AddPidlAttribute(xmlDocument, itemNode.get(), ITEM_ATTRIBUTE, item))
+		if (!AppendPidlNode(xmlDocument, orderNode.get(), ITEM_NODE_NAME, item))
 		{
-			continue;
+			return;
 		}
-
-		XMLSettings::AppendChildToParent(itemNode.get(), orderNode.get());
 	}
 
 	XMLSettings::AppendChildToParent(orderNode.get(), ordersNode);
@@ -213,6 +200,7 @@ void Load(IXMLDOMNode *rootNode, TreeViewOrderModel *model)
 
 	if (hr != S_OK)
 	{
+		// Version 1 stored only a parent PIDL and cannot distinguish repeated namespace entries.
 		model->SetItemOrders({});
 		return;
 	}

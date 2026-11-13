@@ -49,19 +49,23 @@ std::optional<PidlAbsolute> RebasePidl(const PidlAbsolute &oldPrefix,
 	return rebasedPidl;
 }
 
-void AddChangedParent(std::vector<PidlAbsolute> &parents, const PidlAbsolute &parent)
+void AddChangedPath(std::vector<TreeViewPath> &paths, const TreeViewPath &path)
 {
-	if (std::none_of(parents.begin(), parents.end(), [&parent](const auto &currentParent)
-			{ return (!currentParent.HasValue() && !parent.HasValue())
-				|| (currentParent.HasValue() && parent.HasValue() && currentParent == parent); }))
+	if (std::find(paths.begin(), paths.end(), path) == paths.end())
 	{
-		parents.push_back(parent);
+		paths.push_back(path);
 	}
 }
 
 bool ContainsItem(const std::vector<PidlAbsolute> &items, const PidlAbsolute &item)
 {
 	return std::find(items.begin(), items.end(), item) != items.end();
+}
+
+bool IsPathWithinItem(const TreeViewPath &path, const PidlAbsolute &item)
+{
+	return std::any_of(path.begin(), path.end(), [&item](const auto &pathItem)
+		{ return item == pathItem || item.IsAncestor(pathItem); });
 }
 
 }
@@ -89,11 +93,11 @@ void TreeViewOrderModel::SetItemOrders(const std::vector<TreeViewItemOrder> &ite
 
 		auto existingOrder = std::find_if(m_itemOrders.begin(), m_itemOrders.end(),
 			[&itemOrder](const auto &currentOrder)
-			{ return AreParentsEqual(currentOrder.parent, itemOrder.parent); });
+			{ return currentOrder.parentPath == itemOrder.parentPath; });
 
 		if (existingOrder == m_itemOrders.end())
 		{
-			m_itemOrders.push_back({ itemOrder.parent, std::move(items) });
+			m_itemOrders.push_back({ itemOrder.parentPath, std::move(items) });
 		}
 		else
 		{
@@ -107,19 +111,19 @@ std::vector<TreeViewItemOrder> TreeViewOrderModel::GetItemOrders() const
 	return m_itemOrders;
 }
 
-bool TreeViewOrderModel::HasOrder(const PidlAbsolute &parent) const
+bool TreeViewOrderModel::HasOrder(const TreeViewPath &parentPath) const
 {
 	return std::any_of(m_itemOrders.begin(), m_itemOrders.end(),
-		[&parent](const auto &itemOrder)
-		{ return AreParentsEqual(itemOrder.parent, parent); });
+		[&parentPath](const auto &itemOrder)
+		{ return itemOrder.parentPath == parentPath; });
 }
 
-std::optional<size_t> TreeViewOrderModel::GetItemIndex(const PidlAbsolute &parent,
+std::optional<size_t> TreeViewOrderModel::GetItemIndex(const TreeViewPath &parentPath,
 	const PidlAbsolute &item) const
 {
 	auto order = std::find_if(m_itemOrders.begin(), m_itemOrders.end(),
-		[&parent](const auto &currentOrder)
-		{ return AreParentsEqual(currentOrder.parent, parent); });
+		[&parentPath](const auto &currentOrder)
+		{ return currentOrder.parentPath == parentPath; });
 
 	if (order == m_itemOrders.end())
 	{
@@ -136,17 +140,14 @@ std::optional<size_t> TreeViewOrderModel::GetItemIndex(const PidlAbsolute &paren
 	return static_cast<size_t>(std::distance(order->items.begin(), itemItr));
 }
 
-bool TreeViewOrderModel::MoveItem(const PidlAbsolute &parent, const PidlAbsolute &item,
+bool TreeViewOrderModel::MoveItem(const TreeViewPath &parentPath, size_t itemIndex,
 	Direction direction, const std::vector<PidlAbsolute> &currentOrder)
 {
-	auto itemItr = std::find(currentOrder.begin(), currentOrder.end(), item);
-
-	if (itemItr == currentOrder.end())
+	if (itemIndex >= currentOrder.size())
 	{
 		return false;
 	}
 
-	size_t itemIndex = static_cast<size_t>(std::distance(currentOrder.begin(), itemItr));
 	size_t newIndex;
 
 	switch (direction)
@@ -176,12 +177,12 @@ bool TreeViewOrderModel::MoveItem(const PidlAbsolute &parent, const PidlAbsolute
 
 	auto updatedOrder = currentOrder;
 	std::swap(updatedOrder[itemIndex], updatedOrder[newIndex]);
-	SetItemOrder(parent, updatedOrder);
+	SetItemOrder(parentPath, updatedOrder);
 	return true;
 }
 
-void TreeViewOrderModel::RenameItem(const PidlAbsolute &parent, const PidlAbsolute &oldItem,
-	const PidlAbsolute &newItem, bool isDirectory)
+void TreeViewOrderModel::RenameItem(const PidlAbsolute &oldItem, const PidlAbsolute &newItem,
+	bool isDirectory)
 {
 	if (!oldItem.HasValue() || !newItem.HasValue() || oldItem == newItem)
 	{
@@ -189,36 +190,35 @@ void TreeViewOrderModel::RenameItem(const PidlAbsolute &parent, const PidlAbsolu
 	}
 
 	std::vector<TreeViewItemOrder> updatedOrders;
-	std::vector<PidlAbsolute> changedParents;
+	std::vector<TreeViewPath> changedPaths;
 
 	for (const auto &itemOrder : m_itemOrders)
 	{
 		TreeViewItemOrder updatedOrder = itemOrder;
 		bool changed = false;
 
-		if (AreParentsEqual(itemOrder.parent, parent))
+		for (auto &item : updatedOrder.items)
 		{
-			for (auto &item : updatedOrder.items)
+			if (item == oldItem)
 			{
-				if (item == oldItem)
-				{
-					item = newItem;
-					changed = true;
-				}
+				item = newItem;
+				changed = true;
 			}
 		}
 
 		if (isDirectory)
 		{
-			if (itemOrder.parent.HasValue()
-				&& (itemOrder.parent == oldItem || oldItem.IsAncestor(itemOrder.parent)))
+			for (auto &pathItem : updatedOrder.parentPath)
 			{
-				auto rebasedParent = RebasePidl(oldItem, newItem, itemOrder.parent);
-
-				if (rebasedParent)
+				if (pathItem == oldItem || oldItem.IsAncestor(pathItem))
 				{
-					updatedOrder.parent = *rebasedParent;
-					changed = true;
+					auto rebasedPathItem = RebasePidl(oldItem, newItem, pathItem);
+
+					if (rebasedPathItem)
+					{
+						pathItem = *rebasedPathItem;
+						changed = true;
+					}
 				}
 			}
 
@@ -239,8 +239,8 @@ void TreeViewOrderModel::RenameItem(const PidlAbsolute &parent, const PidlAbsolu
 
 		if (changed)
 		{
-			AddChangedParent(changedParents, itemOrder.parent);
-			AddChangedParent(changedParents, updatedOrder.parent);
+			AddChangedPath(changedPaths, itemOrder.parentPath);
+			AddChangedPath(changedPaths, updatedOrder.parentPath);
 		}
 
 		if (!updatedOrder.items.empty())
@@ -255,7 +255,7 @@ void TreeViewOrderModel::RenameItem(const PidlAbsolute &parent, const PidlAbsolu
 	{
 		auto existingOrder = std::find_if(mergedOrders.begin(), mergedOrders.end(),
 			[&itemOrder](const auto &currentOrder)
-			{ return AreParentsEqual(currentOrder.parent, itemOrder.parent); });
+			{ return currentOrder.parentPath == itemOrder.parentPath; });
 
 		if (existingOrder == mergedOrders.end())
 		{
@@ -272,64 +272,79 @@ void TreeViewOrderModel::RenameItem(const PidlAbsolute &parent, const PidlAbsolu
 		}
 	}
 
-	if (changedParents.empty())
+	if (changedPaths.empty())
 	{
 		return;
 	}
 
 	m_itemOrders = std::move(mergedOrders);
 
-	for (const auto &changedParent : changedParents)
+	for (const auto &changedPath : changedPaths)
 	{
-		m_orderChangedSignal(changedParent);
+		m_orderChangedSignal(changedPath);
 	}
 }
 
-void TreeViewOrderModel::RemoveItem(const PidlAbsolute &parent, const PidlAbsolute &item,
-	bool isDirectory)
+void TreeViewOrderModel::RemoveItem(const TreeViewPath &parentPath,
+	const PidlAbsolute &item, bool isDirectory)
 {
 	if (!item.HasValue())
 	{
 		return;
 	}
 
-	std::vector<PidlAbsolute> changedParents;
+	std::vector<TreeViewPath> changedPaths;
 
 	for (auto orderItr = m_itemOrders.begin(); orderItr != m_itemOrders.end();)
 	{
-		bool removeOrder = isDirectory && orderItr->parent.HasValue()
-			&& (orderItr->parent == item || item.IsAncestor(orderItr->parent));
-
-		if (removeOrder)
+		if (isDirectory && IsPathWithinItem(orderItr->parentPath, item))
 		{
-			AddChangedParent(changedParents, orderItr->parent);
+			AddChangedPath(changedPaths, orderItr->parentPath);
 			orderItr = m_itemOrders.erase(orderItr);
 			continue;
 		}
 
-		if (AreParentsEqual(orderItr->parent, parent))
+		bool changed = false;
+
+		for (auto itemItr = orderItr->items.begin(); itemItr != orderItr->items.end();)
 		{
-			auto itemItr = std::find(orderItr->items.begin(), orderItr->items.end(), item);
+			bool remove = *itemItr == item || (isDirectory && item.IsAncestor(*itemItr));
 
-			if (itemItr != orderItr->items.end())
+			if (remove)
 			{
-				orderItr->items.erase(itemItr);
-				AddChangedParent(changedParents, parent);
+				itemItr = orderItr->items.erase(itemItr);
+				changed = true;
 			}
+			else
+			{
+				++itemItr;
+			}
+		}
 
-			if (orderItr->items.empty())
-			{
-				orderItr = m_itemOrders.erase(orderItr);
-				continue;
-			}
+		if (changed)
+		{
+			AddChangedPath(changedPaths, orderItr->parentPath);
+		}
+
+		if (orderItr->items.empty())
+		{
+			orderItr = m_itemOrders.erase(orderItr);
+			continue;
 		}
 
 		++orderItr;
 	}
 
-	for (const auto &changedParent : changedParents)
+	if (changedPaths.empty())
 	{
-		m_orderChangedSignal(changedParent);
+		// The parent path is included so the affected branch is re-sorted even if no explicit order
+		// entry remains for it.
+		AddChangedPath(changedPaths, parentPath);
+	}
+
+	for (const auto &changedPath : changedPaths)
+	{
+		m_orderChangedSignal(changedPath);
 	}
 }
 
@@ -339,17 +354,7 @@ boost::signals2::connection TreeViewOrderModel::AddOrderChangedObserver(
 	return m_orderChangedSignal.connect(observer);
 }
 
-bool TreeViewOrderModel::AreParentsEqual(const PidlAbsolute &parent1, const PidlAbsolute &parent2)
-{
-	if (parent1.HasValue() != parent2.HasValue())
-	{
-		return false;
-	}
-
-	return !parent1.HasValue() || parent1 == parent2;
-}
-
-void TreeViewOrderModel::SetItemOrder(const PidlAbsolute &parent,
+void TreeViewOrderModel::SetItemOrder(const TreeViewPath &parentPath,
 	const std::vector<PidlAbsolute> &items)
 {
 	std::vector<PidlAbsolute> validItems;
@@ -363,15 +368,15 @@ void TreeViewOrderModel::SetItemOrder(const PidlAbsolute &parent,
 	}
 
 	auto order = std::find_if(m_itemOrders.begin(), m_itemOrders.end(),
-		[&parent](const auto &currentOrder)
-		{ return AreParentsEqual(currentOrder.parent, parent); });
+		[&parentPath](const auto &currentOrder)
+		{ return currentOrder.parentPath == parentPath; });
 
 	if (validItems.empty())
 	{
 		if (order != m_itemOrders.end())
 		{
 			m_itemOrders.erase(order);
-			m_orderChangedSignal(parent);
+			m_orderChangedSignal(parentPath);
 		}
 
 		return;
@@ -388,8 +393,8 @@ void TreeViewOrderModel::SetItemOrder(const PidlAbsolute &parent,
 	}
 	else
 	{
-		m_itemOrders.push_back({ parent, std::move(validItems) });
+		m_itemOrders.push_back({ parentPath, std::move(validItems) });
 	}
 
-	m_orderChangedSignal(parent);
+	m_orderChangedSignal(parentPath);
 }

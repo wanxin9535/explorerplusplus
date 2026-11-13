@@ -175,19 +175,7 @@ void ShellTreeView::OnItemUpdated(PCIDLIST_ABSOLUTE simplePidl, PCIDLIST_ABSOLUT
 
 	ShellTreeNode *node = GetNodeFromTreeViewItem(item);
 	auto oldPidl = simpleUpdatedPidl ? node->GetFullPidl() : unique_pidl_absolute();
-	PidlAbsolute parentDirectory;
-	bool isDirectory = false;
-
-	if (simpleUpdatedPidl)
-	{
-		if (auto *parentNode = node->GetParent())
-		{
-			auto parentPidl = parentNode->GetFullPidl();
-			parentDirectory = parentPidl.get();
-		}
-
-		isDirectory = TestItemAttributes(node, SFGAO_FOLDER);
-	}
+	bool isDirectory = simpleUpdatedPidl && TestItemAttributes(node, SFGAO_FOLDER);
 
 	node->UpdateItemDetails(currentPidl);
 
@@ -198,8 +186,8 @@ void ShellTreeView::OnItemUpdated(PCIDLIST_ABSOLUTE simplePidl, PCIDLIST_ABSOLUT
 		RestartDirectoryMonitoringForNodeAndChildren(node);
 
 		auto newPidl = node->GetFullPidl();
-		m_appServices->GetTreeViewOrderModel()->RenameItem(parentDirectory,
-			PidlAbsolute(oldPidl.get()), PidlAbsolute(newPidl.get()), isDirectory);
+		m_appServices->GetTreeViewOrderModel()->RenameItem(PidlAbsolute(oldPidl.get()),
+			PidlAbsolute(newPidl.get()), isDirectory);
 	}
 
 	// The display name might have changed, even if the item wasn't renamed, so the updated display
@@ -253,14 +241,7 @@ void ShellTreeView::RemoveItem(HTREEITEM item)
 	auto *node = GetNodeFromTreeViewItem(item);
 	auto itemPidl = node->GetFullPidl();
 	auto *parentNode = node->GetParent();
-	PidlAbsolute parentDirectory;
-
-	if (parentNode)
-	{
-		auto parentPidl = parentNode->GetFullPidl();
-		parentDirectory = parentPidl.get();
-	}
-
+	auto parentPath = GetParentPath(parentNode);
 	bool isDirectory = TestItemAttributes(node, SFGAO_FOLDER);
 	StopDirectoryMonitoringForNodeAndChildren(node);
 
@@ -293,7 +274,7 @@ void ShellTreeView::RemoveItem(HTREEITEM item)
 		assert(numErased == 1);
 	}
 
-	m_appServices->GetTreeViewOrderModel()->RemoveItem(parentDirectory,
+	m_appServices->GetTreeViewOrderModel()->RemoveItem(parentPath,
 		PidlAbsolute(itemPidl.get()), isDirectory);
 }
 

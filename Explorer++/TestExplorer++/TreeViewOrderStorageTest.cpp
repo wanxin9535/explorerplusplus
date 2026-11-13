@@ -16,14 +16,18 @@ namespace
 
 std::vector<TreeViewItemOrder> BuildItemOrders()
 {
-	PidlAbsolute parent1 = CreateSimplePidlForTest(L"C:\\Tree\\Parent1");
-	PidlAbsolute parent2 = CreateSimplePidlForTest(L"C:\\Tree\\Parent2");
+	PidlAbsolute desktop = CreateSimplePidlForTest(L"C:\\ShellDesktop");
+	PidlAbsolute home = CreateSimplePidlForTest(L"C:\\ShellDesktop\\Home");
+	PidlAbsolute first = CreateSimplePidlForTest(L"C:\\ShellDesktop\\Home\\Parent\\First");
+	PidlAbsolute second = CreateSimplePidlForTest(L"C:\\ShellDesktop\\Home\\Parent\\Second");
+	PidlAbsolute repeatedItem = CreateSimplePidlForTest(L"C:\\ShellDesktop\\Home\\Desktop");
+	TreeViewPath quickAccessPath = { home };
+	TreeViewPath shellNamespacePath = { desktop, home };
 
-	return { { parent1, { CreateSimplePidlForTest(L"C:\\Tree\\Parent1\\Second"),
-		CreateSimplePidlForTest(L"C:\\Tree\\Parent1\\First") } },
-		{ parent2, { CreateSimplePidlForTest(L"C:\\Tree\\Parent2\\Third") } },
-		{ PidlAbsolute(), { CreateSimplePidlForTest(L"C:\\RootItem2"),
-			CreateSimplePidlForTest(L"C:\\RootItem1") } } };
+	return { { { desktop, home }, { second, first } }, { { desktop }, { home } },
+		{ {}, { CreateSimplePidlForTest(L"C:\\RootItem2"),
+			CreateSimplePidlForTest(L"C:\\RootItem1") } },
+		{ quickAccessPath, { repeatedItem } }, { shellNamespacePath, { repeatedItem } } };
 }
 
 void ExpectSameOrders(const TreeViewOrderModel &expected, const TreeViewOrderModel &actual)
@@ -36,15 +40,7 @@ void ExpectSameOrders(const TreeViewOrderModel &expected, const TreeViewOrderMod
 	{
 		auto actualOrder = std::find_if(actualOrders.begin(), actualOrders.end(),
 			[&expectedOrder](const auto &currentOrder)
-			{
-				if (expectedOrder.parent.HasValue() != currentOrder.parent.HasValue())
-				{
-					return false;
-				}
-
-				return !expectedOrder.parent.HasValue()
-					|| expectedOrder.parent == currentOrder.parent;
-			});
+			{ return currentOrder.parentPath == expectedOrder.parentPath; });
 
 		ASSERT_NE(actualOrder, actualOrders.end());
 		ASSERT_EQ(actualOrder->items.size(), expectedOrder.items.size());

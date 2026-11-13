@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../Helper/ShellItemContextMenuDelegate.h"
+#include <CommCtrl.h>
 
 class ResourceLoader;
 class ShellTreeView;
@@ -15,7 +16,7 @@ class ShellTreeViewContextMenuDelegate : public ShellItemContextMenuDelegate
 {
 public:
 	ShellTreeViewContextMenuDelegate(ShellTreeView *shellTreeView,
-		const ResourceLoader *resourceLoader);
+		const ResourceLoader *resourceLoader, HTREEITEM targetItem, int targetNodeId);
 
 	void UpdateMenuEntries(PCIDLIST_ABSOLUTE directory, const std::vector<PidlChild> &items,
 		ShellContextMenuBuilder *builder) override;
@@ -28,4 +29,6 @@ public:
 private:
 	ShellTreeView *const m_shellTreeView;
 	const ResourceLoader *const m_resourceLoader;
+	const HTREEITEM m_targetItem;
+	const int m_targetNodeId;
 };

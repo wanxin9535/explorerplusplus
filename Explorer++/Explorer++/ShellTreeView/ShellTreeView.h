@@ -8,6 +8,7 @@
 #include "DirectoryWatcher.h"
 #include "MainFontSetter.h"
 #include "ScopedBrowserCommandTarget.h"
+#include "TreeViewOrderModel.h"
 #include "../Helper/ClipboardHelper.h"
 #include "../Helper/DropHandler.h"
 #include "../Helper/FileOperations.h"
@@ -45,8 +46,8 @@ public:
 
 	unique_pidl_absolute GetSelectedNodePidl() const;
 	void SetShowHidden(BOOL bShowHidden);
-	bool CanMoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection direction);
-	void MoveItemOneStep(PCIDLIST_ABSOLUTE pidl, MoveDirection direction);
+	bool CanMoveItemOneStep(HTREEITEM item, int nodeId, MoveDirection direction) const;
+	void MoveItemOneStep(HTREEITEM item, int nodeId, MoveDirection direction);
 
 	/* Sorting. */
 	int CALLBACK CompareItems(LPARAM lParam1, LPARAM lParam2);
@@ -140,7 +141,9 @@ private:
 	HTREEITEM AddItem(HTREEITEM parent, PCIDLIST_ABSOLUTE pidl, HTREEITEM insertAfter = TVI_LAST);
 	void SortChildren(HTREEITEM parent);
 	void OnPinnedItemsChanged(const PidlAbsolute &parentDirectory);
-	void OnTreeViewOrderChanged(const PidlAbsolute &parentDirectory);
+	void OnTreeViewOrderChanged(const TreeViewPath &parentPath);
+	TreeViewPath GetParentPath(const ShellTreeNode *parentNode) const;
+	HTREEITEM FindTreeViewItemByPath(const TreeViewPath &path) const;
 	void OnGetDisplayInfo(NMTVDISPINFO *pnmtvdi);
 	void OnSelectionChanged(const NMTREEVIEW *eventInfo);
 	void OnSelectionChangedTimer();

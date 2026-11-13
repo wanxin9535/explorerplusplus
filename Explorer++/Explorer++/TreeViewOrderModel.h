@@ -9,10 +9,13 @@
 #include <optional>
 #include <vector>
 
+using TreeViewPath = std::vector<PidlAbsolute>;
+
 struct TreeViewItemOrder
 {
-	// An empty PIDL represents the invisible root of the navigation tree.
-	PidlAbsolute parent;
+	// The path of nodes from the visible tree root to the parent. An empty path represents the
+	// invisible root of the navigation tree.
+	TreeViewPath parentPath;
 	std::vector<PidlAbsolute> items;
 };
 
@@ -27,23 +30,22 @@ public:
 		Down
 	};
 
-	using OrderChangedSignal = boost::signals2::signal<void(const PidlAbsolute &)>;
+	using OrderChangedSignal = boost::signals2::signal<void(const TreeViewPath &)>;
 
 	void SetItemOrders(const std::vector<TreeViewItemOrder> &itemOrders);
 	std::vector<TreeViewItemOrder> GetItemOrders() const;
-	bool HasOrder(const PidlAbsolute &parent) const;
-	std::optional<size_t> GetItemIndex(const PidlAbsolute &parent, const PidlAbsolute &item) const;
-	bool MoveItem(const PidlAbsolute &parent, const PidlAbsolute &item, Direction direction,
+	bool HasOrder(const TreeViewPath &parentPath) const;
+	std::optional<size_t> GetItemIndex(const TreeViewPath &parentPath,
+		const PidlAbsolute &item) const;
+	bool MoveItem(const TreeViewPath &parentPath, size_t itemIndex, Direction direction,
 		const std::vector<PidlAbsolute> &currentOrder);
-	void RenameItem(const PidlAbsolute &parent, const PidlAbsolute &oldItem,
-		const PidlAbsolute &newItem, bool isDirectory);
-	void RemoveItem(const PidlAbsolute &parent, const PidlAbsolute &item, bool isDirectory);
+	void RenameItem(const PidlAbsolute &oldItem, const PidlAbsolute &newItem, bool isDirectory);
+	void RemoveItem(const TreeViewPath &parentPath, const PidlAbsolute &item, bool isDirectory);
 	boost::signals2::connection AddOrderChangedObserver(
 		const OrderChangedSignal::slot_type &observer);
 
 private:
-	static bool AreParentsEqual(const PidlAbsolute &parent1, const PidlAbsolute &parent2);
-	void SetItemOrder(const PidlAbsolute &parent, const std::vector<PidlAbsolute> &items);
+	void SetItemOrder(const TreeViewPath &parentPath, const std::vector<PidlAbsolute> &items);
 
 	std::vector<TreeViewItemOrder> m_itemOrders;
 	OrderChangedSignal m_orderChangedSignal;
