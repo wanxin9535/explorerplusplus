@@ -109,7 +109,7 @@ bool SaveOrder(HKEY ordersKey, DWORD groupIndex, const TreeViewItemOrder &itemOr
 		return false;
 	}
 
-	DWORD parentPathCount;
+	DWORD parentPathCount = 0;
 	if (!SavePidls(groupKey.get(), L"ParentPath", itemOrder.parentPath,
 			MAX_TREE_VIEW_PARENT_PATH_LENGTH, parentPathCount)
 		|| RegistrySettings::SaveDword(groupKey.get(), SETTING_PARENT_PATH_COUNT,
@@ -118,7 +118,7 @@ bool SaveOrder(HKEY ordersKey, DWORD groupIndex, const TreeViewItemOrder &itemOr
 		return false;
 	}
 
-	DWORD itemCount;
+	DWORD itemCount = 0;
 	return SavePidls(groupKey.get(), SETTING_PIDLS, itemOrder.items,
 		MAX_TREE_VIEW_ORDER_ITEMS_TO_STORE, itemCount)
 		&& RegistrySettings::SaveDword(groupKey.get(), SETTING_ITEM_COUNT, itemCount)
@@ -136,8 +136,8 @@ void LoadOrder(HKEY ordersKey, DWORD groupIndex, std::vector<TreeViewItemOrder> 
 		return;
 	}
 
-	DWORD parentPathCount;
-	DWORD itemCount;
+	DWORD parentPathCount = 0;
+	DWORD itemCount = 0;
 
 	if (RegistrySettings::ReadDword(groupKey.get(), SETTING_PARENT_PATH_COUNT, parentPathCount)
 			!= ERROR_SUCCESS
@@ -185,7 +185,7 @@ void Load(HKEY applicationKey, TreeViewOrderModel *model)
 		return;
 	}
 
-	DWORD groupCount;
+	DWORD groupCount = 0;
 	if (RegistrySettings::ReadDword(ordersKey.get(), SETTING_GROUP_COUNT, groupCount) != ERROR_SUCCESS
 		|| groupCount > MAX_TREE_VIEW_ORDER_GROUPS_TO_STORE)
 	{
